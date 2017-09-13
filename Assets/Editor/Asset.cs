@@ -64,6 +64,30 @@ namespace ParkitectAssetEditor
         /// </value>
         public int GridSubdivision { get; set; }
 
+        private MaterialType _material;
+
+        /// <summary>
+        /// Gets or sets the material.
+        /// </summary>
+        /// <value>
+        /// The shader.
+        /// </value>
+        public MaterialType Material
+        {
+            get
+            {
+                return _material;
+            }
+            set
+            {
+                if (_material != value)
+                {
+                    _material = value;
+                    ChangeMaterial(value);
+                }
+            }
+        }
+
         /// <summary>
         /// Gets or sets the game object instance identifier.
         /// </summary>
@@ -92,6 +116,13 @@ namespace ParkitectAssetEditor
                 GameObjectInstanceId = value.GetInstanceID();
                 _gameObject = value;
             }
+        }
+
+        private void ChangeMaterial(MaterialType value)
+        {
+            var material = Resources.Load<Material>(value == MaterialType.Diffuse ? "Diffuse" : "Specular");
+
+            GameObject.GetComponent<Renderer>().material = material;
         }
     }
 }

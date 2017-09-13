@@ -111,12 +111,12 @@ namespace ParkitectAssetEditor.UI
             _selectedAsset.Name = EditorGUILayout.TextField("Name", _selectedAsset.Name);
             _selectedAsset.Type = (AssetType)EditorGUILayout.Popup("Type", (int)_selectedAsset.Type, new[]
             {
-            AssetType.Deco.ToString(),
-            AssetType.Trashbin.ToString(),
-            AssetType.Seating.ToString(),
-            AssetType.Fence.ToString(),
-            AssetType.Lamp.ToString(),
-        });
+                AssetType.Deco.ToString(),
+                AssetType.Trashbin.ToString(),
+                AssetType.Seating.ToString(),
+                AssetType.Fence.ToString(),
+                AssetType.Lamp.ToString(),
+            });
             _selectedAsset.Price = EditorGUILayout.FloatField("Price:", _selectedAsset.Price);
 
             GUILayout.Label("Category in the deco window:", EditorStyles.boldLabel);
@@ -126,6 +126,13 @@ namespace ParkitectAssetEditor.UI
             GUILayout.Label("Placement settings", EditorStyles.boldLabel);
             _selectedAsset.GridSnap = EditorGUILayout.Toggle("Snaps to grid: ", _selectedAsset.GridSnap);
             _selectedAsset.GridSubdivision = Mathf.RoundToInt(EditorGUILayout.Slider("Grid subdivision: ", _selectedAsset.GridSubdivision, 1, 8));
+
+            GUILayout.Label("Rendering", EditorStyles.boldLabel);
+            _selectedAsset.Material = (MaterialType)EditorGUILayout.Popup("Material", (int)_selectedAsset.Material, new[]
+            {
+                MaterialType.Diffuse.ToString(),
+                MaterialType.Specular.ToString(),
+            });
 
             if (GUILayout.Button("Remove From Asset Pack"))
             {
