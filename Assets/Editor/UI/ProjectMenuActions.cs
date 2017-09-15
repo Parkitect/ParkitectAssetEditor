@@ -1,9 +1,13 @@
-﻿using ParkitectAssetEditor.UI;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 
 namespace ParkitectAssetEditor.UI
 {
+    /// <inheritdoc />
+    /// <summary>
+    /// Adds the menu actions in the unity editor for managing projects.
+    /// </summary>
+    /// <seealso cref="T:UnityEngine.MonoBehaviour" />
     class ProjectMenuActions : MonoBehaviour
     {
         [MenuItem("Parkitect/New Project")]

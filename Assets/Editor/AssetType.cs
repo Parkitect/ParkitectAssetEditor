@@ -7,7 +7,7 @@
     {
         Deco,
         Trashbin,
-        Seating,
+        Bench,
         Fence,
         Lamp
     }

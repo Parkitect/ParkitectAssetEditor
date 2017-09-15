@@ -16,6 +16,11 @@
         public string ProjectFile;
 
         /// <summary>
+        /// Path to the autosave project file.
+        /// </summary>
+        public string ProjectFileAutoSave;
+
+        /// <summary>
         /// Gets the name of the project.
         /// </summary>
         /// <value>

@@ -8,7 +8,9 @@ namespace ParkitectAssetEditor
     /// <summary>
     /// The main asset pack class that combines all data about the assets.
     /// </summary>
-    public class AssetPack
+    /// <seealso cref="UnityEngine.ScriptableObject" />
+    /// <inheritdoc />
+    public class AssetPack : ScriptableObject
     {
         /// <summary>
         /// Gets or sets the assets.
@@ -25,16 +27,7 @@ namespace ParkitectAssetEditor
         /// The name.
         /// </value>
         public string Name { get; set; }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AssetPack"/> class.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        public AssetPack(string name)
-        {
-            Name = name;
-        }
-
+        
         /// <summary>
         /// Adds the specified game object as an asset.
         /// </summary>
@@ -54,12 +47,12 @@ namespace ParkitectAssetEditor
 
             var asset = new Asset
             {
-                Name = gameObject.name,
                 GameObject = gameObject,
-                Category = "Asset Pack",
+                Name = gameObject.name,
+                Category = ProjectManager.Project.Value.ProjectName,
                 SubCategory = gameObject.name,
-                GridSnap = true,
-                GridSubdivision = 4
+                SnapCenter = true,
+                GridSize = 4,
             };
 
             Add(asset);
@@ -93,7 +86,10 @@ namespace ParkitectAssetEditor
         {
             Assets.Remove(asset);
 
-            asset.GameObject?.SetActive(false);
+            if (asset.GameObject != null)
+            {
+                asset.GameObject.SetActive(false);
+            }
 
             LayOutAssets();
         }
@@ -116,7 +112,6 @@ namespace ParkitectAssetEditor
         {
             foreach (var asset in Assets)
             {
-                asset.GameObject.GetComponent<Renderer>().material = new Material(Shader.Find("Diffuse"));
                 asset.GameObject.SetActive(true);
             }
 

@@ -1,4 +1,6 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using UnityEditor;
 using UnityEngine;
 
 namespace ParkitectAssetEditor
@@ -9,20 +11,33 @@ namespace ParkitectAssetEditor
     public class Asset
     {
         /// <summary>
+        /// The name
+        /// </summary>
+        private string _name;
+
+        /// <summary>
         /// Gets or sets the name.
         /// </summary>
         /// <value>
         /// The name.
         /// </value>
-        public string Name { get; set; }
+        public string Name {
+            get { return _name; }
+            set
+            {
+                _name = value;
+                if(GameObject != null) GameObject.name = _name;
+            }
+        }
 
-        /// <summary>
-        /// Gets or sets the type.
-        /// </summary>
-        /// <value>
-        /// The type.
-        /// </value>
-        public AssetType Type { get; set; }
+		/// <summary>
+		/// Gets or sets the type.
+		/// </summary>
+		/// <value>
+		/// The type.
+		/// </value>
+		[JsonConverter(typeof(StringEnumConverter))]
+		public AssetType Type { get; set; }
 
         /// <summary>
         /// Gets or sets the price.
@@ -31,7 +46,7 @@ namespace ParkitectAssetEditor
         /// The price.
         /// </value>
         public float Price { get; set; }
-
+        
         /// <summary>
         /// Gets or sets the category.
         /// </summary>
@@ -48,45 +63,75 @@ namespace ParkitectAssetEditor
         /// </value>
         public string SubCategory { get; set; }
 
+        #region deco
         /// <summary>
-        /// Gets or sets a value indicating whether this asset snaps to grid.
+        /// Gets or sets a value indicating whether this asset builds on a grid.
         /// </summary>
         /// <value>
-        ///   <c>true</c> if snaps to grid; otherwise, <c>false</c>.
+        ///   <c>true</c> if asset builds on a grid; otherwise, <c>false</c>.
         /// </value>
-        public bool GridSnap { get; set; }
+        public bool BuildOnGrid { get; set; }
 
         /// <summary>
-        /// Gets or sets the grid subdivision.
+        /// Gets or sets a value indicating whether this asset snaps to the center of a tile.
         /// </summary>
         /// <value>
-        /// The grid subdivision.
+        ///   <c>true</c> if snaps to center; otherwise, <c>false</c>.
         /// </value>
-        public int GridSubdivision { get; set; }
-
-        private MaterialType _material;
+        public bool SnapCenter { get; set; }
 
         /// <summary>
-        /// Gets or sets the material.
+        /// Gets or sets the grid size.
         /// </summary>
         /// <value>
-        /// The shader.
+        /// The grid size.
         /// </value>
-        public MaterialType Material
-        {
-            get
-            {
-                return _material;
-            }
-            set
-            {
-                if (_material != value)
-                {
-                    _material = value;
-                    ChangeMaterial(value);
-                }
-            }
-        }
+        public float GridSize { get; set; }
+
+        /// <summary>
+        /// Gets or sets the height delta.
+        /// </summary>
+        /// <value>
+        /// The height delta.
+        /// </value>
+        public float HeightDelta { get; set; }
+        #endregion
+
+        #region bench
+        /// <summary>
+        /// Gets or sets a value indicating whether the bench has a back rest.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if the bench has back a rest; otherwise, <c>false</c>.
+        /// </value>
+        public bool HasBackRest { get; set; } = true;
+        #endregion
+
+        #region fence
+        /// <summary>
+        /// Gets or sets the flat GO of a fence.
+        /// </summary>
+        /// <value>
+        /// The flat GO.
+        /// </value>
+        public GameObject FenceFlat { get; set; }
+
+        /// <summary>
+        /// Gets or sets the fence post GO.
+        /// </summary>
+        /// <value>
+        /// The fence post GO.
+        /// </value>
+        public GameObject FencePost { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance has a post.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance has a post; otherwise, <c>false</c>.
+        /// </value>
+        public bool HasPost { get; set; }
+        #endregion
 
         /// <summary>
         /// Gets or sets the game object instance identifier.
@@ -110,19 +155,20 @@ namespace ParkitectAssetEditor
         [JsonIgnore]
         public GameObject GameObject
         {
-            get { return _gameObject; }
+            get
+            {
+                if (_gameObject == null && GameObjectInstanceId != 0)
+                {
+                    _gameObject = EditorUtility.InstanceIDToObject(GameObjectInstanceId) as GameObject;
+                }
+
+                return _gameObject;
+            }
             set
             {
                 GameObjectInstanceId = value.GetInstanceID();
                 _gameObject = value;
             }
-        }
-
-        private void ChangeMaterial(MaterialType value)
-        {
-            var material = Resources.Load<Material>(value == MaterialType.Diffuse ? "Diffuse" : "Specular");
-
-            GameObject.GetComponent<Renderer>().material = material;
         }
     }
 }

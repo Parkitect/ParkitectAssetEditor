@@ -6,6 +6,9 @@ using UnityEngine;
 
 namespace ParkitectAssetEditor
 {
+    /// <summary>
+    /// Help class for serializing the asset pack.
+    /// </summary>
     public static class AssetPackSerializer
     {
         /// <summary>
@@ -47,6 +50,8 @@ namespace ParkitectAssetEditor
             };
 
             BuildPipeline.BuildAssetBundles(ProjectManager.Project.Value.ProjectDirectory, descriptor, BuildAssetBundleOptions.None, BuildTarget.StandaloneWindows64);
+
+            Directory.Delete(Application.dataPath + "/Tmp", true);
 
             return true;
         }

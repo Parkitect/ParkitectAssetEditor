@@ -3,10 +3,11 @@ using UnityEngine;
 
 namespace ParkitectAssetEditor.UI
 {
+    /// <inheritdoc />
     /// <summary>
     /// Class for handling close project window
     /// </summary>
-    /// <seealso cref="UnityEditor.EditorWindow" />
+    /// <seealso cref="T:UnityEditor.EditorWindow" />
     class CloseProjectWindow : EditorWindow
     {
         /// <summary>
@@ -18,11 +19,8 @@ namespace ParkitectAssetEditor.UI
             window.position = new Rect(Screen.width / 2, Screen.height / 2, 300, 50);
             window.ShowUtility();
         }
-
-        /// <summary>
-        /// Renders the GUI.
-        /// </summary>
-        private void OnGUI()
+        
+        public void OnGUI()
         {
             EditorGUILayout.HelpBox("Do you want to close the project without saving?", MessageType.Warning);
 

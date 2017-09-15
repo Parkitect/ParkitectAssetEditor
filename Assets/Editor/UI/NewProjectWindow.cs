@@ -4,10 +4,11 @@ using UnityEngine;
 
 namespace ParkitectAssetEditor.UI
 {
+    /// <inheritdoc />
     /// <summary>
-    /// Class for handling new project window
+    /// Window for initiating a new project.
     /// </summary>
-    /// <seealso cref="UnityEditor.EditorWindow" />
+    /// <seealso cref="T:UnityEditor.EditorWindow" />
     class NewProjectWindow : EditorWindow
     {
         /// <summary>
@@ -29,11 +30,8 @@ namespace ParkitectAssetEditor.UI
             window.position = new Rect(Screen.width / 2, Screen.height / 2, 300, 50);
             window.ShowUtility();
         }
-
-        /// <summary>
-        /// Renders the GUI.
-        /// </summary>
-        private void OnGUI()
+        
+        public void OnGUI()
         {
             _name = EditorGUILayout.TextField("Project Name", _name);
 
