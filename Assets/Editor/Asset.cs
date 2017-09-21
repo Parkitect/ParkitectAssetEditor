@@ -108,21 +108,15 @@ namespace ParkitectAssetEditor
         #endregion
 
         #region fence
-        /// <summary>
-        /// Gets or sets the flat GO of a fence.
-        /// </summary>
-        /// <value>
-        /// The flat GO.
-        /// </value>
-        public GameObject FenceFlat { get; set; }
 
-        /// <summary>
-        /// Gets or sets the fence post GO.
-        /// </summary>
-        /// <value>
-        /// The fence post GO.
-        /// </value>
-        public GameObject FencePost { get; set; }
+		/// <summary>
+		/// Gets or sets the fence post GO.
+		/// </summary>
+		/// <value>
+		/// The fence post GO.
+		/// </value>
+		[JsonIgnore]
+		public GameObject FencePost { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether this instance has a post.
@@ -130,7 +124,7 @@ namespace ParkitectAssetEditor
         /// <value>
         ///   <c>true</c> if this instance has a post; otherwise, <c>false</c>.
         /// </value>
-        public bool HasPost { get; set; }
+        public bool HasMidPost { get; set; }
         #endregion
 
         /// <summary>

@@ -209,6 +209,11 @@ namespace ParkitectAssetEditor.UI
         /// </summary>
         private void DrawAssetSeatingDetailSection()
         {
+	        if (_selectedAsset.GameObject == null)
+	        {
+		        return;
+	        }
+
 	        var seats = _selectedAsset.
 				GameObject.
 				GetComponentsInChildren<Transform>(true).
@@ -242,14 +247,34 @@ namespace ParkitectAssetEditor.UI
                 Selection.activeGameObject = seat.gameObject;
             }
         }
-
+		
         /// <summary>
         /// Draws the asset fence detail section.
         /// </summary>
         private void DrawAssetFenceDetailSection()
         {
-            EditorGUILayout.HelpBox("Not yet supported :(", MessageType.Warning);
-        }
+			// Game object drop box
+			GUILayout.Label("Category in the deco window:", EditorStyles.boldLabel);
+	        _selectedAsset.Category = EditorGUILayout.TextField("Category:", _selectedAsset.Category);
+	        _selectedAsset.SubCategory = EditorGUILayout.TextField("Sub category:", _selectedAsset.SubCategory);
+
+	        var post = EditorGUILayout.ObjectField("Post:", _selectedAsset.FencePost, typeof(GameObject), true) as GameObject;
+
+	        if (post != _selectedAsset.FencePost)
+			{
+				post.transform.SetParent(_selectedAsset.GameObject.transform);
+				post.transform.localPosition = new Vector3(0.5f, 0, 0);
+
+				if (_selectedAsset.FencePost != null)
+				{
+					DestroyImmediate(_selectedAsset.FencePost);
+				}
+
+				_selectedAsset.FencePost = post;
+				post.name = "Post";
+			}
+	        _selectedAsset.HasMidPost = EditorGUILayout.Toggle("Has mid post: ", _selectedAsset.HasMidPost);
+		}
 
         /// <summary>
         /// Selects an asset to draw its settings

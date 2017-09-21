@@ -50,9 +50,10 @@ namespace ParkitectAssetEditor
                 GameObject = gameObject,
                 Name = gameObject.name,
                 Category = ProjectManager.Project.Value.ProjectName,
-                SubCategory = gameObject.name,
+                SubCategory = "",
                 SnapCenter = true,
-                GridSize = 4,
+                GridSize = 1,
+				HeightDelta = 0.25f
             };
 
             Add(asset);
