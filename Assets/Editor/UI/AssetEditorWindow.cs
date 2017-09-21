@@ -202,6 +202,27 @@ namespace ParkitectAssetEditor.UI
             _selectedAsset.SnapCenter = EditorGUILayout.Toggle("Snaps to center: ", _selectedAsset.SnapCenter);
             _selectedAsset.GridSize = Mathf.RoundToInt(EditorGUILayout.Slider("Grid Size: ", _selectedAsset.GridSize, 0, 5) * 20f) / 20f;
             _selectedAsset.HeightDelta = Mathf.RoundToInt(EditorGUILayout.Slider("Height delta: ", _selectedAsset.HeightDelta, 0, 1) * 20f) / 20f;
+
+	        GUILayout.Label("Color settings", EditorStyles.boldLabel);
+			_selectedAsset.HasCustomColors = EditorGUILayout.Toggle("Has custom colors: ", _selectedAsset.HasCustomColors);
+	        if (_selectedAsset.HasCustomColors)
+			{
+				_selectedAsset.ColorCount = Mathf.RoundToInt(EditorGUILayout.Slider("Color Count: ", _selectedAsset.ColorCount, 1, 4));
+				for (int i = 0; i < _selectedAsset.ColorCount; i++)
+				{
+					_selectedAsset.Colors[i] = EditorGUILayout.ColorField("Color " + (i + 1), _selectedAsset.Colors[i]);
+					
+				}
+			}
+
+	        GUILayout.Label("Size settings", EditorStyles.boldLabel);
+			_selectedAsset.IsResizable = EditorGUILayout.Toggle("Is resizable: ", _selectedAsset.IsResizable);
+
+	        if (_selectedAsset.IsResizable)
+			{
+				_selectedAsset.MinSize = Mathf.RoundToInt(EditorGUILayout.Slider("Min size: ", _selectedAsset.MinSize, 0.1f, _selectedAsset.MaxSize) * 10f) / 10f;
+				_selectedAsset.MaxSize = Mathf.RoundToInt(EditorGUILayout.Slider("Max size: ", _selectedAsset.MaxSize, _selectedAsset.MinSize, 10) * 10f) / 10f;
+			}
         }
 
         /// <summary>

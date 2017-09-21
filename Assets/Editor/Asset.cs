@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.Linq;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using UnityEditor;
 using UnityEngine;
@@ -95,16 +96,71 @@ namespace ParkitectAssetEditor
         /// The height delta.
         /// </value>
         public float HeightDelta { get; set; }
-        #endregion
 
-        #region bench
-        /// <summary>
-        /// Gets or sets a value indicating whether the bench has a back rest.
-        /// </summary>
-        /// <value>
-        ///   <c>true</c> if the bench has back a rest; otherwise, <c>false</c>.
-        /// </value>
-        public bool HasBackRest { get; set; } = true;
+		/// <summary>
+		/// Gets or sets a value indicating whether this instance has custom colors.
+		/// </summary>
+		/// <value>
+		///   <c>true</c> if this instance has custom colors; otherwise, <c>false</c>.
+		/// </value>
+		public bool HasCustomColors { get; set; }
+
+		/// <summary>
+		/// The colors
+		/// </summary>
+		[JsonIgnore]
+		public Color[] Colors = new Color[4];
+
+		/// <summary>
+		/// Property to support serializing for Unity's color struct
+		/// </summary>
+		public CustomColor[] CustomColors
+	    {
+		    get { return Colors.Select(c => new CustomColor {Red = c.r, Green = c.g, Blue = c.b, Alpha = c.a}).ToArray(); }
+		    set { Colors = value.Select(c => new Color(c.Red, c.Green, c.Blue, c.Alpha)).ToArray(); }
+	    }
+
+		/// <summary>
+		/// Gets or sets the amount of custom colors this asset has.
+		/// </summary>
+		/// <value>
+		/// The color count.
+		/// </value>
+		public int ColorCount { get; set; }
+
+		/// <summary>
+		/// Gets or sets a value indicating whether this instance is resizable.
+		/// </summary>
+		/// <value>
+		///   <c>true</c> if this instance is resizable; otherwise, <c>false</c>.
+		/// </value>
+		public bool IsResizable { get; set; }
+
+		/// <summary>
+		/// Gets or sets the minimum size.
+		/// </summary>
+		/// <value>
+		/// The minimum size.
+		/// </value>
+		public float MinSize { get; set; }
+
+		/// <summary>
+		/// Gets or sets the maximum size.
+		/// </summary>
+		/// <value>
+		/// The maximum size.
+		/// </value>
+		public float MaxSize { get; set; }
+		#endregion
+
+		#region bench
+		/// <summary>
+		/// Gets or sets a value indicating whether the bench has a back rest.
+		/// </summary>
+		/// <value>
+		///   <c>true</c> if the bench has back a rest; otherwise, <c>false</c>.
+		/// </value>
+		public bool HasBackRest { get; set; } = true;
         #endregion
 
         #region fence
