@@ -6,6 +6,7 @@
     public enum AssetType
     {
         Deco,
+		Wall,
         Trashbin,
         Bench,
         Fence,

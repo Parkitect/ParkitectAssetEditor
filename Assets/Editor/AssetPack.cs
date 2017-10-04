@@ -1,16 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace ParkitectAssetEditor
 {
     /// <summary>
     /// The main asset pack class that combines all data about the assets.
     /// </summary>
-    /// <seealso cref="UnityEngine.ScriptableObject" />
-    /// <inheritdoc />
-    public class AssetPack : ScriptableObject
+    public class AssetPack
     {
         /// <summary>
         /// Gets or sets the assets.
@@ -18,7 +15,7 @@ namespace ParkitectAssetEditor
         /// <value>
         /// The assets.
         /// </value>
-        public List<Asset> Assets { get; set; } = new List<Asset>();
+        public List<Asset> Assets { get; set; }
 
         /// <summary>
         /// Gets the name.
@@ -40,7 +37,7 @@ namespace ParkitectAssetEditor
         {
             if (Assets.Any(a => a.GameObjectInstanceId == gameObject.GetInstanceID()))
             {
-                Debug.LogWarning($"GameObject {gameObject.name} is already added as an asset, can't add twice.");
+                Debug.LogWarning(string.Format("GameObject {0} is already added as an asset, can't add twice.", gameObject.name));
 
                 return Assets.First(a => a.GameObjectInstanceId == gameObject.GetInstanceID());
             }
@@ -52,7 +49,7 @@ namespace ParkitectAssetEditor
                 Category = ProjectManager.Project.Value.ProjectName,
                 SubCategory = "",
                 SnapCenter = true,
-                GridSize = 1,
+                GridSubdivision = 1,
 				HeightDelta = 0.25f
             };
 
@@ -69,7 +66,7 @@ namespace ParkitectAssetEditor
         {
             if (Assets.Contains(asset))
             {
-                Debug.LogWarning($"Asset {asset.Name} was already added as an asset, can't add twice.");
+                Debug.LogWarning(string.Format("Asset {0} was already added as an asset, can't add twice.", asset.Name));
             }
 
             Assets.Add(asset);
@@ -113,7 +110,7 @@ namespace ParkitectAssetEditor
         {
             foreach (var asset in Assets)
             {
-                asset.GameObject.SetActive(true);
+                if (asset.GameObject != null) asset.GameObject.SetActive(true);
             }
 
             LayOutAssets();
@@ -134,8 +131,30 @@ namespace ParkitectAssetEditor
                 var z = i % gridSize * margin;
                 var x = i / gridSize * margin;
 
-                asset.GameObject.transform.position = new Vector3(x, 0, z);
+                if (asset.GameObject != null)
+                {
+                    asset.GameObject.transform.position = new Vector3(x, 0, z);
+                    asset.GameObject.transform.rotation = Quaternion.identity;
+                }
             }
+        }
+
+        /// <summary>
+        /// Finds an asset for game object.
+        /// </summary>
+        /// <param name="gameObject">The game object.</param>
+        /// <returns>The asset if found, null if not</returns>
+        public Asset FindForGameObject(GameObject gameObject)
+        {
+            return Assets.FirstOrDefault(a => a.GameObject == gameObject);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AssetPack"/> class.
+        /// </summary>
+        public AssetPack()
+        {
+            Assets = new List<Asset>();
         }
     }
 }

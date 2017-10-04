@@ -11,12 +11,17 @@
         public string ProjectDirectory;
 
         /// <summary>
-        /// Path to the project file.
+        /// Path of the mod directory.
+        /// </summary>
+        public string ModDirectory;
+
+        /// <summary>
+        /// Filename of the project file.
         /// </summary>
         public string ProjectFile;
 
         /// <summary>
-        /// Path to the autosave project file.
+        /// Filename of the autosave project file.
         /// </summary>
         public string ProjectFileAutoSave;
 

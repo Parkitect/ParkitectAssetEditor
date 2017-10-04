@@ -22,25 +22,27 @@ namespace ParkitectAssetEditor
             {
                 foreach (var asset in assetPack.Assets.Where(a => a.GameObject == null))
                 {
-                    Debug.LogError($"Could not save asset pack because GameObject of asset {asset.Name} is missing.");
+                    Debug.LogError(string.Format("Could not save asset pack because GameObject of asset {0} is missing.", asset.Name));
 
                     return false;
                 }
             }
 
-            Directory.CreateDirectory(Application.dataPath + "/Tmp");
+            // make sure the prefab directory exists
+            Directory.CreateDirectory(Path.Combine(ProjectManager.Project.Value.ProjectDirectory, "Resources/AssetPack"));
 
-            List<string> prefabPaths = new List<string>();
-
-            foreach (Asset asset in assetPack.Assets)
+            // create the prefabs and store the paths in prefabPaths
+            var prefabPaths = new List<string>();
+            foreach (var asset in assetPack.Assets)
             {
-                var path = $"Assets/Tmp/{asset.GameObjectInstanceId}.prefab";
+                var path = string.Format("Assets/Resources/AssetPack/{0}.prefab", asset.Guid);
 
                 PrefabUtility.CreatePrefab(path, asset.GameObject);
 
                 prefabPaths.Add(path);
             }
-
+            
+            // use the prefab list to build an assetbundle
             AssetBundleBuild[] descriptor = {
                 new AssetBundleBuild()
                 {
@@ -49,27 +51,22 @@ namespace ParkitectAssetEditor
                 }
             };
 
-            BuildPipeline.BuildAssetBundles(ProjectManager.Project.Value.ProjectDirectory, descriptor, BuildAssetBundleOptions.None, BuildTarget.StandaloneWindows64);
-
-            Directory.Delete(Application.dataPath + "/Tmp", true);
-
+            BuildPipeline.BuildAssetBundles(ProjectManager.Project.Value.ModDirectory, descriptor, BuildAssetBundleOptions.ForceRebuildAssetBundle | BuildAssetBundleOptions.DeterministicAssetBundle | BuildAssetBundleOptions.UncompressedAssetBundle | BuildAssetBundleOptions.StrictMode, BuildTarget.StandaloneWindows);
+            
             return true;
         }
         
         /// <summary>
-        /// Fills asset pack from asset bundle.
+        /// Fills asset pack with gameobjects from the scene and/or prefabs.
         /// </summary>
         /// <param name="assetPack">The asset pack.</param>
-        public static void LoadAssetBundle(this AssetPack assetPack)
+        public static void LoadGameObjects(this AssetPack assetPack)
         {
-            var assetBundlePath = Path.Combine(ProjectManager.Project.Value.ProjectDirectory, "assetPack");
-
-            var assetBundle = AssetBundle.LoadFromFile(assetBundlePath);
-
             for (var i = assetPack.Assets.Count - 1; i >= 0; i--)
             {
                 var asset = assetPack.Assets[i];
 
+                // try to find GO in scene first, instantiate the prefab if it doesn't exist.
                 var objectInScene = EditorUtility.InstanceIDToObject(asset.GameObjectInstanceId);
                 if (objectInScene != null)
                 {
@@ -77,26 +74,21 @@ namespace ParkitectAssetEditor
                 }
                 else
                 {
-                    // if one object fails to load, don't make it fail the rest
-                    try
+                    try // if one object fails to load, don't make it fail the rest
                     {
-                        var go = assetBundle.LoadAsset<GameObject>(asset.GameObjectInstanceId.ToString());
-
-                        var instantiadedGo = Object.Instantiate(go);
-
-                        asset.GameObject = instantiadedGo;
+                        var go = Resources.Load<GameObject>(string.Format("AssetPack/{0}", asset.Guid));
+                        
+                        asset.GameObject = Object.Instantiate(go);
                         asset.GameObject.name = asset.Name;
                     }
                     catch (System.Exception)
                     {
-                        Debug.LogError($"Could not find GameObject in AssetBundle for asset {asset.Name}, skipped loading of asset");
+                        Debug.LogError(string.Format("Could not find GameObject at Assets/Resources/AssetPack/{0} for asset {1}, skipped loading of asset", asset.Guid, asset.Name));
 
                         assetPack.Assets.Remove(asset);
                     }
                 }
             }
-
-            assetBundle.Unload(true);
         }
     }
 }

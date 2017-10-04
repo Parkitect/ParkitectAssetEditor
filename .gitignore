@@ -32,3 +32,8 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+
+*.assetProject*
+*.autosave*
+
+Assets/Resources/*

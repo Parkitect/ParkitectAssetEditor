@@ -12,6 +12,14 @@ namespace ParkitectAssetEditor
     public class Asset
     {
         /// <summary>
+        /// Gets or sets the unique identifier.
+        /// </summary>
+        /// <value>
+        /// The unique identifier.
+        /// </value>
+        public string Guid { get; set; }
+
+        /// <summary>
         /// The name
         /// </summary>
         private string _name;
@@ -87,7 +95,7 @@ namespace ParkitectAssetEditor
         /// <value>
         /// The grid size.
         /// </value>
-        public float GridSize { get; set; }
+        public float GridSubdivision { get; set; }
 
         /// <summary>
         /// Gets or sets the height delta.
@@ -160,7 +168,7 @@ namespace ParkitectAssetEditor
 		/// <value>
 		///   <c>true</c> if the bench has back a rest; otherwise, <c>false</c>.
 		/// </value>
-		public bool HasBackRest { get; set; } = true;
+		public bool HasBackRest { get; set; }
         #endregion
 
         #region fence
@@ -183,6 +191,11 @@ namespace ParkitectAssetEditor
         public bool HasMidPost { get; set; }
         #endregion
 
+        #region wall
+
+        public int WallSettings;
+        #endregion
+
         /// <summary>
         /// Gets or sets the game object instance identifier.
         /// </summary>
@@ -190,11 +203,6 @@ namespace ParkitectAssetEditor
         /// The game object instance identifier.
         /// </value>
         public int GameObjectInstanceId { get; set; }
-
-        /// <summary>
-        /// The game object
-        /// </summary>
-        private GameObject _gameObject;
 
         /// <summary>
         /// Gets or sets the game object.
@@ -207,18 +215,20 @@ namespace ParkitectAssetEditor
         {
             get
             {
-                if (_gameObject == null && GameObjectInstanceId != 0)
-                {
-                    _gameObject = EditorUtility.InstanceIDToObject(GameObjectInstanceId) as GameObject;
-                }
-
-                return _gameObject;
+                return EditorUtility.InstanceIDToObject(GameObjectInstanceId) as GameObject;
             }
             set
             {
-                GameObjectInstanceId = value.GetInstanceID();
-                _gameObject = value;
+                GameObjectInstanceId = value != null ? value.GetInstanceID() : 0;
             }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Asset"/> class.
+        /// </summary>
+        public Asset()
+        {
+            Guid = GUID.Generate().ToString(); // don't need the object, just make it a string immediately
         }
     }
 }

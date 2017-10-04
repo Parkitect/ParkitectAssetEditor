@@ -1,5 +1,10 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
+using System.IO;
 using System.Linq;
+using ParkitectAssetEditor.Assets.Editor;
+using ParkitectAssetEditor.Assets.Editor.GizmoRenderers;
+using ParkitectAssetEditor.GizmoRenderers;
 using UnityEditor;
 using UnityEngine;
 
@@ -27,6 +32,11 @@ namespace ParkitectAssetEditor.UI
         /// </summary>
         private Asset _selectedAsset;
 
+        private static readonly IGizmoRenderer[] _gizmoRenderers = {
+            new BenchRenderer(),
+            new WallRenderer()
+        };
+
         [MenuItem("Window/Parkitect Asset Editor")]
         public static void ShowWindow()
         {
@@ -37,8 +47,15 @@ namespace ParkitectAssetEditor.UI
         {
             // Make sure it doesn't autoload the project on unity start. This editor pref is just for when unity loses its state when it compiles.
             EditorPrefs.SetString("loadedProject", null);
-        }
 
+            var files = Directory.GetFiles(Application.dataPath, "*.assetProject");
+            
+            if (files.Length > 0)
+            {
+                ProjectManager.Load(files[0]);
+            }
+        }
+        
         public void Update()
         {
             // Unity loses its state when it compiles, with the editor pref we can load the opened project automatically.
@@ -54,9 +71,9 @@ namespace ParkitectAssetEditor.UI
                 ProjectManager.AutoSave();
 
                 // sync the selected game object in the scene with the corresponding asset
-                if (Selection.activeGameObject != _selectedAsset?.GameObject)
+                if (_selectedAsset != null && Selection.activeGameObject != _selectedAsset.GameObject)
                 {
-                    var asset = ProjectManager.AssetPack?.Assets?.FirstOrDefault(a => a.GameObject == Selection.activeGameObject);
+                    var asset = ProjectManager.AssetPack.Assets.FirstOrDefault(a => a.GameObject == Selection.activeGameObject);
 
                     if (asset != null)
                     {
@@ -72,11 +89,11 @@ namespace ParkitectAssetEditor.UI
         {
             if (!ProjectManager.Initialized)
             {
-                EditorGUILayout.HelpBox("Load a project first", MessageType.Info);
+                EditorGUILayout.HelpBox("Create a project first", MessageType.Info);
 
-                if (GUILayout.Button("Open project"))
+                if (GUILayout.Button("New project"))
                 {
-                    LoadProjectWindow.Show();
+                    NewProjectWindow.Show();
                 }
 
                 return;
@@ -92,6 +109,21 @@ namespace ParkitectAssetEditor.UI
             DrawAssetDetailSection();
             GUILayout.EndScrollView();
             GUILayout.EndVertical();
+        }
+
+        public void OnDrawGizmos()
+        {
+            Debug.Log("Draw gizmos");
+            foreach (var asset in ProjectManager.AssetPack.Assets)
+            {
+                foreach (var gizmoRenderer in _gizmoRenderers)
+                {
+                    if (gizmoRenderer.CanRender(asset))
+                    {
+                        gizmoRenderer.Render(asset);
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -131,7 +163,16 @@ namespace ParkitectAssetEditor.UI
             _assetListScrollPos = EditorGUILayout.BeginScrollView(_assetListScrollPos, "GroupBox", GUILayout.Height(200));
             foreach (var asset in ProjectManager.AssetPack.Assets)
             {
-                if (GUILayout.Button(asset.Name))
+                // blue button for selected asset, black for non selected
+                var style = new GUIStyle(GUI.skin.button)
+                {
+                    normal =
+                    {
+                        textColor = _selectedAsset != null && _selectedAsset.Guid == asset.Guid ? Color.blue : Color.black
+                    }
+                };
+
+                if (GUILayout.Button(asset.Name, style))
                 {
                     SelectAsset(asset);
                 }
@@ -149,7 +190,7 @@ namespace ParkitectAssetEditor.UI
                 return;
             }
 
-            GUILayout.Label($"{_selectedAsset.Name} Settings", "PreToolbar");
+            GUILayout.Label(string.Format("{0} Settings", _selectedAsset.Name), "PreToolbar");
 
             // Name, type and price settings
             GUILayout.Label("General:", EditorStyles.boldLabel);
@@ -157,16 +198,32 @@ namespace ParkitectAssetEditor.UI
             _selectedAsset.Type = (AssetType)EditorGUILayout.Popup("Type", (int)_selectedAsset.Type, new[]
             {
                 AssetType.Deco.ToString(),
+                AssetType.Wall.ToString(),
                 AssetType.Trashbin.ToString(),
                 AssetType.Bench.ToString(),
                 AssetType.Fence.ToString(),
                 AssetType.Lamp.ToString(),
             });
             _selectedAsset.Price = EditorGUILayout.FloatField("Price:", _selectedAsset.Price);
-            
+
+            GUILayout.Label("Color settings", EditorStyles.boldLabel);
+            _selectedAsset.HasCustomColors = EditorGUILayout.Toggle("Has custom colors: ", _selectedAsset.HasCustomColors);
+            if (_selectedAsset.HasCustomColors)
+            {
+                _selectedAsset.ColorCount = Mathf.RoundToInt(EditorGUILayout.Slider("Color Count: ", _selectedAsset.ColorCount, 1, 4));
+                for (int i = 0; i < _selectedAsset.ColorCount; i++)
+                {
+                    _selectedAsset.Colors[i] = EditorGUILayout.ColorField("Color " + (i + 1), _selectedAsset.Colors[i]);
+
+                }
+            }
+
             // Type specific settings
             switch (_selectedAsset.Type)
             {
+                case AssetType.Wall:
+                    DrawAssetWallDetailSection();
+                    goto case AssetType.Deco;
                 case AssetType.Deco:
                     DrawAssetDecoDetailSection();
                     break;
@@ -200,21 +257,9 @@ namespace ParkitectAssetEditor.UI
             GUILayout.Label("Placement settings", EditorStyles.boldLabel);
             _selectedAsset.BuildOnGrid = EditorGUILayout.Toggle("Build on grid: ", _selectedAsset.BuildOnGrid);
             _selectedAsset.SnapCenter = EditorGUILayout.Toggle("Snaps to center: ", _selectedAsset.SnapCenter);
-            _selectedAsset.GridSize = Mathf.RoundToInt(EditorGUILayout.Slider("Grid Size: ", _selectedAsset.GridSize, 0, 5) * 20f) / 20f;
-            _selectedAsset.HeightDelta = Mathf.RoundToInt(EditorGUILayout.Slider("Height delta: ", _selectedAsset.HeightDelta, 0, 1) * 20f) / 20f;
-
-	        GUILayout.Label("Color settings", EditorStyles.boldLabel);
-			_selectedAsset.HasCustomColors = EditorGUILayout.Toggle("Has custom colors: ", _selectedAsset.HasCustomColors);
-	        if (_selectedAsset.HasCustomColors)
-			{
-				_selectedAsset.ColorCount = Mathf.RoundToInt(EditorGUILayout.Slider("Color Count: ", _selectedAsset.ColorCount, 1, 4));
-				for (int i = 0; i < _selectedAsset.ColorCount; i++)
-				{
-					_selectedAsset.Colors[i] = EditorGUILayout.ColorField("Color " + (i + 1), _selectedAsset.Colors[i]);
-					
-				}
-			}
-
+            _selectedAsset.GridSubdivision = Mathf.RoundToInt(EditorGUILayout.Slider("Grid subdivision: ", _selectedAsset.GridSubdivision, 1, 5));
+            _selectedAsset.HeightDelta = Mathf.RoundToInt(EditorGUILayout.Slider("Height delta: ", _selectedAsset.HeightDelta, 0.05f, 1) * 20f) / 20f;
+            
 	        GUILayout.Label("Size settings", EditorStyles.boldLabel);
 			_selectedAsset.IsResizable = EditorGUILayout.Toggle("Is resizable: ", _selectedAsset.IsResizable);
 
@@ -223,6 +268,32 @@ namespace ParkitectAssetEditor.UI
 				_selectedAsset.MinSize = Mathf.RoundToInt(EditorGUILayout.Slider("Min size: ", _selectedAsset.MinSize, 0.1f, _selectedAsset.MaxSize) * 10f) / 10f;
 				_selectedAsset.MaxSize = Mathf.RoundToInt(EditorGUILayout.Slider("Max size: ", _selectedAsset.MaxSize, _selectedAsset.MinSize, 10) * 10f) / 10f;
 			}
+        }
+
+        /// <summary>
+        /// Draws the asset deco detail section.
+        /// </summary>
+        private void DrawAssetWallDetailSection()
+        {
+            // Category settings
+            GUILayout.Label("Wall settings:", EditorStyles.boldLabel);
+            var north = EditorGUILayout.Toggle("Block North", Convert.ToBoolean(_selectedAsset.WallSettings & (int) WallBlock.North));
+            var east = EditorGUILayout.Toggle("Block East", Convert.ToBoolean(_selectedAsset.WallSettings & (int) WallBlock.East));
+            var south = EditorGUILayout.Toggle("Block South", Convert.ToBoolean(_selectedAsset.WallSettings & (int) WallBlock.South));
+            var west = EditorGUILayout.Toggle("Block West", Convert.ToBoolean(_selectedAsset.WallSettings & (int) WallBlock.West));
+
+            var wallSettings = 0;
+
+            if (north)
+                wallSettings |= (int) WallBlock.North;
+            if (east)
+                wallSettings |= (int) WallBlock.East;
+            if (south)
+                wallSettings |= (int) WallBlock.South;
+            if (west)
+                wallSettings |= (int) WallBlock.West;
+
+            _selectedAsset.WallSettings = wallSettings;
         }
 
         /// <summary>
@@ -264,7 +335,7 @@ namespace ParkitectAssetEditor.UI
                 seat.transform.SetParent(_selectedAsset.GameObject.transform);
 
                 seat.transform.localPosition = Vector3.zero;
-                seat.AddComponent<SeatHelper>();
+
                 Selection.activeGameObject = seat.gameObject;
             }
         }

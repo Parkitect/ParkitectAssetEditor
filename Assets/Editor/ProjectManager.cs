@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -37,34 +38,23 @@ namespace ParkitectAssetEditor
         /// <value>
         ///   <c>true</c> if initialized; otherwise, <c>false</c>.
         /// </value>
-        public static bool Initialized => Project != null;
+        public static bool Initialized
+        {
+            get { return Project != null; }
+        }
 
         private static string _autoSaveHash = "";
-
+        
         /// <summary>
         /// Saves the project.
         /// </summary>
         public static bool Save()
         {
-            if (Initialized)
-            {
-                return Save(Project.Value.ProjectFile);
-            }
+            var path = Path.Combine(Project.Value.ProjectDirectory, Project.Value.ProjectFile);
 
-            Debug.LogWarning("Project not initialized, can't save.");
+            Debug.Log(string.Format("Starting saving project {0}", path));
 
-            return false;
-        }
-
-        /// <summary>
-        /// Saves the project to the specified path.
-        /// </summary>
-        /// <param name="path">The path.</param>
-        public static bool Save(string path)
-        {
-            Debug.Log($"Starting saving project {path}");
-
-            Directory.CreateDirectory(Project.Value.ProjectDirectory);
+            Directory.CreateDirectory(Project.Value.ModDirectory);
 
             if (AssetPack.Assets.Count == 0)
             {
@@ -78,12 +68,14 @@ namespace ParkitectAssetEditor
 
                 File.WriteAllText(path, output);
 
-                Debug.Log($"Finished saving project {path}");
+                File.Copy(path, Path.Combine(Project.Value.ModDirectory, Project.Value.ProjectFile), true);
+
+                Debug.Log(string.Format("Finished saving project {0}", path));
 
                 return true;
             }
             
-            Debug.LogWarning($"Failed saving project {path}");
+            Debug.LogWarning(string.Format("Failed saving project {0}", path));
 
             return false;
         }
@@ -99,27 +91,28 @@ namespace ParkitectAssetEditor
                 Close();
             }
 
-            Debug.Log($"Start loading project {path}");
+            Debug.Log(string.Format("Start loading project {0}", path));
 
             Project = new Project
             {
                 ProjectName = Path.GetFileNameWithoutExtension(path),
                 ProjectDirectory = Path.GetDirectoryName(path),
-                ProjectFile = path
+                ModDirectory = Path.Combine(Utility.ParkitectModPath, Path.GetFileNameWithoutExtension(path)),
+                ProjectFile = Path.GetFileName(path),
+                ProjectFileAutoSave = Path.GetFileName(path) + ".autosave"
             };
             
             AssetPack = JsonConvert.DeserializeObject<AssetPack>(File.ReadAllText(path));
-
-            Debug.Log(AssetPack);
-
-            AssetPack.LoadAssetBundle();
+            
+            AssetPack.LoadGameObjects();
             AssetPack.InitAssetsInScene();
 
-            EditorPrefs.SetString("loadedProject", $"{Project.Value.ProjectFile}.autoSave");
-            
+            EditorPrefs.SetString("loadedProject", string.Format("{0}.autosave", Project.Value.ProjectFile));
+
+
             AssetEditorWindow.ShowWindow();
 
-            Debug.Log($"Finished loading project {path}");
+            Debug.Log(string.Format("Finished loading project {0}", path));
         }
 
         /// <summary>
@@ -132,27 +125,27 @@ namespace ParkitectAssetEditor
         {
             var path = EditorPrefs.GetString("loadedProject");
             
-            Directory.CreateDirectory(Project.Value.ProjectDirectory);
-
             string output = JsonConvert.SerializeObject(AssetPack);
 
             using (var md5 = MD5.Create())
             {
                 md5.Initialize();
                 md5.ComputeHash(Encoding.UTF8.GetBytes(output));
-                var hash = string.Join("", md5.Hash.Select(b => b.ToString("x2")));
+                var hash = string.Join("", md5.Hash.Select(b => b.ToString("x2")).ToArray());
 
                 if (hash != _autoSaveHash)
                 {
-                    Debug.Log($"Starting auto saving project {path}");
+                    Debug.Log(string.Format("Starting auto saving project {0}", path));
 
                     File.WriteAllText(path, output);
 
                     _autoSaveHash = hash;
 
-                    Debug.Log($"Finished auto saving project {path}");
+                    Debug.Log(string.Format("Finished auto saving project {0}", path));
                 }
             }
+
+            EditorPrefs.SetString("loadedProject", Path.Combine(Project.Value.ProjectDirectory, Project.Value.ProjectFileAutoSave));
         }
 
         /// <summary>
@@ -161,22 +154,28 @@ namespace ParkitectAssetEditor
         public static void AutoLoad()
         {
             var path = EditorPrefs.GetString("loadedProject");
-
-            // .autosave = 9 characters
+            
+            // .autosave = 9 characters, them hacks!
             var pathWithoutAutoSave = path.Remove(path.Length - 9);
 
-            Debug.Log($"Start auto loading project {path}");
+            Debug.Log(string.Format("Start auto loading project {0}", path));
 
             Project = new Project
             {
                 ProjectName = Path.GetFileNameWithoutExtension(pathWithoutAutoSave),
                 ProjectDirectory = Path.GetDirectoryName(pathWithoutAutoSave),
-                ProjectFile = pathWithoutAutoSave
+                ModDirectory = Path.Combine(Utility.ParkitectModPath, Path.GetFileNameWithoutExtension(pathWithoutAutoSave)),
+                ProjectFile = Path.GetFileName(pathWithoutAutoSave),
+                ProjectFileAutoSave = Path.GetFileName(pathWithoutAutoSave) + ".autosave"
             };
+
+            Debug.Log(Project.Value.ProjectDirectory);
 
             AssetPack = JsonConvert.DeserializeObject<AssetPack>(File.ReadAllText(path));
 
-            Debug.Log($"Finished auto loading project {path}");
+            EditorPrefs.SetString("loadedProject", Path.Combine(Project.Value.ProjectDirectory, Project.Value.ProjectFileAutoSave));
+
+            Debug.Log(string.Format("Finished auto loading project {0}", path));
         }
 
         /// <summary>
@@ -184,7 +183,7 @@ namespace ParkitectAssetEditor
         /// </summary>
         public static void Close()
         {
-            AssetPack?.RemoveAssetsFromScene();
+            AssetPack.RemoveAssetsFromScene();
 
             AssetPack = null;
             Project = null;
@@ -204,29 +203,37 @@ namespace ParkitectAssetEditor
                 throw new InvalidProjectNameException("Project name may not contain any special characters.");
             }
 
-            var projectDirectory = Path.Combine(Utility.ParkitectModPath, name);
-            var projectFile = Path.Combine(projectDirectory, $"{name}.assetProject");
-            var projectFileAutoSave = $"{projectFile}.autosave";
+            var projectDirectory = Application.dataPath;
+            var modDirectory = Path.Combine(Utility.ParkitectModPath, name);
+            var projectFile = string.Format("{0}.assetProject", name);
+            var projectFileAutoSave = string.Format("{0}.autosave", projectFile);
+
+            var projectFilePath = Path.Combine(projectDirectory, projectFile);
+            if (File.Exists(projectFilePath))
+            {
+                throw new ProjectAlreadyExistsException(string.Format("There already is a project at {0}", projectFilePath));
+            }
+            
+            if (Directory.Exists(modDirectory))
+            {
+                throw new ProjectAlreadyExistsException(string.Format("Your Parkitect installation already has a mod called {0} at {1}", name, modDirectory));
+            }
 
             Project = new Project
             {
                 ProjectName = name,
                 ProjectDirectory = projectDirectory,
+                ModDirectory = modDirectory,
                 ProjectFile = projectFile,
                 ProjectFileAutoSave = projectFileAutoSave
             };
-            
-            if (Directory.Exists(projectDirectory))
-            {
-                throw new ProjectAlreadyExistsException($"There already is a project at {projectDirectory}");
-            }
 
             AssetPack = new AssetPack
             {
                 Name = name
             };
 
-            EditorPrefs.SetString("loadedProject", Project.Value.ProjectFileAutoSave);
+            EditorPrefs.SetString("loadedProject", Path.Combine(Project.Value.ProjectDirectory, Project.Value.ProjectFileAutoSave));
         }
     }
 }
