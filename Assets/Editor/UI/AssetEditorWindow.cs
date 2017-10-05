@@ -34,7 +34,8 @@ namespace ParkitectAssetEditor.UI
 
         private static readonly IGizmoRenderer[] _gizmoRenderers = {
             new BenchRenderer(),
-            new WallRenderer()
+            new WallRenderer(),
+			new GridRenderer(), 
         };
 
         [MenuItem("Window/Parkitect Asset Editor")]
@@ -111,10 +112,15 @@ namespace ParkitectAssetEditor.UI
             GUILayout.EndVertical();
         }
 
-        public void OnDrawGizmos()
-        {
-            Debug.Log("Draw gizmos");
-            foreach (var asset in ProjectManager.AssetPack.Assets)
+		[DrawGizmo(GizmoType.Selected)]
+		static void DrawGizmoForMyScript(Transform scr, GizmoType gizmoType)
+		{
+			if (ProjectManager.AssetPack == null)
+			{
+				return;
+			}
+
+            foreach (var asset in ProjectManager.AssetPack.Assets.Where(a => a.GameObject != null && scr.GetComponentsInParent<Transform>().Contains(a.GameObject.transform)))
             {
                 foreach (var gizmoRenderer in _gizmoRenderers)
                 {
