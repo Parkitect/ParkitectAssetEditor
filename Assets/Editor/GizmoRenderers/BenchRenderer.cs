@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Linq;
-using System.Text;
-using ParkitectAssetEditor.Assets.Editor.GizmoRenderers;
 using UnityEngine;
 
 namespace ParkitectAssetEditor.GizmoRenderers
 {
-    class BenchRenderer : IGizmoRenderer
+	/// <summary>
+	/// Renders guests on a bench
+	/// </summary>
+	/// <seealso cref="IGizmoRenderer" />
+	class BenchRenderer : IGizmoRenderer
     {
         /// <inheritdoc />
         /// <summary>

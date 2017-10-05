@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace ParkitectAssetEditor.Assets.Editor.GizmoRenderers
+namespace ParkitectAssetEditor.GizmoRenderers
 {
     /// <summary>
     /// Renders the blocking sides of a wall.

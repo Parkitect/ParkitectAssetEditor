@@ -1,4 +1,4 @@
-﻿namespace ParkitectAssetEditor.Assets.Editor
+﻿namespace ParkitectAssetEditor
 {
     /// <summary>
     /// Which sides of a wall are blocked.

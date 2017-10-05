@@ -2,8 +2,6 @@
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using ParkitectAssetEditor.Assets.Editor;
-using ParkitectAssetEditor.Assets.Editor.GizmoRenderers;
 using ParkitectAssetEditor.GizmoRenderers;
 using UnityEditor;
 using UnityEngine;
