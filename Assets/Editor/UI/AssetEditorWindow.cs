@@ -134,6 +134,8 @@ namespace ParkitectAssetEditor.UI
             GUILayout.Label("Asset Pack Settings", "PreToolbar");
 
             ProjectManager.AssetPack.Name = EditorGUILayout.TextField("Name", ProjectManager.AssetPack.Name);
+	        GUILayout.Label("Pack description", EditorStyles.boldLabel);
+			ProjectManager.AssetPack.Description = EditorGUILayout.TextArea(ProjectManager.AssetPack.Description);
 
             GUILayout.Space(10);
 

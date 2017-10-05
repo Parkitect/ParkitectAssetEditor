@@ -18,12 +18,20 @@ namespace ParkitectAssetEditor
         public List<Asset> Assets { get; set; }
 
         /// <summary>
-        /// Gets the name.
+        /// Gets or sets the name.
         /// </summary>
         /// <value>
         /// The name.
         /// </value>
         public string Name { get; set; }
+
+        /// <summary>
+        /// Gets or sets the description.
+        /// </summary>
+        /// <value>
+        /// The description.
+        /// </value>
+        public string Description { get; set; }
         
         /// <summary>
         /// Adds the specified game object as an asset.

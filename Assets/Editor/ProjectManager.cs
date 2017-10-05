@@ -230,7 +230,8 @@ namespace ParkitectAssetEditor
 
             AssetPack = new AssetPack
             {
-                Name = name
+                Name = name,
+				Description = "An asset pack"
             };
 
             EditorPrefs.SetString("loadedProject", Path.Combine(Project.Value.ProjectDirectory, Project.Value.ProjectFileAutoSave));
