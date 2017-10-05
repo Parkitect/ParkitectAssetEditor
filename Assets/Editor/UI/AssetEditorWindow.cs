@@ -279,21 +279,21 @@ namespace ParkitectAssetEditor.UI
         {
             // Category settings
             GUILayout.Label("Wall settings:", EditorStyles.boldLabel);
-            var north = EditorGUILayout.Toggle("Block North", Convert.ToBoolean(_selectedAsset.WallSettings & (int) WallBlock.North));
-            var east = EditorGUILayout.Toggle("Block East", Convert.ToBoolean(_selectedAsset.WallSettings & (int) WallBlock.East));
-            var south = EditorGUILayout.Toggle("Block South", Convert.ToBoolean(_selectedAsset.WallSettings & (int) WallBlock.South));
-            var west = EditorGUILayout.Toggle("Block West", Convert.ToBoolean(_selectedAsset.WallSettings & (int) WallBlock.West));
+            var north = EditorGUILayout.Toggle("Block North", Convert.ToBoolean(_selectedAsset.WallSettings & (int) WallBlock.Forward));
+            var east = EditorGUILayout.Toggle("Block East", Convert.ToBoolean(_selectedAsset.WallSettings & (int) WallBlock.Right));
+            var south = EditorGUILayout.Toggle("Block South", Convert.ToBoolean(_selectedAsset.WallSettings & (int) WallBlock.Back));
+            var west = EditorGUILayout.Toggle("Block West", Convert.ToBoolean(_selectedAsset.WallSettings & (int) WallBlock.Left));
 
             var wallSettings = 0;
 
             if (north)
-                wallSettings |= (int) WallBlock.North;
+                wallSettings |= (int) WallBlock.Forward;
             if (east)
-                wallSettings |= (int) WallBlock.East;
+                wallSettings |= (int) WallBlock.Right;
             if (south)
-                wallSettings |= (int) WallBlock.South;
+                wallSettings |= (int) WallBlock.Back;
             if (west)
-                wallSettings |= (int) WallBlock.West;
+                wallSettings |= (int) WallBlock.Left;
 
             _selectedAsset.WallSettings = wallSettings;
         }

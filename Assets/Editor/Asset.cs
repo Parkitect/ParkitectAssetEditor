@@ -45,7 +45,6 @@ namespace ParkitectAssetEditor
 		/// <value>
 		/// The type.
 		/// </value>
-		[JsonConverter(typeof(StringEnumConverter))]
 		public AssetType Type { get; set; }
 
         /// <summary>

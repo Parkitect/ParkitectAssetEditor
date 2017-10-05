@@ -32,14 +32,29 @@ namespace ParkitectAssetEditor.Assets.Editor.GizmoRenderers
         /// <param name="asset">The asset.</param>
         public void Render(Asset asset)
         {
-            if(Convert.ToBoolean(asset.WallSettings & (int)WallBlock.North))
-                Gizmos.DrawLine(asset.GameObject.transform.position, asset.GameObject.transform.position + Vector3.forward);
-            if (Convert.ToBoolean(asset.WallSettings & (int)WallBlock.South))
-                Gizmos.DrawLine(asset.GameObject.transform.position, asset.GameObject.transform.position + Vector3.back);
-            if (Convert.ToBoolean(asset.WallSettings & (int)WallBlock.West))
-                Gizmos.DrawLine(asset.GameObject.transform.position, asset.GameObject.transform.position + Vector3.left);
-            if (Convert.ToBoolean(asset.WallSettings & (int)WallBlock.East))
-                Gizmos.DrawLine(asset.GameObject.transform.position, asset.GameObject.transform.position + Vector3.right);
+	        if (Convert.ToBoolean(asset.WallSettings & (int) WallBlock.Forward))
+	        {
+		        Gizmos.DrawLine(asset.GameObject.transform.position + new Vector3(-0.5f, 0, 0.5f), asset.GameObject.transform.position + new Vector3(0.5f, 1, 0.5f));
+		        Gizmos.DrawLine(asset.GameObject.transform.position + new Vector3(-0.5f, 1, 0.5f), asset.GameObject.transform.position + new Vector3(0.5f, 0, 0.5f));
+	        }
+
+	        if (Convert.ToBoolean(asset.WallSettings & (int) WallBlock.Back))
+			{
+				Gizmos.DrawLine(asset.GameObject.transform.position + new Vector3(0.5f, 0, -0.5f), asset.GameObject.transform.position + new Vector3(-0.5f, 1, -0.5f));
+				Gizmos.DrawLine(asset.GameObject.transform.position + new Vector3(0.5f, 1, -0.5f), asset.GameObject.transform.position + new Vector3(-0.5f, 0, -0.5f));
+			}
+
+	        if (Convert.ToBoolean(asset.WallSettings & (int) WallBlock.Left))
+	        {
+		        Gizmos.DrawLine(asset.GameObject.transform.position + new Vector3(-0.5f, 0, -0.5f), asset.GameObject.transform.position + new Vector3(-0.5f, 1, 0.5f));
+		        Gizmos.DrawLine(asset.GameObject.transform.position + new Vector3(-0.5f, 1, -0.5f), asset.GameObject.transform.position + new Vector3(-0.5f, 0, 0.5f));
+	        }
+
+	        if (Convert.ToBoolean(asset.WallSettings & (int) WallBlock.Right))
+			{
+				Gizmos.DrawLine(asset.GameObject.transform.position + new Vector3(0.5f, 0, 0.5f), asset.GameObject.transform.position + new Vector3(0.5f, 1, -0.5f));
+				Gizmos.DrawLine(asset.GameObject.transform.position + new Vector3(0.5f, 1, 0.5f), asset.GameObject.transform.position + new Vector3(0.5f, 0, -0.5f));
+			}
         }
     }
 }
