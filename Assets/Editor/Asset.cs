@@ -179,7 +179,11 @@ namespace ParkitectAssetEditor
 		/// The fence post GO.
 		/// </value>
 		[JsonIgnore]
-		public GameObject FencePost { get; set; }
+		public GameObject FencePost
+		{
+		    get { return GameObjectHashMap.Instance.Get(Guid + ".post"); }
+		    set { GameObjectHashMap.Instance.Set(Guid + ".post", value); }
+		}
 
         /// <summary>
         /// Gets or sets a value indicating whether this instance has a post.
@@ -195,14 +199,36 @@ namespace ParkitectAssetEditor
         public int WallSettings;
         #endregion
 
+        #region sign        
         /// <summary>
-        /// Gets or sets the game object instance identifier.
+        /// Gets or sets the text game object.
         /// </summary>
         /// <value>
-        /// The game object instance identifier.
+        /// The text game object.
         /// </value>
-        public int GameObjectInstanceId { get; set; }
+        [JsonIgnore]
+        public GameObject Text
+        {
+            get { return GameObjectHashMap.Instance.Get(Guid + ".text"); }
+            set { GameObjectHashMap.Instance.Set(Guid + ".text", value); }
+        }
+        #endregion
 
+        #region sign        
+        /// <summary>
+        /// Gets or sets the screen game object.
+        /// </summary>
+        /// <value>
+        /// The screen game object.
+        /// </value>
+        [JsonIgnore]
+        public GameObject Screen
+        {
+            get { return GameObjectHashMap.Instance.Get(Guid + ".screen"); }
+            set { GameObjectHashMap.Instance.Set(Guid + ".screen", value); }
+        }
+        #endregion
+        
         /// <summary>
         /// Gets or sets the game object.
         /// </summary>
@@ -212,14 +238,8 @@ namespace ParkitectAssetEditor
         [JsonIgnore]
         public GameObject GameObject
         {
-            get
-            {
-                return EditorUtility.InstanceIDToObject(GameObjectInstanceId) as GameObject;
-            }
-            set
-            {
-                GameObjectInstanceId = value != null ? value.GetInstanceID() : 0;
-            }
+            get { return GameObjectHashMap.Instance.Get(Guid); }
+            set { GameObjectHashMap.Instance.Set(Guid, value); }
         }
 
         /// <summary>
@@ -228,6 +248,8 @@ namespace ParkitectAssetEditor
         public Asset()
         {
             Guid = GUID.Generate().ToString(); // don't need the object, just make it a string immediately
+	        MinSize = 1;
+	        MaxSize = 1;
         }
     }
 }

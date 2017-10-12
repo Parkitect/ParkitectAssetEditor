@@ -34,6 +34,7 @@ namespace ParkitectAssetEditor.UI
             new BenchRenderer(),
             new WallRenderer(),
 			new GridRenderer(), 
+			new SignRenderer(), 
         };
 
         [MenuItem("Window/Parkitect Asset Editor")]
@@ -145,7 +146,7 @@ namespace ParkitectAssetEditor.UI
 
             if (GUILayout.Button("Export Asset Pack"))
             {
-                ProjectManager.Save();
+                ProjectManager.Export();
             }
         }
 
@@ -209,6 +210,8 @@ namespace ParkitectAssetEditor.UI
                 AssetType.Bench.ToString(),
                 AssetType.Fence.ToString(),
                 AssetType.Lamp.ToString(),
+                AssetType.Sign.ToString(),
+                AssetType.Tv.ToString(),
             });
             _selectedAsset.Price = EditorGUILayout.FloatField("Price:", _selectedAsset.Price);
 
@@ -238,6 +241,12 @@ namespace ParkitectAssetEditor.UI
                     break;
                 case AssetType.Fence:
                     DrawAssetFenceDetailSection();
+                    break;
+                case AssetType.Sign:
+                    DrawAssetSignDetailSection();
+                    break;
+                case AssetType.Tv:
+                    DrawAssetTvDetailSection();
                     break;
             }
 
@@ -373,6 +382,36 @@ namespace ParkitectAssetEditor.UI
 			}
 	        _selectedAsset.HasMidPost = EditorGUILayout.Toggle("Has mid post: ", _selectedAsset.HasMidPost);
 		}
+		
+        /// <summary>
+        /// Draws the asset sign detail section.
+        /// </summary>
+        private void DrawAssetSignDetailSection()
+        {
+            GUILayout.Label("Sign settings:", EditorStyles.boldLabel);
+            var text = EditorGUILayout.ObjectField("Text object:", _selectedAsset.Text, typeof(GameObject), true) as GameObject;
+
+	        if (text != _selectedAsset.Text)
+			{
+				_selectedAsset.Text = text;
+				text.name = "Text";
+			}
+		}
+		
+        /// <summary>
+        /// Draws the asset tv detail section.
+        /// </summary>
+        private void DrawAssetTvDetailSection()
+        {
+            GUILayout.Label("Tv settings:", EditorStyles.boldLabel);
+            var screen = EditorGUILayout.ObjectField("Screen object:", _selectedAsset.Screen, typeof(GameObject), true) as GameObject;
+
+	        if (screen != _selectedAsset.Text)
+			{
+				_selectedAsset.Screen = screen;
+				screen.name = "Screen";
+			}
+		}
 
         /// <summary>
         /// Selects an asset to draw its settings
@@ -382,7 +421,7 @@ namespace ParkitectAssetEditor.UI
         {
             _selectedAsset = asset;
             
-            EditorGUIUtility.PingObject(_selectedAsset.GameObjectInstanceId);
+            EditorGUIUtility.PingObject(_selectedAsset.GameObject.GetInstanceID());
 
             Selection.activeGameObject = _selectedAsset.GameObject;
         }

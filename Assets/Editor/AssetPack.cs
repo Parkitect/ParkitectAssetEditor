@@ -43,11 +43,11 @@ namespace ParkitectAssetEditor
         /// <returns>The asset that was created from the game object.</returns>
         public Asset Add(GameObject gameObject)
         {
-            if (Assets.Any(a => a.GameObjectInstanceId == gameObject.GetInstanceID()))
+            if (Assets.Any(a => a.GameObject == gameObject))
             {
                 Debug.LogWarning(string.Format("GameObject {0} is already added as an asset, can't add twice.", gameObject.name));
 
-                return Assets.First(a => a.GameObjectInstanceId == gameObject.GetInstanceID());
+                return Assets.First(a => a.GameObject == gameObject);
             }
 
             var asset = new Asset
@@ -81,6 +81,8 @@ namespace ParkitectAssetEditor
 
             asset.GameObject.SetActive(true);
 
+            GameObjectHashMap.Instance.Set(asset.Guid, asset.GameObject);
+
             LayOutAssets();
         }
         
@@ -96,6 +98,8 @@ namespace ParkitectAssetEditor
             {
                 asset.GameObject.SetActive(false);
             }
+
+            GameObjectHashMap.Instance.Remove(asset.Guid);
 
             LayOutAssets();
         }

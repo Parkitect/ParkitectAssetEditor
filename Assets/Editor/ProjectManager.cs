@@ -61,22 +61,34 @@ namespace ParkitectAssetEditor
                 Debug.LogError("There are no defined assets in the Asset Pack, can't save");
                 return false;
             }
+            
+            string output = JsonConvert.SerializeObject(AssetPack);
 
-            if (AssetPack.CreateAssetBundle())
+            File.WriteAllText(path, output);
+
+            Debug.Log(string.Format("Finished saving project {0}", path));
+
+            return true;
+        }
+
+        /// <summary>
+        /// Saves and exports this project.
+        /// </summary>
+        public static bool Export()
+        {
+            EditorApplication.SaveScene();
+
+            var path = Path.Combine(Project.Value.ProjectDirectory, Project.Value.ProjectFile);
+
+            if (Save() && AssetPack.CreateAssetBundle())
             {
-                string output = JsonConvert.SerializeObject(AssetPack);
-
-                File.WriteAllText(path, output);
-
                 File.Copy(path, Path.Combine(Project.Value.ModDirectory, Project.Value.ProjectFile), true);
-
-                Debug.Log(string.Format("Finished saving project {0}", path));
 
                 return true;
             }
-            
-            Debug.LogWarning(string.Format("Failed saving project {0}", path));
 
+            Debug.LogWarning(string.Format("Failed saving project {0}", path));
+            
             return false;
         }
 
@@ -168,9 +180,7 @@ namespace ParkitectAssetEditor
                 ProjectFile = Path.GetFileName(pathWithoutAutoSave),
                 ProjectFileAutoSave = Path.GetFileName(pathWithoutAutoSave) + ".autosave"
             };
-
-            Debug.Log(Project.Value.ProjectDirectory);
-
+            
             AssetPack = JsonConvert.DeserializeObject<AssetPack>(File.ReadAllText(path));
 
             EditorPrefs.SetString("loadedProject", Path.Combine(Project.Value.ProjectDirectory, Project.Value.ProjectFileAutoSave));

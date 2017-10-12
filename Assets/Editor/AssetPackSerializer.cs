@@ -66,14 +66,10 @@ namespace ParkitectAssetEditor
             {
                 var asset = assetPack.Assets[i];
 
-                // try to find GO in scene first, instantiate the prefab if it doesn't exist.
-                var objectInScene = EditorUtility.InstanceIDToObject(asset.GameObjectInstanceId);
-                if (objectInScene != null)
+                // instantiate the prefab if game object doesn't exist.
+                if (asset.GameObject == null)
                 {
-                    asset.GameObject = objectInScene as GameObject;
-                }
-                else
-                {
+                    Debug.Log(string.Format("Can't find {0} in the scene, instantiating prefab.", asset.Name));
                     try // if one object fails to load, don't make it fail the rest
                     {
                         var go = Resources.Load<GameObject>(string.Format("AssetPack/{0}", asset.Guid));

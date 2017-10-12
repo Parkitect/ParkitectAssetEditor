@@ -10,6 +10,8 @@
         Trashbin,
         Bench,
         Fence,
-        Lamp
+        Lamp,
+        Sign,
+        Tv
     }
 }
