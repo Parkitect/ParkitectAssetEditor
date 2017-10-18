@@ -32,6 +32,14 @@ namespace ParkitectAssetEditor
         /// The description.
         /// </value>
         public string Description { get; set; }
+
+        /// <summary>
+        /// Gets or sets the asset archive setting.
+        /// </summary>
+        /// <value>
+        /// The archive setting. If true, assets should be archived with the mod to be uploaded to the workshop.
+        /// </value>
+        public bool ArchiveAssets { get; set; }
         
         /// <summary>
         /// Adds the specified game object as an asset.
@@ -167,6 +175,7 @@ namespace ParkitectAssetEditor
         public AssetPack()
         {
             Assets = new List<Asset>();
+            ArchiveAssets = true;
         }
     }
 }

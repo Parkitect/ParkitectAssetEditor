@@ -142,11 +142,16 @@ namespace ParkitectAssetEditor.UI
 	        GUILayout.Label("Pack description", EditorStyles.boldLabel);
 			ProjectManager.AssetPack.Description = EditorGUILayout.TextArea(ProjectManager.AssetPack.Description);
 
+            EditorGUILayout.Space();
+
+            EditorGUILayout.HelpBox("Stores your raw model files with the asset pack in an archive. Recommended: on", MessageType.Info);
+			ProjectManager.AssetPack.ArchiveAssets = EditorGUILayout.Toggle("Archive assets", ProjectManager.AssetPack.ArchiveAssets);
+
             GUILayout.Space(10);
 
             if (GUILayout.Button("Export Asset Pack"))
             {
-                ProjectManager.Export();
+                ProjectManager.Export(ProjectManager.AssetPack.ArchiveAssets);
             }
         }
 

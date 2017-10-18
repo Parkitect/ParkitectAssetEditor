@@ -5,9 +5,12 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
+using ParkitectAssetEditor.Compression;
 using ParkitectAssetEditor.UI;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace ParkitectAssetEditor
 {
@@ -74,15 +77,31 @@ namespace ParkitectAssetEditor
         /// <summary>
         /// Saves and exports this project.
         /// </summary>
-        public static bool Export()
+        /// <param name="exportAssetZip">If the assets folder should be exported as an archive with the pack.</param>
+        public static bool Export(bool exportAssetZip)
         {
-            EditorApplication.SaveScene();
+            EditorSceneManager.SaveScene(SceneManager.GetActiveScene());
 
             var path = Path.Combine(Project.Value.ProjectDirectory, Project.Value.ProjectFile);
 
             if (Save() && AssetPack.CreateAssetBundle())
             {
                 File.Copy(path, Path.Combine(Project.Value.ModDirectory, Project.Value.ProjectFile), true);
+
+                var assetZipPath = Path.Combine(Project.Value.ModDirectory, "assets.zip");
+
+                // Always delete the old file. It will get recreated if the user checked the checkbox.
+                if (File.Exists(assetZipPath))
+                {
+                    File.Delete(assetZipPath);
+                }
+                
+                if (exportAssetZip)
+                {
+                    Debug.Log(string.Format("Archiving {0} to {1}", Project.Value.ProjectDirectory, assetZipPath));
+
+                    ArchiveHelper.CreateZip(assetZipPath, Project.Value.ProjectDirectory);
+                }
 
                 return true;
             }
