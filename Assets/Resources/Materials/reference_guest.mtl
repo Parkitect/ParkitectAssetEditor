@@ -1,0 +1,155 @@
+newmtl CustomColorsDiffuseSG1
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd 256palette.tga
+Ni 1.00
+Ks 0.00 0.00 0.00
+Ns 18.00
+newmtl CustomColorsEmployeeOutfitsSG
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd employee_outfits.tga
+Ni 1.00
+Ks 0.00 0.00 0.00
+Ns 18.00
+newmtl CustomColorsSpecularSG
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd 256palette.tga
+Ni 1.00
+Ks 0.60 0.60 0.60
+Ns 18.00
+newmtl crate_phong3SG
+illum 4
+Kd 0.62 0.30 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+Ni 1.00
+Ks 0.00 0.00 0.00
+Ns 18.00
+newmtl crate_whiteSG1
+illum 4
+Kd 1.00 1.00 1.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+Ni 1.00
+Ks 0.00 0.00 0.00
+Ns 18.00
+newmtl hardhat_SpecularSG
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd 256palette.png
+Ni 1.00
+Ks 0.53 0.53 0.53
+Ns 18.00
+newmtl ilrOccSampler1SG
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+Ni 0.00
+newmtl peeps3:phong3SG
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd 256palette.png
+Ni 1.00
+Ks 0.00 0.00 0.00
+Ns 18.00
+newmtl phong2SG
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd peep2_concepts.jpg
+Ni 1.00
+Ks 0.00 0.00 0.00
+Ns 18.00
+newmtl phong3SG
+illum 4
+Kd 1.00 1.00 1.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+Ni 1.00
+Ks 0.00 0.00 0.00
+Ns 18.00
+newmtl phong5SG
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd happyco_peep.png
+Ni 1.00
+Ks 0.00 0.00 0.00
+Ns 15.91
+newmtl phong7SG
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd peep_facial_atlas.png
+Ni 1.00
+Ks 0.00 0.00 0.00
+Ns 18.00
+newmtl phong8SG
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd peep_outfits.tga
+Ni 1.00
+Ks 0.00 0.00 0.00
+Ns 18.00
+newmtl phong9SG
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd accessory_logos.png
+Ni 1.00
+Ks 0.00 0.00 0.00
+Ns 18.00
+newmtl phong10SG
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd 256palette.tga
+Ni 1.00
+Ks 0.00 0.00 0.00
+Ns 18.00
+newmtl phong11SG
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 0.33 0.33 0.33
+map_Kd 256palette.tga
+Ni 1.00
+Ks 0.20 0.20 0.20
+Ns 81.27
+newmtl phong12SG
+illum 4
+Kd 1.00 1.00 1.00
+Ka 0.00 0.00 0.00
+Tf 0.18 0.18 0.18
+Ni 1.00
+Ks 0.00 0.00 0.00
+Ns 18.00
+newmtl phong13SG
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd peep_visor.png
+Ni 1.00
+Ks 0.00 0.00 0.00
+Ns 18.00
