@@ -166,7 +166,7 @@ namespace ParkitectAssetEditor.UI
 
             // Game object drop box
             var newAsset = EditorGUILayout.ObjectField("Drop to add:", null, typeof(GameObject), true) as GameObject;
-            if (newAsset != null)
+            if (newAsset != null && newAsset.scene.name != null) // scene name is null for prefabs, yay for unity for checking it this way
             {
                 SelectAsset(ProjectManager.AssetPack.Add(newAsset));
             }
