@@ -1,11 +1,10 @@
 ﻿using System;
-using UnityEngine;
-namespace ParkitectAssetEditor
-{
+
+namespace ParkitectAssetEditor.Utility {
     /// <summary>
     /// Helper methods/properties
     /// </summary>
-    public static class Utility
+    public static class ModPath
     {
 		/// <summary>
 		/// Gets the path to the parkitect mod folder.

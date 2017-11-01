@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using ParkitectAssetEditor.Compression;
 using ParkitectAssetEditor.UI;
+using ParkitectAssetEditor.Utility;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -61,7 +62,7 @@ namespace ParkitectAssetEditor
 
             if (AssetPack.Assets.Count == 0)
             {
-                Debug.LogError("There are no defined assets in the Asset Pack, can't save");
+                Debug.Log("There are no defined assets in the Asset Pack, can't save");
                 return false;
             }
             
@@ -128,7 +129,7 @@ namespace ParkitectAssetEditor
             {
                 ProjectName = Path.GetFileNameWithoutExtension(path),
                 ProjectDirectory = Path.GetDirectoryName(path),
-                ModDirectory = Path.Combine(Utility.ParkitectModPath, Path.GetFileNameWithoutExtension(path)),
+                ModDirectory = Path.Combine(ModPath.ParkitectModPath, Path.GetFileNameWithoutExtension(path)),
                 ProjectFile = Path.GetFileName(path),
                 ProjectFileAutoSave = Path.GetFileName(path) + ".autosave"
             };
@@ -195,7 +196,7 @@ namespace ParkitectAssetEditor
             {
                 ProjectName = Path.GetFileNameWithoutExtension(pathWithoutAutoSave),
                 ProjectDirectory = Path.GetDirectoryName(pathWithoutAutoSave),
-                ModDirectory = Path.Combine(Utility.ParkitectModPath, Path.GetFileNameWithoutExtension(pathWithoutAutoSave)),
+                ModDirectory = Path.Combine(ModPath.ParkitectModPath, Path.GetFileNameWithoutExtension(pathWithoutAutoSave)),
                 ProjectFile = Path.GetFileName(pathWithoutAutoSave),
                 ProjectFileAutoSave = Path.GetFileName(pathWithoutAutoSave) + ".autosave"
             };
@@ -233,7 +234,7 @@ namespace ParkitectAssetEditor
             }
 
             var projectDirectory = Application.dataPath;
-            var modDirectory = Path.Combine(Utility.ParkitectModPath, name);
+            var modDirectory = Path.Combine(ModPath.ParkitectModPath, name);
             var projectFile = string.Format("{0}.assetProject", name);
             var projectFileAutoSave = string.Format("{0}.autosave", projectFile);
 
