@@ -140,7 +140,7 @@ namespace ParkitectAssetEditor.UI
 
             ProjectManager.AssetPack.Name = EditorGUILayout.TextField("Name", ProjectManager.AssetPack.Name);
 	        GUILayout.Label("Pack description", EditorStyles.boldLabel);
-			ProjectManager.AssetPack.Description = EditorGUILayout.TextArea(ProjectManager.AssetPack.Description);
+			ProjectManager.AssetPack.Description = EditorGUILayout.TextArea(ProjectManager.AssetPack.Description, GUILayout.Height(50));
 
             EditorGUILayout.Space();
 
