@@ -288,6 +288,10 @@ namespace ParkitectAssetEditor.UI
 				_selectedAsset.MinSize = Mathf.RoundToInt(EditorGUILayout.Slider("Min size: ", _selectedAsset.MinSize, 0.1f, _selectedAsset.MaxSize) * 10f) / 10f;
 				_selectedAsset.MaxSize = Mathf.RoundToInt(EditorGUILayout.Slider("Max size: ", _selectedAsset.MaxSize, _selectedAsset.MinSize, 10) * 10f) / 10f;
 			}
+
+	        GUILayout.Label("Visibility settings", EditorStyles.boldLabel);
+			_selectedAsset.CanSeeThrough = EditorGUILayout.Toggle("Can see through: ", _selectedAsset.CanSeeThrough);
+			_selectedAsset.BlocksRain = EditorGUILayout.Toggle("Blocks rain: ", _selectedAsset.BlocksRain);
         }
 
         /// <summary>

@@ -158,6 +158,22 @@ namespace ParkitectAssetEditor
 		/// The maximum size.
 		/// </value>
 		public float MaxSize { get; set; }
+
+	    /// <summary>
+	    /// Gets or sets a value indicating whether this object blocks visibility.
+	    /// </summary>
+	    /// <value>
+	    ///   <c>true</c> if [see through]; otherwise, <c>false</c>.
+	    /// </value>
+	    public bool CanSeeThrough { get; set; }
+
+	    /// <summary>
+	    /// Gets or sets a value indicating whether this object blocks rain.
+	    /// </summary>
+	    /// <value>
+	    ///   <c>true</c> if [blocks rain]; otherwise, <c>false</c>.
+	    /// </value>
+	    public bool BlocksRain { get; set; }
 		#endregion
 
 		#region bench
@@ -250,6 +266,7 @@ namespace ParkitectAssetEditor
             Guid = GUID.Generate().ToString(); // don't need the object, just make it a string immediately
 	        MinSize = 1;
 	        MaxSize = 1;
+	        CanSeeThrough = true;
         }
     }
 }
