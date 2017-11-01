@@ -7,7 +7,9 @@ namespace ParkitectAssetEditor
     /// </summary>
     public static class Utility
     {
-        // TODO: support more than windows.
+		/// <summary>
+		/// Gets the path to the parkitect mod folder.
+		/// </summary>
         public static string ParkitectModPath
         {
             get
