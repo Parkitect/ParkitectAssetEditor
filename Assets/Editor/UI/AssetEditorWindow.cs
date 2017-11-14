@@ -275,9 +275,12 @@ namespace ParkitectAssetEditor.UI
 
             // Placement settings
             GUILayout.Label("Placement settings", EditorStyles.boldLabel);
-            _selectedAsset.BuildOnGrid = EditorGUILayout.Toggle("Build on grid: ", _selectedAsset.BuildOnGrid);
-            _selectedAsset.SnapCenter = EditorGUILayout.Toggle("Snaps to center: ", _selectedAsset.SnapCenter);
-            _selectedAsset.GridSubdivision = Mathf.RoundToInt(EditorGUILayout.Slider("Grid subdivision: ", _selectedAsset.GridSubdivision, 1, 5));
+	        if (_selectedAsset.Type != AssetType.Wall)
+			{
+				_selectedAsset.BuildOnGrid = EditorGUILayout.Toggle("Force build on grid: ", _selectedAsset.BuildOnGrid);
+				_selectedAsset.SnapCenter = EditorGUILayout.Toggle("Snaps to center: ", _selectedAsset.SnapCenter);
+				_selectedAsset.GridSubdivision = Mathf.RoundToInt(EditorGUILayout.Slider("Grid subdivision: ", _selectedAsset.GridSubdivision, 1, 9));
+			}
             _selectedAsset.HeightDelta = Mathf.RoundToInt(EditorGUILayout.Slider("Height delta: ", _selectedAsset.HeightDelta, 0.05f, 1) * 200f) / 200f;
             
 	        GUILayout.Label("Size settings", EditorStyles.boldLabel);
