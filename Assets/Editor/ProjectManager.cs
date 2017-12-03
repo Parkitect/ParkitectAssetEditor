@@ -104,6 +104,9 @@ namespace ParkitectAssetEditor
                     ArchiveHelper.CreateZip(assetZipPath, Project.Value.ProjectDirectory);
                 }
 
+                var previewImagePath = Path.Combine(Project.Value.ProjectDirectory, "Resources/preview.png");
+                File.Copy(previewImagePath, Path.Combine(Project.Value.ModDirectory, "preview.png"), true);
+
                 return true;
             }
 
