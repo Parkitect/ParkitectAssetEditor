@@ -174,6 +174,30 @@ namespace ParkitectAssetEditor
 	    ///   <c>true</c> if [blocks rain]; otherwise, <c>false</c>.
 	    /// </value>
 	    public bool BlocksRain { get; set; }
+
+        /// <summary>
+	    /// Gets or sets a value indicating whether this object has lights that should turn on at night.
+	    /// </summary>
+	    /// <value>
+	    ///   <c>true</c> if [lights should turn on at night]; otherwise, <c>false</c>.
+	    /// </value>
+	    public bool LightsTurnOnAtNight { get; set; }
+
+        /// <summary>
+	    /// Gets or sets a value indicating whether lights on this object should use custom colors.
+	    /// </summary>
+	    /// <value>
+	    ///   <c>true</c> if [lights should use custom colors]; otherwise, <c>false</c>.
+	    /// </value>
+	    public bool LightsUseCustomColors { get; set; }
+
+        /// <summary>
+        /// Gets or sets the custom color slot to use by this light.
+        /// </summary>
+        /// <value>
+        /// The custom color slot
+        /// </value>
+	    public int LightsCustomColorSlot { get; set; }
 		#endregion
 
 		#region bench

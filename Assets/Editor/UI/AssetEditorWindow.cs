@@ -232,6 +232,15 @@ namespace ParkitectAssetEditor.UI
                 }
             }
 
+            GUILayout.Label("Light settings", EditorStyles.boldLabel);
+			_selectedAsset.LightsTurnOnAtNight = EditorGUILayout.Toggle("Turn on at night: ", _selectedAsset.LightsTurnOnAtNight);
+            if (_selectedAsset.LightsTurnOnAtNight && _selectedAsset.HasCustomColors) {
+                _selectedAsset.LightsUseCustomColors = EditorGUILayout.Toggle("Use custom colors: ", _selectedAsset.LightsUseCustomColors);
+                if (_selectedAsset.LightsUseCustomColors) {
+                    _selectedAsset.LightsCustomColorSlot = (int)(CustomColorSlot)EditorGUILayout.EnumPopup("Custom color slot:", (CustomColorSlot)_selectedAsset.LightsCustomColorSlot);
+                }
+            }
+
             // Type specific settings
             switch (_selectedAsset.Type)
             {
