@@ -25,6 +25,8 @@ namespace ParkitectAssetEditor.UI
         /// </summary>
         private Vector2 _assetListScrollPos;
 
+        private Vector2 _descriptionTextScrollPosition;
+
         /// <summary>
         /// The selected asset.
         /// </summary>
@@ -139,8 +141,10 @@ namespace ParkitectAssetEditor.UI
             GUILayout.Label("Asset Pack Settings", "PreToolbar");
 
             ProjectManager.AssetPack.Name = EditorGUILayout.TextField("Name", ProjectManager.AssetPack.Name);
-	        GUILayout.Label("Pack description", EditorStyles.boldLabel);
-			ProjectManager.AssetPack.Description = EditorGUILayout.TextArea(ProjectManager.AssetPack.Description, GUILayout.Height(50));
+            GUILayout.Label("Pack description", EditorStyles.boldLabel);
+            _descriptionTextScrollPosition = EditorGUILayout.BeginScrollView(_descriptionTextScrollPosition, GUILayout.Height(150));
+			ProjectManager.AssetPack.Description = EditorGUILayout.TextArea(ProjectManager.AssetPack.Description, GUILayout.ExpandHeight(true));
+            EditorGUILayout.EndScrollView();
 
             EditorGUILayout.Space();
 
