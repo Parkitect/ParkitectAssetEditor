@@ -5,9 +5,9 @@
     /// </summary>
     enum CustomColorSlot
     {
-	    Slot0 = 0,
-		Slot1 = 1,
-		Slot2 = 2,
-		Slot3 = 3
+	    Color1 = 0,
+		Color2 = 1,
+		Color3 = 2,
+		Color4 = 3
 	}
 }
