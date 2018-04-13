@@ -266,6 +266,10 @@ namespace ParkitectAssetEditor.UI
                 case AssetType.Tv:
                     DrawAssetTvDetailSection();
                     break;
+                case AssetType.Flatride:
+                    drawFlatRideSection();
+                    
+                    break;
             }
 
             GUILayout.Space(20);
@@ -310,6 +314,11 @@ namespace ParkitectAssetEditor.UI
 			_selectedAsset.BlocksRain = EditorGUILayout.Toggle("Blocks rain: ", _selectedAsset.BlocksRain);
         }
 
+        private void drawFlatRideSection()
+        {
+            
+        }
+        
         /// <summary>
         /// Draws the asset deco detail section.
         /// </summary>

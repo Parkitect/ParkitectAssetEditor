@@ -1,4 +1,6 @@
 ﻿using System;
+using UnityEditor;
+using UnityEngine.WSA;
 
 namespace ParkitectAssetEditor.Utility {
     /// <summary>
@@ -18,7 +20,7 @@ namespace ParkitectAssetEditor.Utility {
 #elif UNITY_STANDALONE_WIN
 				return System.IO.Path.GetFullPath(System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "/Parkitect/", "Mods"));
 #else
-				return System.IO.Path.GetFullPath(System.IO.Path.Combine(Application.dataPath + "/..", "Mods"));
+				return System.IO.Path.GetFullPath(System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "/Parkitect/", "Mods"));
 #endif
             }
         } 
