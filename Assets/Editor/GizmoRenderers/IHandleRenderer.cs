@@ -2,7 +2,10 @@
 {
     interface IHandleRenderer
     {
-        void Handle(Asset asset);
-        
+        /// <summary>
+        /// Renders unity handles
+        /// </summary>
+        /// <param name="asset">The asset.</param>
+        void Handle(Asset asset);   
     }
 }

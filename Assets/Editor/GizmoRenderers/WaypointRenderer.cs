@@ -13,9 +13,9 @@ namespace ParkitectAssetEditor.GizmoRenderers
         }
 
         private bool _snapToPlane = false;
-      
-      
-    
+
+
+
         public bool CanRender(Asset asset)
         {
             return asset.Type == AssetType.Flatride;
@@ -23,19 +23,19 @@ namespace ParkitectAssetEditor.GizmoRenderers
 
         public void Render(Asset asset)
         {
-               
+
         }
 
         public void Handle(Asset asset)
         {
-            
+
             if (asset.EnableEditing)
             {
                 if (_snapToPlane)
                 {
                     asset.SelectedWaypoint.Position.y = asset.HelperPlaneY;
                 }
-                
+
                 switch (Event.current.type)
                 {
                     case EventType.Layout:
@@ -43,7 +43,7 @@ namespace ParkitectAssetEditor.GizmoRenderers
                     case EventType.KeyDown:
                         if (Event.current.keyCode == KeyCode.LeftAlt)
                         {
-                            _snapToPlane = true; 
+                            _snapToPlane = true;
                         }
 
                         break;
@@ -59,6 +59,7 @@ namespace ParkitectAssetEditor.GizmoRenderers
                                 asset.WaypointState = WaypointState.NONE;
                             }
                         }
+
                         if (Event.current.keyCode == KeyCode.R && asset.SelectedWaypoint != null)
                         {
                             if (asset.SelectedWaypoint == null)
@@ -66,48 +67,58 @@ namespace ParkitectAssetEditor.GizmoRenderers
                                 break;
                             }
 
-                            Waypoint.DeletePoint(asset,asset.SelectedWaypoint);
+                            Waypoint.DeletePoint(asset, asset.SelectedWaypoint);
                         }
+
                         if (Event.current.shift && Event.current.keyCode == KeyCode.A)
                         {
                             Ray ray = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
                             Plane plane = new Plane(Vector3.up, new Vector3(0, asset.HelperPlaneY, 0));
                             float enter = 0;
                             plane.Raycast(ray, out enter);
-                            asset.SelectedWaypoint = Waypoint.addWaypoint(asset,ray.GetPoint(enter));
+                            asset.SelectedWaypoint = Waypoint.addWaypoint(asset, ray.GetPoint(enter));
                         }
+
                         if (Event.current.keyCode == KeyCode.O && asset.SelectedWaypoint != null)
                         {
                             asset.SelectedWaypoint.IsOuter = !asset.SelectedWaypoint.IsOuter;
                         }
+
                         if (Event.current.keyCode == KeyCode.I && asset.SelectedWaypoint != null)
                         {
                             asset.SelectedWaypoint.IsRabbitHoleGoal = !asset.SelectedWaypoint.IsRabbitHoleGoal;
                         }
-                        
+
                         if (Event.current.keyCode == KeyCode.LeftAlt)
                         {
-                            _snapToPlane = false; 
+                            _snapToPlane = false;
                         }
 
                         SceneView.RepaintAll();
                         HandleUtility.Repaint();
                         break;
                 }
-                
+
                 //render helper plane
-                Vector3 topLeft = new Vector3(-((float)asset.FootprintX) / 2.0f, 0, (float)asset.FootprintZ / 2.0f) + asset.GameObject.transform.position + new Vector3(0,asset.HelperPlaneY,0);
-                Vector3 topRight = new Vector3(((float)asset.FootprintX) / 2.0f, 0, (float)asset.FootprintZ / 2.0f) + asset.GameObject.transform.position+ new Vector3(0,asset.HelperPlaneY,0);
-                Vector3 bottomLeft = new Vector3(-((float)asset.FootprintX) / 2.0f, 0, -(float)asset.FootprintZ / 2.0f) + asset.GameObject.transform.position+ new Vector3(0,asset.HelperPlaneY,0);
-                Vector3 bottomRight = new Vector3(((float)asset.FootprintX) / 2.0f, 0, -(float)asset.FootprintZ / 2.0f) + asset.GameObject.transform.position+ new Vector3(0,asset.HelperPlaneY,0);
+                Vector3 topLeft = new Vector3(-((float) asset.FootprintX) / 2.0f, 0, (float) asset.FootprintZ / 2.0f) +
+                                  asset.GameObject.transform.position + new Vector3(0, asset.HelperPlaneY, 0);
+                Vector3 topRight = new Vector3(((float) asset.FootprintX) / 2.0f, 0, (float) asset.FootprintZ / 2.0f) +
+                                   asset.GameObject.transform.position + new Vector3(0, asset.HelperPlaneY, 0);
+                Vector3 bottomLeft =
+                    new Vector3(-((float) asset.FootprintX) / 2.0f, 0, -(float) asset.FootprintZ / 2.0f) +
+                    asset.GameObject.transform.position + new Vector3(0, asset.HelperPlaneY, 0);
+                Vector3 bottomRight =
+                    new Vector3(((float) asset.FootprintX) / 2.0f, 0, -(float) asset.FootprintZ / 2.0f) +
+                    asset.GameObject.transform.position + new Vector3(0, asset.HelperPlaneY, 0);
 
                 Color fill = Color.white;
                 fill.a = 0.1f;
                 Handles.zTest = CompareFunction.LessEqual;
                 Handles.color = Color.yellow;
-                Handles.DrawSolidRectangleWithOutline(new[] {topLeft, topRight, bottomRight, bottomLeft}, fill, Color.black);      
+                Handles.DrawSolidRectangleWithOutline(new[] {topLeft, topRight, bottomRight, bottomLeft}, fill,
+                    Color.black);
             }
-            
+
             for (int x = 0; x < asset.Waypoints.Count; x++)
             {
                 if (asset.Waypoints[x] == asset.SelectedWaypoint)
@@ -135,7 +146,7 @@ namespace ParkitectAssetEditor.GizmoRenderers
                 {
                     if (asset.EnableEditing)
                     {
-                        handleClick(asset,asset.Waypoints[x]);
+                        handleClick(asset, asset.Waypoints[x]);
                     }
                 }
 
@@ -144,12 +155,13 @@ namespace ParkitectAssetEditor.GizmoRenderers
                 foreach (int connectedIndex in asset.Waypoints[x].ConnectedTo)
                 {
                     Handles.zTest = CompareFunction.Always;
-                    Handles.DrawLine(worldPos,asset.Waypoints[connectedIndex].Position + asset.GameObject.transform.position);
+                    Handles.DrawLine(worldPos,
+                        asset.Waypoints[connectedIndex].Position + asset.GameObject.transform.position);
                 }
 
                 Handles.Label(worldPos, "#" + x);
             }
-            
+
             if (asset.SelectedWaypoint != null)
             {
                 Vector3 worldPos = asset.SelectedWaypoint.Position + asset.GameObject.transform.position;
@@ -160,17 +172,17 @@ namespace ParkitectAssetEditor.GizmoRenderers
                 }
                 else
                 {
-                    asset.SelectedWaypoint.Position = asset.GameObject.transform.InverseTransformPoint(Handles.PositionHandle(asset.GameObject.transform.TransformPoint(asset.SelectedWaypoint.Position), Quaternion.identity));
-
+                    asset.SelectedWaypoint.Position = asset.GameObject.transform.InverseTransformPoint(
+                        Handles.PositionHandle(
+                            asset.GameObject.transform.TransformPoint(asset.SelectedWaypoint.Position),
+                            Quaternion.identity));
                     Handles.Label(worldPos, "\nShift+(A)dd\n(C)onnect\n(R)emove\n(O)uter\nRabb(i)t Hole");
                 }
             }
-            
-            
-            
+
         }
-        
-        private void handleClick(Asset asset,Waypoint waypoint)
+
+        private void handleClick(Asset asset, Waypoint waypoint)
         {
 
             if (asset.WaypointState == WaypointState.NONE && waypoint != null)
@@ -180,7 +192,10 @@ namespace ParkitectAssetEditor.GizmoRenderers
             else if (asset.WaypointState == WaypointState.CONNECT && waypoint != null)
             {
                 int closestWaypointIndex = asset.Waypoints.FindIndex(delegate(Waypoint wp) { return wp == waypoint; });
-                int selectedWaypointIndex = asset.Waypoints.FindIndex(delegate(Waypoint wp) { return wp == asset.SelectedWaypoint; });
+                int selectedWaypointIndex = asset.Waypoints.FindIndex(delegate(Waypoint wp)
+                {
+                    return wp == asset.SelectedWaypoint;
+                });
                 if (closestWaypointIndex >= 0 && selectedWaypointIndex >= 0)
                 {
                     if (!asset.SelectedWaypoint.ConnectedTo.Contains(closestWaypointIndex))
@@ -196,7 +211,6 @@ namespace ParkitectAssetEditor.GizmoRenderers
                 }
             }
         }
-       
-       
+
     }
 }
