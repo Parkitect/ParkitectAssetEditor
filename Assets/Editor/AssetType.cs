@@ -13,6 +13,6 @@
         Lamp,
         Sign,
         Tv,
-        Flatride
+        FlatRide
     }
 }

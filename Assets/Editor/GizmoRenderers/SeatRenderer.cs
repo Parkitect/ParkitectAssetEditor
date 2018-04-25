@@ -9,7 +9,7 @@ namespace ParkitectAssetEditor.GizmoRenderers
 	/// Renders guests on a bench
 	/// </summary>
 	/// <seealso cref="IGizmoRenderer" />
-	class BenchRenderer : IGizmoRenderer
+	class SeatRenderer : IGizmoRenderer
 	{
 	    private Mesh npcMesh;
         
@@ -23,7 +23,7 @@ namespace ParkitectAssetEditor.GizmoRenderers
         /// </returns>
         public bool CanRender(Asset asset)
         {
-            return asset.Type == AssetType.Bench | asset.Type == AssetType.Flatride;
+            return asset.Type == AssetType.Bench | asset.Type == AssetType.FlatRide;
         }
 
         /// <inheritdoc />

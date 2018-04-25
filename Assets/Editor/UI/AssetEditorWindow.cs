@@ -36,7 +36,7 @@ namespace ParkitectAssetEditor.UI
         public Vector2 _waypointScrollView;
 
         private static readonly IGizmoRenderer[] _gizmoRenderers = {
-            new BenchRenderer(),
+            new SeatRenderer(),
             new WallRenderer(),
 			new GridRenderer(), 
 			new SignRenderer(), 
@@ -269,7 +269,7 @@ namespace ParkitectAssetEditor.UI
                 AssetType.Lamp.ToString(),
                 AssetType.Sign.ToString(),
                 AssetType.Tv.ToString(),
-                AssetType.Flatride.ToString()
+                AssetType.FlatRide.ToString()
             });
             _selectedAsset.Price = EditorGUILayout.FloatField("Price:", _selectedAsset.Price);
 
@@ -315,8 +315,8 @@ namespace ParkitectAssetEditor.UI
                 case AssetType.Tv:
                     DrawAssetTvDetailSection();
                     break;
-                case AssetType.Flatride:
-                    drawFlatRideSection();
+                case AssetType.FlatRide:
+                    DrawAssetFlatRideDetailSection();
                     break;
             }
 
@@ -366,7 +366,7 @@ namespace ParkitectAssetEditor.UI
         /// <summary>
         /// Draws the asset flatride detail section.
         /// </summary>
-        private void drawFlatRideSection()
+        private void DrawAssetFlatRideDetailSection()
         {
             //shows the rating of the ride
             GUILayout.Label("Rating", EditorStyles.boldLabel);
@@ -506,25 +506,22 @@ namespace ParkitectAssetEditor.UI
         /// <returns></returns>
         private string GetRatingCategory(float ratingValue)
         {
-            if (ratingValue > 0.9f)
-            {
-                return "Very High";
-            }
-
-            if (ratingValue > 0.6f)
-            {
+            if ((double) ratingValue > 0.899999976158142)
+                return "Ultra extreme";
+            if ((double) ratingValue > 0.75)
+                return "Extreme";
+            if ((double) ratingValue > 0.600000023841858)
+                return "Very high";
+            if ((double) ratingValue > 0.449999988079071)
                 return "High";
-            }
-
-            if (ratingValue > 0.3f)
-            {
+            if ((double) ratingValue > 0.300000011920929)
                 return "Medium";
-            }
-
-            return "Low";
+            if ((double) ratingValue > 0.150000005960464)
+                return "Low";
+            return "Very low";
         }
-        
-        
+
+
         /// <summary>
         /// Draws the asset deco detail section.
         /// </summary>
