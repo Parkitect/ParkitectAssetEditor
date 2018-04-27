@@ -370,13 +370,9 @@ namespace ParkitectAssetEditor.UI
         {
             //shows the rating of the ride
             GUILayout.Label("Rating", EditorStyles.boldLabel);
-            _selectedAsset.Excitement = EditorGUILayout.Slider(
-                "Excitement (" + GetRatingCategory(_selectedAsset.Excitement) + ")", _selectedAsset.Excitement, 0, 1);
-            _selectedAsset.Intensity =
-                EditorGUILayout.Slider("Intensity (" + GetRatingCategory(_selectedAsset.Intensity) + ")",
-                    _selectedAsset.Intensity, 0, 1);
-            _selectedAsset.Nausea = EditorGUILayout.Slider("Nausea (" + GetRatingCategory(_selectedAsset.Nausea) + ")",
-                _selectedAsset.Nausea, 0, 1);
+            _selectedAsset.Excitement = EditorGUILayout.Slider("Excitement", _selectedAsset.Excitement * 100, 0, 100)/100f;
+            _selectedAsset.Intensity =EditorGUILayout.Slider("Intensity",_selectedAsset.Intensity* 100, 0, 100)/100f;
+            _selectedAsset.Nausea = EditorGUILayout.Slider("Nausea",_selectedAsset.Nausea* 100, 0, 100)/100f;
 
             //the footprint that the ride covers
             GUILayout.Label("Ride Footprint", EditorStyles.boldLabel);
@@ -497,28 +493,6 @@ namespace ParkitectAssetEditor.UI
                 Selection.activeGameObject = seat.gameObject;
             }
 
-        }
-
-        /// <summary>
-        /// converts rating score to readable text
-        /// </summary>
-        /// <param name="ratingValue">rating value between 0 and 1</param>
-        /// <returns></returns>
-        private string GetRatingCategory(float ratingValue)
-        {
-            if ((double) ratingValue > 0.899999976158142)
-                return "Ultra extreme";
-            if ((double) ratingValue > 0.75)
-                return "Extreme";
-            if ((double) ratingValue > 0.600000023841858)
-                return "Very high";
-            if ((double) ratingValue > 0.449999988079071)
-                return "High";
-            if ((double) ratingValue > 0.300000011920929)
-                return "Medium";
-            if ((double) ratingValue > 0.150000005960464)
-                return "Low";
-            return "Very low";
         }
 
 
