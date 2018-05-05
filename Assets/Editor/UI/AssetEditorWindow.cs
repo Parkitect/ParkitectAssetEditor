@@ -3,6 +3,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using ParkitectAssetEditor.GizmoRenderers;
+using ParkitectAssetEditor.Utility;
 using UnityEditor;
 using UnityEngine;
 
@@ -27,13 +28,13 @@ namespace ParkitectAssetEditor.UI
 
         private Vector2 _descriptionTextScrollPosition;
 
+        private Vector2 _boundedBoxScrollPosition;
+        
         /// <summary>
         /// The selected asset.
         /// </summary>
         private Asset _selectedAsset;
-        
-        
-        public Vector2 _waypointScrollView;
+       
 
         private static readonly IGizmoRenderer[] _gizmoRenderers = {
             new SeatRenderer(),
@@ -42,6 +43,7 @@ namespace ParkitectAssetEditor.UI
 			new SignRenderer(), 
             new FootprintRenderer(),
             new WaypointRenderer(), 
+            new BoundedBoxRenderer(), 
         };
 
         [MenuItem("Window/Parkitect Asset Editor")]
@@ -316,6 +318,7 @@ namespace ParkitectAssetEditor.UI
                     DrawAssetTvDetailSection();
                     break;
                 case AssetType.FlatRide:
+                    DrawBoundedBoxDetailSection();
                     DrawAssetFlatRideDetailSection();
                     break;
             }
@@ -325,6 +328,55 @@ namespace ParkitectAssetEditor.UI
             if (GUILayout.Button("Remove From Asset Pack"))
             {
                 RemoveAsset(_selectedAsset);
+            }
+        }
+
+        private void DrawBoundedBoxDetailSection()
+        {
+            Event e = Event.current;
+
+            _boundedBoxScrollPosition = EditorGUILayout.BeginScrollView(_boundedBoxScrollPosition, "GroupBox", GUILayout.Height(100));
+            for (int i = 0; i < _selectedAsset.BoundedBoxes.Count; i++)
+            {
+                Color gui = GUI.color;
+                if (_selectedAsset.BoundedBoxes[i] == _selectedAsset.SelectedBoundedBox)
+                { GUI.color = Color.red; }
+
+                if (GUILayout.Button("BoudingBox" + (i + 1)))
+                {
+                    if (e.button == 1)
+                    {
+                        _selectedAsset.BoundedBoxes.RemoveAt(i);
+                        return;
+                    }
+
+                    if (_selectedAsset.SelectedBoundedBox == _selectedAsset.BoundedBoxes[i])
+                    {
+                        _selectedAsset.SelectedBoundedBox = null;
+                        return;
+                    }
+                    _selectedAsset.SelectedBoundedBox = _selectedAsset.BoundedBoxes[i];
+                }
+                GUI.color = gui;
+            }
+            EditorGUILayout.EndScrollView();
+
+            if (GUILayout.Button("Add BoudingBox"))
+            {
+                _selectedAsset.BoundedBoxes.Add(new SpBoundedBox());
+            }
+            string caption = "Enable Editing";
+            if (_selectedAsset.EnableBoundedBoxEditing)
+            {
+                caption = "Disable Editing";
+            }
+            if (GUILayout.Button(caption))
+            {
+                _selectedAsset.EnableBoundedBoxEditing = !_selectedAsset.EnableBoundedBoxEditing;
+            }
+            if (_selectedAsset.EnableBoundedBoxEditing)
+            {
+                GUILayout.Label("Hold S - Snap to 0.25");
             }
         }
 
@@ -389,10 +441,10 @@ namespace ParkitectAssetEditor.UI
 
             //waypoint tool for NPC pathing
             GUILayout.Label("Waypoints", EditorStyles.boldLabel);
-            _selectedAsset.EnableEditing =
-                GUILayout.Toggle(_selectedAsset.EnableEditing, "Enable Editing Waypoints", "Button");
+            _selectedAsset.EnableWaypointEditing =
+                GUILayout.Toggle(_selectedAsset.EnableWaypointEditing, "Enable Editing Waypoints", "Button");
 
-            if (_selectedAsset.EnableEditing)
+            if (_selectedAsset.EnableWaypointEditing)
             {
 
                 GUILayout.Label("S - Snap to axis of connected waypoints");

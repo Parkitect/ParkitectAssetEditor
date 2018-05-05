@@ -29,7 +29,7 @@ namespace ParkitectAssetEditor.GizmoRenderers
         public void Handle(Asset asset)
         {
 
-            if (asset.EnableEditing)
+            if (asset.EnableWaypointEditing)
             {
                 if (_snapToPlane)
                 {
@@ -144,7 +144,7 @@ namespace ParkitectAssetEditor.GizmoRenderers
                 if (Handles.Button(worldPos, Quaternion.identity, HandleUtility.GetHandleSize(worldPos) * 0.2f,
                     HandleUtility.GetHandleSize(worldPos) * 0.2f, Handles.SphereCap))
                 {
-                    if (asset.EnableEditing)
+                    if (asset.EnableWaypointEditing)
                     {
                         handleClick(asset, asset.Waypoints[x]);
                     }

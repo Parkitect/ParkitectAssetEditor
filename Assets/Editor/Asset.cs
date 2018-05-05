@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using NUnit.Framework;
 using ParkitectAssetEditor.GizmoRenderers;
+using ParkitectAssetEditor.Utility;
 using UnityEditor;
 using UnityEngine;
 
@@ -255,7 +254,7 @@ namespace ParkitectAssetEditor
 		/// Get or sets a value indicating how exciting a ride is bounded between 0 and 1
 		/// </summary>
 		public float Excitement;
-		
+
 		/// <summary>
 		/// Get or sets a value indicating how intense a ride is bounded between 0 and 1
 		/// </summary>
@@ -265,17 +264,17 @@ namespace ParkitectAssetEditor
 		/// Get or sets a value indicating how nausea a ride is bounded between 0 and 1
 		/// </summary>
 		public float Nausea;
-		
+
 		/// <summary>
 		/// Determines the x footprint size
 		/// </summary>
 		public int FootprintX = 1;
-		
+
 		/// <summary>
 		/// Determines the y footprint size
 		/// </summary>
 		public int FootprintZ = 1;
-		
+
 		/// <summary>
 		/// Category of flatride
 		/// </summary>
@@ -283,36 +282,58 @@ namespace ParkitectAssetEditor
 
 		#endregion
 
+		#region boundedBoxs
+
+		[JsonIgnore] 
+		public bool EnableBoundedBoxEditing;
+
+		
+		/// <summary>
+		/// determins if the bounding box can snap
+		/// </summary>
+		[JsonIgnore] 
+		public bool BoundedBoxSnap;
+
+		/// <summary>
+		/// the active bounded box
+		/// </summary>
+		[JsonIgnore] 
+		public SpBoundedBox SelectedBoundedBox = null;
+
+		/// <summary>
+		/// Bounded box regions
+		/// </summary>
+		public List<SpBoundedBox> BoundedBoxes = new List<SpBoundedBox>();
+
+		#endregion
+
 		#region waypoints
+
 		/// <summary>
 		/// list of waypoints to help with NPC traversial 
 		/// </summary>
 		public List<Waypoint> Waypoints = new List<Waypoint>();
 
-		[JsonIgnore]
-		public bool EnableEditing;
-	
-		
+		[JsonIgnore] public bool EnableWaypointEditing;
+
+
 		/// <summary>
 		/// Helper Y Plane, used to place waypoints
 		/// </summary>
-		[JsonIgnore]
-		public float HelperPlaneY;
-		
+		[JsonIgnore] public float HelperPlaneY;
+
 		/// <summary>
 		/// The currently selected waypoint
 		/// </summary>
-		[JsonIgnore]
-		public Waypoint SelectedWaypoint;
+		[JsonIgnore] public Waypoint SelectedWaypoint;
 
 		/// <summary>
 		/// The state of the waypoint editor
 		/// </summary>
-		[JsonIgnore]
-		public WaypointRenderer.WaypointState WaypointState;
-		
+		[JsonIgnore] public WaypointRenderer.WaypointState WaypointState;
+
 		#endregion
-		
+
 		#region sign        
 
 		/// <summary>
