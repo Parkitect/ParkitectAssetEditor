@@ -317,6 +317,7 @@ namespace ParkitectAssetEditor.UI
         {
             // Category settings
             GUILayout.Label("Wall settings:", EditorStyles.boldLabel);
+            _selectedAsset.Height = EditorGUILayout.FloatField("Height:", _selectedAsset.Height);
             var north = EditorGUILayout.Toggle("Block North", Convert.ToBoolean(_selectedAsset.WallSettings & (int) WallBlock.Forward));
             var east = EditorGUILayout.Toggle("Block East", Convert.ToBoolean(_selectedAsset.WallSettings & (int) WallBlock.Right));
             var south = EditorGUILayout.Toggle("Block South", Convert.ToBoolean(_selectedAsset.WallSettings & (int) WallBlock.Back));
@@ -406,6 +407,8 @@ namespace ParkitectAssetEditor.UI
 				post.name = "Post";
 			}
 	        _selectedAsset.HasMidPost = EditorGUILayout.Toggle("Has mid post: ", _selectedAsset.HasMidPost);
+
+            DrawAssetWallDetailSection();
 		}
 		
         /// <summary>

@@ -237,6 +237,8 @@ namespace ParkitectAssetEditor
         #region wall
 
         public int WallSettings;
+
+        public float Height;
         #endregion
 
         #region sign        
@@ -290,6 +292,7 @@ namespace ParkitectAssetEditor
             Guid = GUID.Generate().ToString(); // don't need the object, just make it a string immediately
 	        MinSize = 1;
 	        MaxSize = 1;
+            Height = 1;
 	        CanSeeThrough = true;
         }
     }
