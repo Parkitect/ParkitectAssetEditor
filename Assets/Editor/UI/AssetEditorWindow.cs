@@ -27,6 +27,9 @@ namespace ParkitectAssetEditor.UI
 
         private Vector2 _descriptionTextScrollPosition;
 
+        private ShopProduct _selectedProduct;
+        private Vector2 _productScrollPosition;
+
         /// <summary>
         /// The selected asset.
         /// </summary>
@@ -221,6 +224,7 @@ namespace ParkitectAssetEditor.UI
                 AssetType.Lamp.ToString(),
                 AssetType.Sign.ToString(),
                 AssetType.Tv.ToString(),
+                AssetType.Shop.ToString()
             });
             _selectedAsset.Price = EditorGUILayout.FloatField("Price:", _selectedAsset.Price);
 
@@ -266,6 +270,9 @@ namespace ParkitectAssetEditor.UI
                 case AssetType.Tv:
                     DrawAssetTvDetailSection();
                     break;
+                case AssetType.Shop:
+                    DrawShopProductSection();
+                    break;
             }
 
             GUILayout.Space(20);
@@ -275,6 +282,66 @@ namespace ParkitectAssetEditor.UI
                 RemoveAsset(_selectedAsset);
             }
         }
+
+        /// <summary>
+        /// Shop product
+        /// </summary>
+        private void DrawShopProductSection()
+        {
+            
+            Event e = Event.current;
+
+            GUILayout.Space(10);
+            EditorGUILayout.LabelField("Products:", EditorStyles.boldLabel);
+            _productScrollPosition = EditorGUILayout.BeginScrollView(_productScrollPosition, "GroupBox", GUILayout.Height(100));
+            foreach (var product in _selectedAsset.Products)
+            {
+                Color gui = GUI.color;
+                if (product == _selectedProduct)
+                {
+                    GUI.color = Color.red;
+                }
+
+                if (GUILayout.Button(product.Name + "    $" + product.Price + " (" + product.ProductType + ")"))
+                {
+
+                    GUI.FocusControl("");
+                    if (e.button == 1)
+                    {
+                        _selectedAsset.Products.Remove(product);
+                        return;
+                    }
+
+                    if (_selectedProduct == product)
+                    {
+                        _selectedProduct = null;
+                        return;
+                    }
+                    _selectedProduct = product;
+                }
+                GUI.color = gui;  
+            }
+            EditorGUILayout.EndScrollView();
+
+		
+            if (GUILayout.Button("Add Product"))
+            {
+                _selectedAsset.Products.Add(new ShopProduct());
+            }
+            if(_selectedProduct != null)
+            {
+                if(!_selectedAsset.Products.Contains(_selectedProduct))
+                {
+                    _selectedProduct = null;
+                    return;
+                }
+                GUILayout.Space(10);
+                _selectedProduct.ShopProductSection();
+
+            }
+
+        }
+        
 
         /// <summary>
         /// Draws the asset deco detail section.

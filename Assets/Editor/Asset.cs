@@ -1,6 +1,8 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
 
@@ -241,6 +243,12 @@ namespace ParkitectAssetEditor
         public float Height;
         #endregion
 
+        #region shop
+
+        public List<ShopProduct> Products = new List<ShopProduct>();
+        
+	    #endregion
+        
         #region sign        
         /// <summary>
         /// Gets or sets the text game object.

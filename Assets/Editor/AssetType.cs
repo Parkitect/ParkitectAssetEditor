@@ -12,6 +12,7 @@
         Fence,
         Lamp,
         Sign,
-        Tv
+        Tv,
+        Shop
     }
 }
