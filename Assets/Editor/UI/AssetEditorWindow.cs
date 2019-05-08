@@ -28,7 +28,7 @@ namespace ParkitectAssetEditor.UI
 
         private Vector2 _descriptionTextScrollPosition;
 
-        private Vector2 _boundedBoxScrollPosition;
+        private Vector2 _boundingBoxScrollPosition;
         
         /// <summary>
         /// The selected asset.
@@ -43,7 +43,7 @@ namespace ParkitectAssetEditor.UI
 			new SignRenderer(), 
             new FootprintRenderer(),
             new WaypointRenderer(), 
-            new BoundedBoxRenderer(), 
+            new BoundingBoxRenderer(), 
         };
 
         [MenuItem("Window/Parkitect Asset Editor")]
@@ -318,7 +318,7 @@ namespace ParkitectAssetEditor.UI
                     DrawAssetTvDetailSection();
                     break;
                 case AssetType.FlatRide:
-                    DrawBoundedBoxDetailSection();
+                    DrawBoundingBoxDetailSection();
                     DrawAssetFlatRideDetailSection();
                     break;
             }
@@ -331,50 +331,50 @@ namespace ParkitectAssetEditor.UI
             }
         }
 
-        private void DrawBoundedBoxDetailSection()
+        private void DrawBoundingBoxDetailSection()
         {
             Event e = Event.current;
 
-            _boundedBoxScrollPosition = EditorGUILayout.BeginScrollView(_boundedBoxScrollPosition, "GroupBox", GUILayout.Height(100));
-            for (int i = 0; i < _selectedAsset.BoundedBoxes.Count; i++)
+            _boundingBoxScrollPosition = EditorGUILayout.BeginScrollView(_boundingBoxScrollPosition, "GroupBox", GUILayout.Height(100));
+            for (int i = 0; i < _selectedAsset.BoundingBoxes.Count; i++)
             {
                 Color gui = GUI.color;
-                if (_selectedAsset.BoundedBoxes[i] == _selectedAsset.SelectedBoundedBox)
+                if (_selectedAsset.BoundingBoxes[i] == _selectedAsset.SelectedBoundingBox)
                 { GUI.color = Color.red; }
 
-                if (GUILayout.Button("BoudingBox" + (i + 1)))
+                if (GUILayout.Button("BoundingBox" + (i + 1)))
                 {
                     if (e.button == 1)
                     {
-                        _selectedAsset.BoundedBoxes.RemoveAt(i);
+                        _selectedAsset.BoundingBoxes.RemoveAt(i);
                         return;
                     }
 
-                    if (_selectedAsset.SelectedBoundedBox == _selectedAsset.BoundedBoxes[i])
+                    if (_selectedAsset.SelectedBoundingBox == _selectedAsset.BoundingBoxes[i])
                     {
-                        _selectedAsset.SelectedBoundedBox = null;
+                        _selectedAsset.SelectedBoundingBox = null;
                         return;
                     }
-                    _selectedAsset.SelectedBoundedBox = _selectedAsset.BoundedBoxes[i];
+                    _selectedAsset.SelectedBoundingBox = _selectedAsset.BoundingBoxes[i];
                 }
                 GUI.color = gui;
             }
             EditorGUILayout.EndScrollView();
 
-            if (GUILayout.Button("Add BoudingBox"))
+            if (GUILayout.Button("Add BoundingBox"))
             {
-                _selectedAsset.BoundedBoxes.Add(new SpBoundedBox());
+                _selectedAsset.BoundingBoxes.Add(new BoundingBox());
             }
             string caption = "Enable Editing";
-            if (_selectedAsset.EnableBoundedBoxEditing)
+            if (_selectedAsset.EnableBoundingBoxEditing)
             {
                 caption = "Disable Editing";
             }
             if (GUILayout.Button(caption))
             {
-                _selectedAsset.EnableBoundedBoxEditing = !_selectedAsset.EnableBoundedBoxEditing;
+                _selectedAsset.EnableBoundingBoxEditing = !_selectedAsset.EnableBoundingBoxEditing;
             }
-            if (_selectedAsset.EnableBoundedBoxEditing)
+            if (_selectedAsset.EnableBoundingBoxEditing)
             {
                 GUILayout.Label("Hold S - Snap to 0.25");
             }

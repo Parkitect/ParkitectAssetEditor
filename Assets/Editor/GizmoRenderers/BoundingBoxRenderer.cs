@@ -5,7 +5,7 @@ using UnityEngine.Rendering;
 
 namespace ParkitectAssetEditor.GizmoRenderers
 {
-    public class BoundedBoxRenderer : IGizmoRenderer, IHandleRenderer
+    public class BoundingBoxRenderer : IGizmoRenderer, IHandleRenderer
     {
         public bool CanRender(Asset asset)
         {
@@ -21,7 +21,7 @@ namespace ParkitectAssetEditor.GizmoRenderers
         {
             DrawBoxes(asset);
 
-            if (!asset.EnableBoundedBoxEditing)
+            if (!asset.EnableBoundingBoxEditing)
             {
                 return;
             }
@@ -38,19 +38,18 @@ namespace ParkitectAssetEditor.GizmoRenderers
                 case EventType.KeyDown:
                     if (Event.current.keyCode == KeyCode.S)
                     {
-                        asset.BoundedBoxSnap = true;
+                        asset.BoundingBoxSnap = true;
                     }
 
                     break;
                 case EventType.KeyUp:
                     if (Event.current.keyCode == KeyCode.S)
                     {
-                        asset.BoundedBoxSnap = false;
+                        asset.BoundingBoxSnap = false;
                     }
 
                     break;
             }
-
         }
 
         private void drawPlane(Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4, Color fill, Color outer, Asset asset)
@@ -65,9 +64,8 @@ namespace ParkitectAssetEditor.GizmoRenderers
 
         private void DrawBoxes(Asset asset)
         {
-            foreach (SpBoundedBox box in asset.BoundedBoxes)
+            foreach (BoundingBox box in asset.BoundingBoxes)
             {
-
                 Vector3 diff = box.Bounds.max - box.Bounds.min;
                 Vector3 diffX = new Vector3(diff.x, 0, 0);
                 Vector3 diffY = new Vector3(0, diff.y, 0);
@@ -76,14 +74,13 @@ namespace ParkitectAssetEditor.GizmoRenderers
                 Color fill = Color.white;
                 fill.a = 0.005f;
                 Color outer = Color.gray;
-                if (asset.EnableBoundedBoxEditing && box == asset.SelectedBoundedBox)
+                if (asset.EnableBoundingBoxEditing && box == asset.SelectedBoundingBox)
                 {
                     fill = Color.magenta;
                     fill.a = 0.05f;
                     outer = Color.black;
                     Handles.zTest = CompareFunction.Less;
                 }
-
 
                 // left
                 drawPlane(box.Bounds.min, box.Bounds.min + diffZ, box.Bounds.min + diffZ + diffY,
@@ -109,17 +106,17 @@ namespace ParkitectAssetEditor.GizmoRenderers
                 drawPlane(box.Bounds.min, box.Bounds.min + diffX, box.Bounds.min + diffX + diffZ,
                     box.Bounds.min + diffZ, fill, outer, asset);
 
-                if (asset.EnableBoundedBoxEditing && box == asset.SelectedBoundedBox)
+                if (asset.EnableBoundingBoxEditing && box == asset.SelectedBoundingBox)
                 {
                     box.Bounds.min = handleModifyValue(box.Bounds.min,
                         asset.GameObject.transform.InverseTransformPoint(Handles.PositionHandle(
                             asset.GameObject.transform.TransformPoint(box.Bounds.min),
-                            Quaternion.LookRotation(Vector3.left, Vector3.down))), asset.BoundedBoxSnap);
+                            Quaternion.LookRotation(Vector3.left, Vector3.down))), asset.BoundingBoxSnap);
 
                     box.Bounds.max = handleModifyValue(box.Bounds.max,
                         asset.GameObject.transform.InverseTransformPoint(Handles.PositionHandle(
                             asset.GameObject.transform.TransformPoint(box.Bounds.max),
-                            Quaternion.LookRotation(Vector3.forward))), asset.BoundedBoxSnap);
+                            Quaternion.LookRotation(Vector3.forward))), asset.BoundingBoxSnap);
                     Handles.Label(asset.GameObject.transform.position + box.Bounds.min, box.Bounds.min.ToString("F2"));
                     Handles.Label(asset.GameObject.transform.position + box.Bounds.max, box.Bounds.max.ToString("F2"));
                 }

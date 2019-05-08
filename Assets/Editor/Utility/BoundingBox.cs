@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace ParkitectAssetEditor.Utility
 {
-    public class SpBoundedBox
+    public class BoundingBox
     {
         [JsonIgnore]
         public Bounds Bounds;
@@ -22,6 +22,5 @@ namespace ParkitectAssetEditor.Utility
             get { return new float[3] {Bounds.max.x, Bounds.max.y, Bounds.max.z}; }
             set { Bounds.max = new Vector3(value[0], value[1], value[2]); }
         }
-
     }
 }

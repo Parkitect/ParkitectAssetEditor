@@ -284,28 +284,28 @@ namespace ParkitectAssetEditor
 
 		#endregion
 
-		#region boundedBoxs
+		#region BoundingBoxes
 
 		[JsonIgnore] 
-		public bool EnableBoundedBoxEditing;
+		public bool EnableBoundingBoxEditing;
 
 		
 		/// <summary>
 		/// determins if the bounding box can snap
 		/// </summary>
 		[JsonIgnore] 
-		public bool BoundedBoxSnap;
+		public bool BoundingBoxSnap;
 
 		/// <summary>
 		/// the active bounded box
 		/// </summary>
 		[JsonIgnore] 
-		public SpBoundedBox SelectedBoundedBox = null;
+		public BoundingBox SelectedBoundingBox = null;
 
 		/// <summary>
 		/// Bounded box regions
 		/// </summary>
-		public List<SpBoundedBox> BoundedBoxes = new List<SpBoundedBox>();
+		public List<BoundingBox> BoundingBoxes = new List<BoundingBox>();
 
 		#endregion
 
