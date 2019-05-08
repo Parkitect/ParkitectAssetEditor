@@ -3,6 +3,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using ParkitectAssetEditor.GizmoRenderers;
+using ParkitectAssetEditor.Utility;
 using UnityEditor;
 using UnityEngine;
 
@@ -27,16 +28,22 @@ namespace ParkitectAssetEditor.UI
 
         private Vector2 _descriptionTextScrollPosition;
 
+        private Vector2 _boundedBoxScrollPosition;
+        
         /// <summary>
         /// The selected asset.
         /// </summary>
         private Asset _selectedAsset;
+       
 
         private static readonly IGizmoRenderer[] _gizmoRenderers = {
-            new BenchRenderer(),
+            new SeatRenderer(),
             new WallRenderer(),
 			new GridRenderer(), 
 			new SignRenderer(), 
+            new FootprintRenderer(),
+            new WaypointRenderer(), 
+            new BoundedBoxRenderer(), 
         };
 
         [MenuItem("Window/Parkitect Asset Editor")]
@@ -132,6 +139,49 @@ namespace ParkitectAssetEditor.UI
                 }
             }
         }
+        
+        void OnFocus()
+        {
+            // Remove delegate listener if it has previously
+            // been assigned.
+            SceneView.onSceneGUIDelegate -= OnSceneGUI;
+            // Add (or re-add) the delegate.
+            SceneView.onSceneGUIDelegate += OnSceneGUI;
+        }
+
+        void OnDestroy()
+        {
+            // When the window is destroyed, remove the delegate
+            // so that it will no longer do any drawing.
+            //Exporter.SaveToXML(ModManager);
+            SceneView.onSceneGUIDelegate -= OnSceneGUI;
+
+        }
+
+        void OnSceneGUI(SceneView sceneView)
+        {
+            if (ProjectManager.AssetPack == null)
+            {
+                return;
+            }
+
+            if (_selectedAsset == null)
+            {
+                return;
+            }
+
+            foreach (var gizmoRenderer in _gizmoRenderers)
+            {
+                if (gizmoRenderer.CanRender(_selectedAsset))
+                {
+                    var renderer = gizmoRenderer as IHandleRenderer;
+                    if (renderer != null)
+                    {
+                        renderer.Handle(_selectedAsset);
+                    }
+                }
+            }
+        }
 
         /// <summary>
         /// Draws the asset pack settings section.
@@ -221,6 +271,7 @@ namespace ParkitectAssetEditor.UI
                 AssetType.Lamp.ToString(),
                 AssetType.Sign.ToString(),
                 AssetType.Tv.ToString(),
+                AssetType.FlatRide.ToString()
             });
             _selectedAsset.Price = EditorGUILayout.FloatField("Price:", _selectedAsset.Price);
 
@@ -266,6 +317,10 @@ namespace ParkitectAssetEditor.UI
                 case AssetType.Tv:
                     DrawAssetTvDetailSection();
                     break;
+                case AssetType.FlatRide:
+                    DrawBoundedBoxDetailSection();
+                    DrawAssetFlatRideDetailSection();
+                    break;
             }
 
             GUILayout.Space(20);
@@ -273,6 +328,55 @@ namespace ParkitectAssetEditor.UI
             if (GUILayout.Button("Remove From Asset Pack"))
             {
                 RemoveAsset(_selectedAsset);
+            }
+        }
+
+        private void DrawBoundedBoxDetailSection()
+        {
+            Event e = Event.current;
+
+            _boundedBoxScrollPosition = EditorGUILayout.BeginScrollView(_boundedBoxScrollPosition, "GroupBox", GUILayout.Height(100));
+            for (int i = 0; i < _selectedAsset.BoundedBoxes.Count; i++)
+            {
+                Color gui = GUI.color;
+                if (_selectedAsset.BoundedBoxes[i] == _selectedAsset.SelectedBoundedBox)
+                { GUI.color = Color.red; }
+
+                if (GUILayout.Button("BoudingBox" + (i + 1)))
+                {
+                    if (e.button == 1)
+                    {
+                        _selectedAsset.BoundedBoxes.RemoveAt(i);
+                        return;
+                    }
+
+                    if (_selectedAsset.SelectedBoundedBox == _selectedAsset.BoundedBoxes[i])
+                    {
+                        _selectedAsset.SelectedBoundedBox = null;
+                        return;
+                    }
+                    _selectedAsset.SelectedBoundedBox = _selectedAsset.BoundedBoxes[i];
+                }
+                GUI.color = gui;
+            }
+            EditorGUILayout.EndScrollView();
+
+            if (GUILayout.Button("Add BoudingBox"))
+            {
+                _selectedAsset.BoundedBoxes.Add(new SpBoundedBox());
+            }
+            string caption = "Enable Editing";
+            if (_selectedAsset.EnableBoundedBoxEditing)
+            {
+                caption = "Disable Editing";
+            }
+            if (GUILayout.Button(caption))
+            {
+                _selectedAsset.EnableBoundedBoxEditing = !_selectedAsset.EnableBoundedBoxEditing;
+            }
+            if (_selectedAsset.EnableBoundedBoxEditing)
+            {
+                GUILayout.Label("Hold S - Snap to 0.25");
             }
         }
 
@@ -309,6 +413,140 @@ namespace ParkitectAssetEditor.UI
 			_selectedAsset.CanSeeThrough = EditorGUILayout.Toggle("Can see through: ", _selectedAsset.CanSeeThrough);
 			_selectedAsset.BlocksRain = EditorGUILayout.Toggle("Blocks rain: ", _selectedAsset.BlocksRain);
         }
+
+
+        /// <summary>
+        /// Draws the asset flatride detail section.
+        /// </summary>
+        private void DrawAssetFlatRideDetailSection()
+        {
+            //shows the rating of the ride
+            GUILayout.Label("Rating", EditorStyles.boldLabel);
+            _selectedAsset.Excitement = EditorGUILayout.Slider("Excitement", _selectedAsset.Excitement * 100, 0, 100)/100f;
+            _selectedAsset.Intensity =EditorGUILayout.Slider("Intensity",_selectedAsset.Intensity* 100, 0, 100)/100f;
+            _selectedAsset.Nausea = EditorGUILayout.Slider("Nausea",_selectedAsset.Nausea* 100, 0, 100)/100f;
+
+            //the footprint that the ride covers
+            GUILayout.Label("Ride Footprint", EditorStyles.boldLabel);
+            _selectedAsset.FootprintX = EditorGUILayout.IntField("X", _selectedAsset.FootprintX);
+            _selectedAsset.FootprintZ = EditorGUILayout.IntField("Z", _selectedAsset.FootprintZ);
+
+
+            //category of the ride
+            GUILayout.Label("Category", EditorStyles.boldLabel);
+            _selectedAsset.FlatRideCategory = AttractionType.CategoryTag[
+                EditorGUILayout.Popup("category",
+                    Array.IndexOf(AttractionType.CategoryTag, _selectedAsset.FlatRideCategory),
+                    AttractionType.CategoryDisplayName)];
+
+            //waypoint tool for NPC pathing
+            GUILayout.Label("Waypoints", EditorStyles.boldLabel);
+            _selectedAsset.EnableWaypointEditing =
+                GUILayout.Toggle(_selectedAsset.EnableWaypointEditing, "Enable Editing Waypoints", "Button");
+
+            if (_selectedAsset.EnableWaypointEditing)
+            {
+
+                GUILayout.Label("S - Snap to axis of connected waypoints");
+                _selectedAsset.HelperPlaneY = EditorGUILayout.FloatField("Helper Plane Y", _selectedAsset.HelperPlaneY);
+
+                //generates an initial gride of waypoints around the outer squares
+                if (GUILayout.Button("Generate outer grid"))
+                {
+
+                    float minX = -_selectedAsset.FootprintX / 2;
+                    float maxX = _selectedAsset.FootprintX / 2;
+                    float minZ = -_selectedAsset.FootprintZ / 2;
+                    float maxZ = _selectedAsset.FootprintZ / 2;
+                    for (int xi = 0; xi < Mathf.RoundToInt(maxX - minX); xi++)
+                    {
+                        for (int zi = 0; zi < Mathf.RoundToInt(maxZ - minZ); zi++)
+                        {
+                            float x = minX + xi;
+                            float z = minZ + zi;
+                            if (!(x == minX || x == maxX - 1) && !(z == minZ || z == maxZ - 1))
+                            {
+                                continue;
+                            }
+
+                            Waypoint newWaypoint = new Waypoint();
+                            newWaypoint.Position = new Vector3(x + 0.5f, 0, z + 0.5f);
+                            newWaypoint.IsOuter = true;
+                            _selectedAsset.Waypoints.Add(newWaypoint);
+                        }
+                    }
+                }
+
+                //adds a waypoint at (0,0,0) relative to the unity object
+                if (GUILayout.Button("Add Waypoint"))
+                {
+                    Waypoint.addWaypoint(_selectedAsset, _selectedAsset.GameObject.transform.position);
+                }
+
+                //clears all the waypoint
+                if (GUILayout.Button("Clear all"))
+                {
+                    _selectedAsset.Waypoints.Clear();
+                    _selectedAsset.SelectedWaypoint = null;
+                }
+            }
+
+
+
+            //provies a list of all the waypoints
+            for (int i = 0; i < _selectedAsset.Waypoints.Count; i++)
+            {
+                EditorGUILayout.BeginHorizontal();
+                GUILayout.Label("#" + i);
+                _selectedAsset.Waypoints[i].IsOuter =
+                    GUILayout.Toggle(_selectedAsset.Waypoints[i].IsOuter, "IsOuter", "Button");
+                _selectedAsset.Waypoints[i].IsRabbitHoleGoal =
+                    GUILayout.Toggle(_selectedAsset.Waypoints[i].IsRabbitHoleGoal, "IsRabbitHoleGoal", "Button");
+                if (GUILayout.Button("Delete"))
+                {
+                    Waypoint.DeletePoint(_selectedAsset, _selectedAsset.SelectedWaypoint);
+                }
+
+                EditorGUILayout.EndHorizontal();
+
+                _selectedAsset.Waypoints[i].Position =
+                    EditorGUILayout.Vector3Field("Position", _selectedAsset.Waypoints[i].Position);
+            }
+
+
+            var seats = _selectedAsset.
+                GameObject.
+                GetComponentsInChildren<Transform>(true).
+                Where(transform => transform.name.StartsWith("Seat", true, CultureInfo.InvariantCulture));
+
+            // Bench settings
+            GUILayout.Label("Bench settings", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField("Seats found", seats.Count().ToString());
+
+            foreach (Transform seat in seats)
+            {
+                if (GUILayout.Button(seat.name))
+                {
+                    EditorGUIUtility.PingObject(seat.gameObject.GetInstanceID());
+                    Selection.activeGameObject = seat.gameObject;
+                }
+            }
+
+            GUILayout.Space(10);
+
+            if (GUILayout.Button("Add seat"))
+            {
+                var seat = new GameObject("Seat");
+
+                seat.transform.SetParent(_selectedAsset.GameObject.transform);
+
+                seat.transform.localPosition = Vector3.zero;
+
+                Selection.activeGameObject = seat.gameObject;
+            }
+
+        }
+
 
         /// <summary>
         /// Draws the asset deco detail section.
