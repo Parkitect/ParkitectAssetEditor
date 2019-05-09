@@ -79,8 +79,9 @@ namespace ParkitectAssetEditor.GizmoRenderers
                     fill = Color.magenta;
                     fill.a = 0.05f;
                     outer = Color.black;
-                    Handles.zTest = CompareFunction.Less;
                 }
+                
+                Handles.zTest = CompareFunction.Less;
 
                 // left
                 drawPlane(box.Bounds.min, box.Bounds.min + diffZ, box.Bounds.min + diffZ + diffY,
@@ -106,6 +107,8 @@ namespace ParkitectAssetEditor.GizmoRenderers
                 drawPlane(box.Bounds.min, box.Bounds.min + diffX, box.Bounds.min + diffX + diffZ,
                     box.Bounds.min + diffZ, fill, outer, asset);
 
+                Handles.zTest = CompareFunction.Always;
+
                 if (asset.EnableBoundingBoxEditing && box == asset.SelectedBoundingBox)
                 {
                     box.Bounds.min = handleModifyValue(box.Bounds.min,
@@ -120,8 +123,6 @@ namespace ParkitectAssetEditor.GizmoRenderers
                     Handles.Label(asset.GameObject.transform.position + box.Bounds.min, box.Bounds.min.ToString("F2"));
                     Handles.Label(asset.GameObject.transform.position + box.Bounds.max, box.Bounds.max.ToString("F2"));
                 }
-
-                Handles.zTest = CompareFunction.Always;
             }
         }
 

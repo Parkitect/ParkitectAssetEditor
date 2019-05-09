@@ -117,6 +117,7 @@ namespace ParkitectAssetEditor.GizmoRenderers
                 Handles.color = Color.yellow;
                 Handles.DrawSolidRectangleWithOutline(new[] {topLeft, topRight, bottomRight, bottomLeft}, fill,
                     Color.black);
+                Handles.zTest = CompareFunction.Always;
             }
 
             for (int x = 0; x < asset.Waypoints.Count; x++)
@@ -149,15 +150,16 @@ namespace ParkitectAssetEditor.GizmoRenderers
                         handleClick(asset, asset.Waypoints[x]);
                     }
                 }
+                Handles.zTest = CompareFunction.Always;
 
 
                 Handles.color = Color.blue;
                 foreach (int connectedIndex in asset.Waypoints[x].ConnectedTo)
                 {
-                    Handles.zTest = CompareFunction.Always;
                     Handles.DrawLine(worldPos,
                         asset.Waypoints[connectedIndex].Position + asset.GameObject.transform.position);
                 }
+                Handles.color = Color.white;
 
                 Handles.Label(worldPos, "#" + x);
             }
@@ -179,7 +181,6 @@ namespace ParkitectAssetEditor.GizmoRenderers
                     Handles.Label(worldPos, "\nShift+(A)dd\n(C)onnect\n(R)emove\n(O)uter\nRabb(i)t Hole");
                 }
             }
-
         }
 
         private void handleClick(Asset asset, Waypoint waypoint)

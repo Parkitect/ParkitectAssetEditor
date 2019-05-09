@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using System.Linq;
 using Microsoft.CSharp;
+using UnityEditor;
 using UnityEngine;
 
 namespace ParkitectAssetEditor.GizmoRenderers
@@ -12,6 +13,7 @@ namespace ParkitectAssetEditor.GizmoRenderers
 	class SeatRenderer : IGizmoRenderer
 	{
 	    private Mesh npcMesh;
+        private Material sceneViewMaterial;
         
         /// <inheritdoc />
         /// <summary>
@@ -34,7 +36,15 @@ namespace ParkitectAssetEditor.GizmoRenderers
         public void Render(Asset asset)
         {
             if (npcMesh == null)
+            {
                 npcMesh = Resources.Load<Mesh>("Reference Objects/reference_sitting_guest");
+            }
+
+            if (sceneViewMaterial == null)
+            {
+                sceneViewMaterial = (Material)AssetDatabase.LoadAssetAtPath("Assets/Editor/SceneViewGhostMaterial.mat", typeof(Material));
+            }
+
             var seats = asset.
                 GameObject.
                 GetComponentsInChildren<Transform>(true).
@@ -42,8 +52,10 @@ namespace ParkitectAssetEditor.GizmoRenderers
 
             foreach (var seat in seats)
             {
-                Gizmos.DrawMesh(npcMesh,seat.position);
-               
+                sceneViewMaterial.SetPass(0);
+                Graphics.DrawMeshNow(npcMesh, seat.position, seat.rotation); 
+                sceneViewMaterial.SetPass(1);
+                Graphics.DrawMeshNow(npcMesh, seat.position, seat.rotation);
             }
         }
     }
