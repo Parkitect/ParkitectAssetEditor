@@ -132,7 +132,7 @@ namespace ParkitectAssetEditor.GizmoRenderers
 
 			for (int x = 0; x < asset.Waypoints.Count; x++)
 			{
-				if (asset.Waypoints[x] == asset.SelectedWaypoint)
+				if (asset.EnableWaypointEditing && asset.Waypoints[x] == asset.SelectedWaypoint)
 				{
 					Handles.color = Color.red;
 				}
@@ -152,6 +152,7 @@ namespace ParkitectAssetEditor.GizmoRenderers
 				Vector3 worldPos = asset.Waypoints[x].Position + asset.GameObject.transform.position;
 
 				Handles.zTest = CompareFunction.LessEqual;
+				
 				if (Handles.Button(worldPos, Quaternion.identity, HandleUtility.GetHandleSize(worldPos) * 0.2f,
 					HandleUtility.GetHandleSize(worldPos) * 0.2f, Handles.SphereHandleCap))
 				{
@@ -160,8 +161,6 @@ namespace ParkitectAssetEditor.GizmoRenderers
 						handleClick(asset, asset.Waypoints[x]);
 					}
 				}
-				Handles.zTest = CompareFunction.Always;
-
 
 				Handles.color = Color.blue;
 				foreach (int connectedIndex in asset.Waypoints[x].ConnectedTo)
@@ -170,11 +169,12 @@ namespace ParkitectAssetEditor.GizmoRenderers
 						asset.Waypoints[connectedIndex].Position + asset.GameObject.transform.position);
 				}
 				Handles.color = Color.white;
-
 				Handles.Label(worldPos, "#" + x);
+
+				Handles.zTest = CompareFunction.Always;
 			}
 
-			if (asset.SelectedWaypoint != null)
+			if (asset.EnableWaypointEditing && asset.SelectedWaypoint != null)
 			{
 				Vector3 worldPos = asset.SelectedWaypoint.Position + asset.GameObject.transform.position;
 
