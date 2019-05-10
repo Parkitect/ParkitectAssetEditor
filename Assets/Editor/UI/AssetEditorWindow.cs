@@ -447,7 +447,7 @@ namespace ParkitectAssetEditor.UI
             if (_selectedAsset.EnableWaypointEditing)
             {
 
-                GUILayout.Label("S - Snap to axis of connected waypoints");
+                GUILayout.Label("Alt - snap to plane height");
                 _selectedAsset.HelperPlaneY = EditorGUILayout.FloatField("Helper Plane Y", _selectedAsset.HelperPlaneY);
 
                 //generates an initial gride of waypoints around the outer squares

@@ -318,7 +318,6 @@ namespace ParkitectAssetEditor
 
 		[JsonIgnore] public bool EnableWaypointEditing;
 
-
 		/// <summary>
 		/// Helper Y Plane, used to place waypoints
 		/// </summary>
