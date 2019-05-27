@@ -29,7 +29,7 @@ namespace ParkitectAssetEditor.GizmoRenderers
 
 			if (asset.EnableWaypointEditing)
 			{
-				if (_snapToPlane)
+				if (_snapToPlane && asset.SelectedWaypoint != null)
 				{
 					asset.SelectedWaypoint.Position.y = asset.HelperPlaneY;
 				}
@@ -39,7 +39,7 @@ namespace ParkitectAssetEditor.GizmoRenderers
 					case EventType.Layout:
 						break;
 					case EventType.KeyDown:
-						if (Event.current.keyCode == KeyCode.LeftAlt)
+						if (Event.current.keyCode == KeyCode.LeftControl)
 						{
 							_snapToPlane = true;
 						}
@@ -99,7 +99,7 @@ namespace ParkitectAssetEditor.GizmoRenderers
 							asset.SelectedWaypoint.IsRabbitHoleGoal = !asset.SelectedWaypoint.IsRabbitHoleGoal;
 						}
 
-						if (Event.current.keyCode == KeyCode.LeftAlt)
+						if (Event.current.keyCode == KeyCode.LeftControl)
 						{
 							_snapToPlane = false;
 						}

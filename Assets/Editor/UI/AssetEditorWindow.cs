@@ -5,6 +5,7 @@ using System.Linq;
 using ParkitectAssetEditor.GizmoRenderers;
 using ParkitectAssetEditor.Utility;
 using UnityEditor;
+using UnityEditor.Animations;
 using UnityEngine;
 
 namespace ParkitectAssetEditor.UI
@@ -376,9 +377,11 @@ namespace ParkitectAssetEditor.UI
 				GUILayout.Label("Hold S - Snap to 0.25");
 			}
 
-			if (GUILayout.Button("Add BoundingBox"))
+			if (GUILayout.Button("Add bounding box"))
 			{
-				_selectedAsset.BoundingBoxes.Add(new BoundingBox());
+				BoundingBox boundingBox = new BoundingBox();
+				boundingBox.Bounds = new Bounds(new Vector3(0, 0.5f, 0), Vector3.one);
+				_selectedAsset.BoundingBoxes.Add(boundingBox);
 			}
 		}
 
@@ -422,22 +425,30 @@ namespace ParkitectAssetEditor.UI
 		/// </summary>
 		private void DrawAssetFlatRideDetailSection()
 		{
+			Animator animator = _selectedAsset.GameObject.GetComponent<Animator>();
+			if (animator == null) {
+				EditorGUILayout.HelpBox("This ride has no animator", MessageType.Error);
+			}
+			else if (animator.runtimeAnimatorController == null)
+			{
+				EditorGUILayout.HelpBox("This ride has no animator controller assigned (you can use Assets/Resources/Flat Rides/FlatRideAnimator.controller)", MessageType.Error);
+			}
+
 			//shows the rating of the ride
 			GUILayout.Label("Rating", EditorStyles.boldLabel);
-			_selectedAsset.Excitement = EditorGUILayout.Slider("Excitement", _selectedAsset.Excitement * 100, 0, 100)/100f;
-			_selectedAsset.Intensity =EditorGUILayout.Slider("Intensity",_selectedAsset.Intensity* 100, 0, 100)/100f;
-			_selectedAsset.Nausea = EditorGUILayout.Slider("Nausea",_selectedAsset.Nausea* 100, 0, 100)/100f;
+			_selectedAsset.Excitement = EditorGUILayout.Slider("Excitement", _selectedAsset.Excitement * 100, 0, 100) / 100f;
+			_selectedAsset.Intensity = EditorGUILayout.Slider("Intensity", _selectedAsset.Intensity * 100, 0, 100) / 100f;
+			_selectedAsset.Nausea = EditorGUILayout.Slider("Nausea", _selectedAsset.Nausea * 100, 0, 100) / 100f;
 
 			//the footprint that the ride covers
 			GUILayout.Label("Ride Footprint", EditorStyles.boldLabel);
 			_selectedAsset.FootprintX = EditorGUILayout.IntField("X", _selectedAsset.FootprintX);
 			_selectedAsset.FootprintZ = EditorGUILayout.IntField("Z", _selectedAsset.FootprintZ);
 
-
 			//category of the ride
 			GUILayout.Label("Category", EditorStyles.boldLabel);
 			_selectedAsset.FlatRideCategory = AttractionType.CategoryTag[
-				EditorGUILayout.Popup("category",
+				EditorGUILayout.Popup("Category",
 					Array.IndexOf(AttractionType.CategoryTag, _selectedAsset.FlatRideCategory),
 					AttractionType.CategoryDisplayName)];
 		}
@@ -457,7 +468,7 @@ namespace ParkitectAssetEditor.UI
 
 			if (_selectedAsset.EnableWaypointEditing)
 			{
-				GUILayout.Label("Alt - snap to plane height");
+				GUILayout.Label("Ctrl - snap to plane height");
 				_selectedAsset.HelperPlaneY = EditorGUILayout.FloatField("Helper Plane Y", _selectedAsset.HelperPlaneY);
 
 				//generates an initial gride of waypoints around the outer squares
