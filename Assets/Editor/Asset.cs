@@ -369,6 +369,8 @@ namespace ParkitectAssetEditor
 
 		#endregion
 
+		public AspectRatio AspectRatio { get; set; }
+
 		/// <summary>
 		/// Gets or sets the game object.
 		/// </summary>

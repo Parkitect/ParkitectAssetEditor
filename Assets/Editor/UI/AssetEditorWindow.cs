@@ -270,7 +270,8 @@ namespace ParkitectAssetEditor.UI
 				AssetType.Lamp.ToString(),
 				AssetType.Sign.ToString(),
 				AssetType.Tv.ToString(),
-				AssetType.FlatRide.ToString()
+				AssetType.FlatRide.ToString(),
+				AssetType.ImageSign.ToString()
 			});
 			_selectedAsset.Price = EditorGUILayout.FloatField("Price:", _selectedAsset.Price);
 
@@ -315,6 +316,10 @@ namespace ParkitectAssetEditor.UI
 					break;
 				case AssetType.Tv:
 					DrawAssetTvDetailSection();
+					break;
+				case AssetType.ImageSign:
+					DrawAssetImageSignDetailSection();
+					goto case AssetType.Deco;
 					break;
 				case AssetType.FlatRide:
 					DrawAssetFlatRideDetailSection();
@@ -697,11 +702,28 @@ namespace ParkitectAssetEditor.UI
 			GUILayout.Label("Tv settings:", EditorStyles.boldLabel);
 			var screen = EditorGUILayout.ObjectField("Screen object:", _selectedAsset.Screen, typeof(GameObject), true) as GameObject;
 
-			if (screen != _selectedAsset.Text)
+			if (screen != _selectedAsset.Screen)
 			{
 				_selectedAsset.Screen = screen;
 				screen.name = "Screen";
 			}
+		}
+
+		/// <summary>
+		/// Draws the asset image sign detail section.
+		/// </summary>
+		private void DrawAssetImageSignDetailSection()
+		{
+			GUILayout.Label("Image Sign settings:", EditorStyles.boldLabel);
+			var sign = EditorGUILayout.ObjectField("Sign object:", _selectedAsset.Screen, typeof(GameObject), true) as GameObject;
+
+			if (sign != _selectedAsset.Screen)
+			{
+				_selectedAsset.Screen = sign;
+				sign.name = "Sign";
+			}
+
+			_selectedAsset.AspectRatio = (AspectRatio)EditorGUILayout.Popup("Aspect ratio", (int)_selectedAsset.AspectRatio, AspectRatioUtility.aspectRatioNames);
 		}
 
 		/// <summary>
