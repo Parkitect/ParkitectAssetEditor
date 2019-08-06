@@ -252,6 +252,13 @@ namespace ParkitectAssetEditor
 
 		#region flatride
 
+		public string Description;
+
+		/// <summary>
+		/// Get or sets a value indicating how protected against rain a ride is bounded between 0 and 1
+		/// </summary>
+		public float RainProtection;
+
 		/// <summary>
 		/// Get or sets a value indicating how exciting a ride is bounded between 0 and 1
 		/// </summary>

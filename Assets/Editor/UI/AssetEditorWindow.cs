@@ -451,11 +451,19 @@ namespace ParkitectAssetEditor.UI
 			_selectedAsset.FootprintZ = EditorGUILayout.IntField("Z", _selectedAsset.FootprintZ);
 
 			//category of the ride
-			GUILayout.Label("Category", EditorStyles.boldLabel);
+			GUILayout.Label("Ride settings", EditorStyles.boldLabel);
 			_selectedAsset.FlatRideCategory = AttractionType.CategoryTag[
 				EditorGUILayout.Popup("Category",
 					Array.IndexOf(AttractionType.CategoryTag, _selectedAsset.FlatRideCategory),
 					AttractionType.CategoryDisplayName)];
+
+
+			_selectedAsset.RainProtection = EditorGUILayout.Slider("Rain Protection", _selectedAsset.RainProtection * 100, 0, 100) / 100f;
+
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.PrefixLabel("Description");
+			_selectedAsset.Description = EditorGUILayout.TextArea(_selectedAsset.Description, GUILayout.Height(EditorGUIUtility.singleLineHeight * 3));
+			EditorGUILayout.EndHorizontal();
 		}
 
 		private void DrawWaypointsDetailSection()
