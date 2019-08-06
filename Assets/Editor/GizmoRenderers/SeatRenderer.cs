@@ -37,7 +37,7 @@ namespace ParkitectAssetEditor.GizmoRenderers
 		{
 			if (npcMesh == null)
 			{
-				npcMesh = Resources.Load<Mesh>("Reference Objects/reference_sitting_guest");
+				npcMesh = Resources.Load<Mesh>("Reference Objects/reference_guest_sitting");
 			}
 
 			if (sceneViewMaterial == null)
