@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace ParkitectAssetEditor.GizmoRenderers
 {
@@ -33,14 +35,18 @@ namespace ParkitectAssetEditor.GizmoRenderers
 			var min = asset.SnapCenter ?  - 2.5f : -3f;
 			var max = asset.SnapCenter ? 2.5f : 3f;
 
+			Handles.zTest = CompareFunction.LessEqual;
+
 			for (float x = min; x <= max; x += 1 / asset.GridSubdivision)
 			{
-				Gizmos.DrawLine(asset.GameObject.transform.position + new Vector3(x, 0, min), asset.GameObject.transform.position + new Vector3(x, 0, max));
+				Handles.DrawLine(asset.GameObject.transform.position + new Vector3(x, 0, min), asset.GameObject.transform.position + new Vector3(x, 0, max));
 			}
 			for (float z = min; z <= max; z += 1 / asset.GridSubdivision)
 			{
-				Gizmos.DrawLine(asset.GameObject.transform.position + new Vector3(min, 0, z), asset.GameObject.transform.position + new Vector3(max, 0, z));
+				Handles.DrawLine(asset.GameObject.transform.position + new Vector3(min, 0, z), asset.GameObject.transform.position + new Vector3(max, 0, z));
 			}
+
+			Handles.zTest = CompareFunction.Always;
 		}
 	}
 }
