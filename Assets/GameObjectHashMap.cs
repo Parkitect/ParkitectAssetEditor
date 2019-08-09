@@ -55,8 +55,14 @@ public class GameObjectHashMap : MonoBehaviour
     /// <param name="value">The value.</param>
     public void Set(string key, GameObject value)
     {
-        if (string.IsNullOrEmpty(key) || value == null)
+        if (string.IsNullOrEmpty(key))
         {
+            return;
+        }
+
+        if (value == null)
+        {
+            Remove(key);
             return;
         }
 

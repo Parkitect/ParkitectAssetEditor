@@ -132,7 +132,7 @@ namespace ParkitectAssetEditor
             {
                 ProjectName = Path.GetFileNameWithoutExtension(path),
                 ProjectDirectory = Path.GetDirectoryName(path),
-                ModDirectory = Path.Combine(ModPath.ParkitectModPath, Path.GetFileNameWithoutExtension(path)),
+                ModDirectory = Path.Combine(Utility.Utility.ParkitectModPath, Path.GetFileNameWithoutExtension(path)),
                 ProjectFile = Path.GetFileName(path),
                 ProjectFileAutoSave = Path.GetFileName(path) + ".autosave"
             };
@@ -199,7 +199,7 @@ namespace ParkitectAssetEditor
             {
                 ProjectName = Path.GetFileNameWithoutExtension(pathWithoutAutoSave),
                 ProjectDirectory = Path.GetDirectoryName(pathWithoutAutoSave),
-                ModDirectory = Path.Combine(ModPath.ParkitectModPath, Path.GetFileNameWithoutExtension(pathWithoutAutoSave)),
+                ModDirectory = Path.Combine(Utility.Utility.ParkitectModPath, Path.GetFileNameWithoutExtension(pathWithoutAutoSave)),
                 ProjectFile = Path.GetFileName(pathWithoutAutoSave),
                 ProjectFileAutoSave = Path.GetFileName(pathWithoutAutoSave) + ".autosave"
             };
@@ -237,7 +237,7 @@ namespace ParkitectAssetEditor
             }
 
             var projectDirectory = Application.dataPath;
-            var modDirectory = Path.Combine(ModPath.ParkitectModPath, name);
+            var modDirectory = Path.Combine(Utility.Utility.ParkitectModPath, name);
             var projectFile = string.Format("{0}.assetProject", name);
             var projectFileAutoSave = string.Format("{0}.autosave", projectFile);
 

@@ -291,6 +291,19 @@ namespace ParkitectAssetEditor
 
 		#endregion
 
+		#region trains
+
+		public string TrackedRideName;
+
+		public int DefaultTrainLength = 1;
+		public int MinTrainLength = 1;
+		public int MaxTrainLength = 1;
+
+		public CoasterCar LeadCar;
+		public CoasterCar Car;
+
+		#endregion
+
 		#region BoundingBoxes
 
 		[JsonIgnore] 

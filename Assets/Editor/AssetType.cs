@@ -14,6 +14,7 @@
         Sign,
         Tv,
         FlatRide,
-        ImageSign
+        ImageSign,
+        Train
     }
 }

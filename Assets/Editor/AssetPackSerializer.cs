@@ -35,11 +35,19 @@ namespace ParkitectAssetEditor
             var prefabPaths = new List<string>();
             foreach (var asset in assetPack.Assets)
             {
-                var path = string.Format("Assets/Resources/AssetPack/{0}.prefab", asset.Guid);
-
-                PrefabUtility.CreatePrefab(path, asset.GameObject);
-
-                prefabPaths.Add(path);
+                if (asset.Type == AssetType.Train) {
+                    if (asset.LeadCar != null) {
+                        prefabPaths.Add(CreatePrefab(asset.LeadCar.GameObject, asset.LeadCar.Guid));
+                    }
+                    if (asset.Car != null) {
+                        prefabPaths.Add(CreatePrefab(asset.Car.GameObject, asset.Car.Guid));
+                    }
+                }
+                else {
+                    asset.LeadCar = null;
+                    asset.Car = null;
+                    prefabPaths.Add(CreatePrefab(asset.GameObject, asset.Guid));
+                }
             }
             
             // use the prefab list to build an assetbundle
@@ -54,6 +62,18 @@ namespace ParkitectAssetEditor
             BuildPipeline.BuildAssetBundles(ProjectManager.Project.Value.ModDirectory, descriptor, BuildAssetBundleOptions.ForceRebuildAssetBundle | BuildAssetBundleOptions.DeterministicAssetBundle | BuildAssetBundleOptions.UncompressedAssetBundle | BuildAssetBundleOptions.StrictMode, BuildTarget.StandaloneWindows);
             
             return true;
+        }
+
+        private static string CreatePrefab(GameObject gameObject, string Guid) {
+            if (gameObject == null) {
+                return null;
+            }
+
+            var path = string.Format("Assets/Resources/AssetPack/{0}.prefab", Guid);
+
+            PrefabUtility.CreatePrefab(path, gameObject);
+
+            return path;
         }
         
         /// <summary>
@@ -84,7 +104,41 @@ namespace ParkitectAssetEditor
                         assetPack.Assets.Remove(asset);
                     }
                 }
+
+                if (asset.Type == AssetType.Train)
+                {
+                    if (asset.LeadCar != null && asset.LeadCar.GameObject == null)
+                    {
+                        asset.LeadCar.GameObject = LoadGameObject(asset.LeadCar.Guid, asset);
+                    }
+
+                    if (asset.Car != null && asset.Car.GameObject == null)
+                    {
+                        asset.Car.GameObject = LoadGameObject(asset.Car.Guid, asset);
+                    }
+                }
             }
+        }
+
+        private static GameObject LoadGameObject(string Guid, Asset asset)
+        {
+            if (!string.IsNullOrEmpty(Guid))
+            {
+                try // if one object fails to load, don't make it fail the rest
+                {
+                    var go = Resources.Load<GameObject>(string.Format("AssetPack/{0}", Guid));
+                    
+                    return Object.Instantiate(go);
+                }
+                catch (System.Exception)
+                {
+                    Debug.LogError(string.Format("Could not find GameObject at Assets/Resources/AssetPack/{0} for asset {1}, skipped loading of asset", Guid, asset.Name));
+
+                    return null;
+                }
+            }
+
+            return null;
         }
     }
 }

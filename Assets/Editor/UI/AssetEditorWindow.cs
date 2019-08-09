@@ -43,6 +43,48 @@ namespace ParkitectAssetEditor.UI
 			new FootprintRenderer(),
 			new WaypointRenderer(), 
 			new BoundingBoxRenderer(), 
+			new TrainRenderer(), 
+		};
+
+		private static string[] trackedRideNames = new[]
+		{
+			"Alpine Coaster",
+			"Boat Dark Ride",
+			"Boat Transport",
+			"Calm River Ride",
+			"Car Ride",
+			"Floorless Coaster",
+			"Flying Coaster",
+			"Gentle Monorail Ride",
+			"Ghost Mansion Ride",
+			"Giga Coaster",
+			"Hydraulically-Launched Coaster",
+			"Hyper Coaster",
+			"Inverted Coaster",
+			"Inverted Dark Ride",
+			"Inverting Spinning Coaster",
+			"Inverting Wooden Coaster",
+			"Junior Coaster",
+			"Log Flume",
+			"Mine Train Coaster",
+			"Miniature Railway",
+			"Mini Coaster",
+			"Mini Monorail",
+			"Monorail",
+			"Monorail Coaster",
+			"Powered Coaster",
+			"Spinning Coaster",
+			"Splash Battle",
+			"Stand-up Coaster",
+			"Steel Coaster",
+			"Submarines",
+			"Suspended Coaster",
+			"Suspended Monorail",
+			"Vertical Drop Coaster",
+			"Water Coaster",
+			"Wild Mouse",
+			"Wing Coaster",
+			"Wooden Coaster",
 		};
 
 		[MenuItem("Window/Parkitect Asset Editor")]
@@ -271,7 +313,8 @@ namespace ParkitectAssetEditor.UI
 				AssetType.Sign.ToString(),
 				AssetType.Tv.ToString(),
 				AssetType.FlatRide.ToString(),
-				AssetType.ImageSign.ToString()
+				AssetType.ImageSign.ToString(),
+				AssetType.Train.ToString()
 			});
 			_selectedAsset.Price = EditorGUILayout.FloatField("Price:", _selectedAsset.Price);
 
@@ -307,6 +350,8 @@ namespace ParkitectAssetEditor.UI
 					break;
 				case AssetType.Bench:
 					DrawAssetSeatingDetailSection();
+					GUILayout.Space(15);
+					DrawSeatsDetailSection(_selectedAsset.GameObject);
 					break;
 				case AssetType.Fence:
 					DrawAssetFenceDetailSection();
@@ -320,6 +365,8 @@ namespace ParkitectAssetEditor.UI
 				case AssetType.ImageSign:
 					DrawAssetImageSignDetailSection();
 					goto case AssetType.Deco;
+				case AssetType.Train:
+					DrawAssetTrainDetailSection();
 					break;
 				case AssetType.FlatRide:
 					DrawAssetFlatRideDetailSection();
@@ -328,7 +375,7 @@ namespace ParkitectAssetEditor.UI
 					GUILayout.Space(15);
 					DrawWaypointsDetailSection();
 					GUILayout.Space(15);
-					DrawRideSeatsDetailSection();
+					DrawSeatsDetailSection(_selectedAsset.GameObject);
 					break;
 			}
 
@@ -524,7 +571,7 @@ namespace ParkitectAssetEditor.UI
 					_selectedAsset.SelectedWaypoint = null;
 				}
 
-				//provies a list of all the waypoints
+				//provides a list of all the waypoints
 				for (int i = 0; i < _selectedAsset.Waypoints.Count; i++)
 				{
 					EditorGUILayout.BeginHorizontal();
@@ -546,18 +593,22 @@ namespace ParkitectAssetEditor.UI
 			}
 		}
 
-		private void DrawRideSeatsDetailSection()
+		private void DrawSeatsDetailSection(GameObject gameObject)
 		{
+			if (gameObject == null)
+			{
+				return;
+			}
+
 			GUILayout.Label("Seats", "PreToolbar");
 
-			var seats = _selectedAsset.
-				GameObject.
+			var seats = gameObject.
 				GetComponentsInChildren<Transform>(true).
 				Where(transform => transform.name.StartsWith("Seat", true, CultureInfo.InvariantCulture));
 
 			if (seats.Count() == 0)
 			{
-				EditorGUILayout.HelpBox("This ride has no seats yet", MessageType.Error);
+				EditorGUILayout.HelpBox("There are no seats yet", MessageType.Warning);
 			}
 			else
 			{
@@ -577,7 +628,7 @@ namespace ParkitectAssetEditor.UI
 			{
 				var seat = new GameObject("Seat");
 
-				seat.transform.SetParent(_selectedAsset.GameObject.transform);
+				seat.transform.SetParent(gameObject.transform);
 
 				seat.transform.localPosition = Vector3.zero;
 
@@ -623,38 +674,9 @@ namespace ParkitectAssetEditor.UI
 				return;
 			}
 
-			var seats = _selectedAsset.
-				GameObject.
-				GetComponentsInChildren<Transform>(true).
-				Where(transform => transform.name.StartsWith("Seat", true, CultureInfo.InvariantCulture));
-
 			// Bench settings
 			GUILayout.Label("Bench settings", EditorStyles.boldLabel);
 			_selectedAsset.HasBackRest = EditorGUILayout.Toggle("Has back rest: ", _selectedAsset.HasBackRest);
-
-			EditorGUILayout.LabelField("Seats found", seats.Count().ToString());
-
-			foreach (Transform seat in seats)
-			{
-				if (GUILayout.Button(seat.name))
-				{
-					EditorGUIUtility.PingObject(seat.gameObject.GetInstanceID());
-					Selection.activeGameObject = seat.gameObject;
-				}
-			}
-
-			GUILayout.Space(10);
-
-			if (GUILayout.Button("Add seat"))
-			{
-				var seat = new GameObject("Seat");
-
-				seat.transform.SetParent(_selectedAsset.GameObject.transform);
-
-				seat.transform.localPosition = Vector3.zero;
-
-				Selection.activeGameObject = seat.gameObject;
-			}
 		}
 		
 		/// <summary>
@@ -732,6 +754,94 @@ namespace ParkitectAssetEditor.UI
 			}
 
 			_selectedAsset.AspectRatio = (AspectRatio)EditorGUILayout.Popup("Aspect ratio", (int)_selectedAsset.AspectRatio, AspectRatioUtility.aspectRatioNames);
+		}
+
+		/// <summary>
+		/// Draws the asset image sign detail section.
+		/// </summary>
+		private void DrawAssetTrainDetailSection()
+		{
+			GUILayout.Label("Train settings:", EditorStyles.boldLabel);
+			
+			if (_selectedAsset.GameObject.transform.Find("backAxis") == null)
+			{
+				EditorGUILayout.HelpBox("There is no backAxis marker!", MessageType.Error);
+			}
+
+			int trackedRideNameIndex = EditorGUILayout.Popup("Ride", Array.IndexOf(trackedRideNames, _selectedAsset.TrackedRideName), trackedRideNames);
+			if (trackedRideNameIndex >= 0 && trackedRideNameIndex < trackedRideNames.Length) {
+				_selectedAsset.TrackedRideName = trackedRideNames[trackedRideNameIndex];
+			}
+
+			_selectedAsset.DefaultTrainLength = EditorGUILayout.IntSlider("Default train length: ", _selectedAsset.DefaultTrainLength, 1, 12);
+			_selectedAsset.MinTrainLength = EditorGUILayout.IntSlider("Minimum train length: ", _selectedAsset.MinTrainLength, 1, 12);
+			_selectedAsset.MaxTrainLength = EditorGUILayout.IntSlider("Maximum train length: ", _selectedAsset.MaxTrainLength, 1, 12);
+
+			GUILayout.Space(15);
+			
+			if (_selectedAsset.LeadCar == null)
+			{
+				CoasterCar car = new CoasterCar(_selectedAsset.Guid + ".leadCar");
+				car.GameObject = _selectedAsset.GameObject;
+				_selectedAsset.LeadCar = car;
+			}
+			GUILayout.Label("Lead Car:", EditorStyles.boldLabel);
+			DrawCarDetailSection(_selectedAsset.LeadCar);
+
+			GUILayout.Space(30);
+			
+			if (_selectedAsset.Car == null)
+			{
+				CoasterCar car = new CoasterCar(_selectedAsset.Guid + ".car");
+				_selectedAsset.Car = car;
+			}
+
+			if (_selectedAsset.Car.GameObject == _selectedAsset.LeadCar.GameObject) {
+				_selectedAsset.Car.GameObject = null;
+			}
+
+			GUILayout.Label("Normal Car:", EditorStyles.boldLabel);
+			DrawCarDetailSection(_selectedAsset.Car);
+		}
+
+		private void DrawCarDetailSection(CoasterCar car) {
+			var newAsset = EditorGUILayout.ObjectField("Drop to add:", car.GameObject, typeof(GameObject), true) as GameObject;
+			if (newAsset != null && newAsset != car.GameObject && newAsset.scene.name != null) // scene name is null for prefabs, yay for unity for checking it this way
+			{
+				car.GameObject = newAsset;
+			}
+
+			car.SeatWaypointOffset = EditorGUILayout.FloatField("Seat waypoint offset:", car.SeatWaypointOffset);
+			car.OffsetFront = EditorGUILayout.FloatField("Offset front:", car.OffsetFront);
+			car.OffsetBack = EditorGUILayout.FloatField("Offset back:", car.OffsetBack);
+			
+			DrawSeatsDetailSection(car.GameObject);
+
+			GUILayout.Space(15);
+
+			GUILayout.Label("Restraints", "PreToolbar");
+			for (int i = car.Restraints.Count - 1; i >= 0; i--)
+			{
+				CoasterRestraints restraints = car.Restraints[i];
+
+				EditorGUILayout.BeginHorizontal();
+				GUILayout.Label("#" + i);
+				if (GUILayout.Button("Delete"))
+				{
+					car.Restraints.RemoveAt(i);
+				}
+				EditorGUILayout.EndHorizontal();
+
+				restraints.TransformName = EditorGUILayout.TextField("Transform name", restraints.TransformName);
+				restraints.ClosedAngle = EditorGUILayout.FloatField("Closed angle (X-Axis)", restraints.ClosedAngle);
+			}
+
+			if (GUILayout.Button("Add"))
+			{
+				CoasterRestraints restraints = new CoasterRestraints();
+				restraints.TransformName = "restraint";
+				car.Restraints.Add(restraints);
+			}
 		}
 
 		/// <summary>
