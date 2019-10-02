@@ -1,9 +1,7 @@
 fileFormatVersion: 2
 guid: cefce2fbf9166d24fa7549cd8c7acbfb
-timeCreated: 1508399674
-licenseType: Free
 ModelImporter:
-  serializedVersion: 21
+  serializedVersion: 22
   fileIDToRecycleName:
     100000: //RootNode
     100002: SignTextPanel
@@ -15,10 +13,22 @@ ModelImporter:
     3300002: SignTextPanel
     4300000: sign_modguide
     4300002: SignTextPanel
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: CustomColorsDiffuse
+    second: {fileID: 2100000, guid: 09831808cebc61d438871fe282b934c5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: SignTextMaterial
+    second: {fileID: 2100000, guid: 8c96c7b3766e91d469ecaa3badc73ae7, type: 2}
   materials:
     importMaterials: 1
     materialName: 1
-    materialSearch: 1
+    materialSearch: 2
+    materialLocation: 0
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
@@ -31,6 +41,7 @@ ModelImporter:
     animationImportWarnings: 
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
     animationCompression: 1
     animationRotationError: 0.5
     animationPositionError: 0.5
@@ -55,6 +66,8 @@ ModelImporter:
     optimizeMeshForGPU: 1
     keepQuads: 0
     weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 1
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
