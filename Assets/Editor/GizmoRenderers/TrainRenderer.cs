@@ -40,21 +40,42 @@ namespace ParkitectAssetEditor.GizmoRenderers
 				sceneViewMaterial = (Material)AssetDatabase.LoadAssetAtPath("Assets/Editor/SceneViewGhostMaterial.mat", typeof(Material));
 			}
 
-			if (asset.LeadCar != null && asset.LeadCar.GameObject != null && asset.Car != null && asset.Car.GameObject != null) {
-				GameObject car = asset.Car.GameObject;
-				GameObject leadCar = asset.LeadCar.GameObject;
+			CoasterCar previousCar = asset.LeadCar;
+			if (asset.Car != null && asset.Car.GameObject != null) {
+				if (previousCar != null && previousCar.GameObject != null) {
+					GameObject previousCarObject = previousCar.GameObject;
+					GameObject car = asset.Car.GameObject;
 
-				float lengthAxis = 0;
-				Transform backAxisMarker = leadCar.transform.Find("backAxis");
-				if (backAxisMarker != null) {
-					lengthAxis = Mathf.Abs(backAxisMarker.localPosition.z);
+					float lengthAxis = 0;
+					Transform backAxisMarker = previousCarObject.transform.Find("backAxis");
+					if (backAxisMarker != null) {
+						lengthAxis = Mathf.Abs(backAxisMarker.localPosition.z);
+					}
+
+					car.transform.position = previousCarObject.transform.position - previousCarObject.transform.forward * (lengthAxis + previousCar.OffsetBack + asset.Car.OffsetFront);
 				}
 
-				car.transform.position = leadCar.transform.position - leadCar.transform.forward * (lengthAxis + asset.LeadCar.OffsetBack + asset.Car.OffsetFront);
+				previousCar = asset.Car;
+			}
+
+			if (asset.RearCar != null && asset.RearCar.GameObject != null) {
+				if (previousCar != null && previousCar.GameObject != null) {
+					GameObject previousCarObject = previousCar.GameObject;
+					GameObject car = asset.RearCar.GameObject;
+
+					float lengthAxis = 0;
+					Transform backAxisMarker = previousCarObject.transform.Find("backAxis");
+					if (backAxisMarker != null) {
+						lengthAxis = Mathf.Abs(backAxisMarker.localPosition.z);
+					}
+
+					car.transform.position = previousCarObject.transform.position - previousCarObject.transform.forward * (lengthAxis + previousCar.OffsetBack + asset.RearCar.OffsetFront);
+				}
 			}
 
 			DrawCar(asset.LeadCar);
 			DrawCar(asset.Car);
+			DrawCar(asset.RearCar);
 		}
 
 		private void DrawCar(CoasterCar car) {
@@ -85,12 +106,13 @@ namespace ParkitectAssetEditor.GizmoRenderers
 			Handles.Label(frontPosition + Vector3.up * 0.5f + carGO.transform.forward * 0.1f, "Front");
 
 			Transform backAxis = carGO.transform.Find("backAxis");
-			Vector3 backPosition = backAxis.position;
-			backPosition -= carGO.transform.forward * car.OffsetBack;
+			if (backAxis != null) {
+				Vector3 backPosition = backAxis.position;
+				backPosition -= carGO.transform.forward * car.OffsetBack;
 
-			EditorGUI.BeginChangeCheck();
-			Gizmos.DrawLine(backPosition, backPosition + Vector3.up * 0.5f);
-			Handles.Label(backPosition - Vector3.up * 0.1f - carGO.transform.forward * 0.1f, "Back");
+				Gizmos.DrawLine(backPosition, backPosition + Vector3.up * 0.5f);
+				Handles.Label(backPosition - Vector3.up * 0.1f - carGO.transform.forward * 0.1f, "Back");
+			}
 
 			foreach (CoasterRestraints restraints in car.Restraints)
 			{

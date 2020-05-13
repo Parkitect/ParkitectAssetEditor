@@ -301,6 +301,7 @@ namespace ParkitectAssetEditor
 
 		public CoasterCar LeadCar;
 		public CoasterCar Car;
+		public CoasterCar RearCar;
 
 		#endregion
 

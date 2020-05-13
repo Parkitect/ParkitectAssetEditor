@@ -42,10 +42,14 @@ namespace ParkitectAssetEditor
                     if (asset.Car != null) {
                         prefabPaths.Add(CreatePrefab(asset.Car.GameObject, asset.Car.Guid));
                     }
+                    if (asset.RearCar != null) {
+                        prefabPaths.Add(CreatePrefab(asset.RearCar.GameObject, asset.RearCar.Guid));
+                    }
                 }
                 else {
                     asset.LeadCar = null;
                     asset.Car = null;
+                    asset.RearCar = null;
                     prefabPaths.Add(CreatePrefab(asset.GameObject, asset.Guid));
                 }
             }
@@ -115,6 +119,11 @@ namespace ParkitectAssetEditor
                     if (asset.Car != null && asset.Car.GameObject == null)
                     {
                         asset.Car.GameObject = LoadGameObject(asset.Car.Guid, asset);
+                    }
+
+                    if (asset.RearCar != null && asset.RearCar.GameObject == null)
+                    {
+                        asset.RearCar.GameObject = LoadGameObject(asset.RearCar.Guid, asset);
                     }
                 }
             }

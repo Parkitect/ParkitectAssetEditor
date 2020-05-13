@@ -761,6 +761,10 @@ namespace ParkitectAssetEditor.UI
 		/// </summary>
 		private void DrawAssetTrainDetailSection()
 		{
+			if (_selectedAsset.GameObject == null) {
+				return;
+			}
+
 			GUILayout.Label("Train settings:", EditorStyles.boldLabel);
 			
 			if (_selectedAsset.GameObject.transform.Find("backAxis") == null)
@@ -802,6 +806,21 @@ namespace ParkitectAssetEditor.UI
 
 			GUILayout.Label("Normal Car:", EditorStyles.boldLabel);
 			DrawCarDetailSection(_selectedAsset.Car);
+
+			GUILayout.Space(30);
+			
+			if (_selectedAsset.RearCar == null)
+			{
+				CoasterCar car = new CoasterCar(_selectedAsset.Guid + ".rearCar");
+				_selectedAsset.RearCar = car;
+			}
+
+			if (_selectedAsset.RearCar.GameObject == _selectedAsset.LeadCar.GameObject || _selectedAsset.RearCar.GameObject == _selectedAsset.Car.GameObject) {
+				_selectedAsset.RearCar.GameObject = null;
+			}
+
+			GUILayout.Label("Rear Car:", EditorStyles.boldLabel);
+			DrawCarDetailSection(_selectedAsset.RearCar);
 		}
 
 		private void DrawCarDetailSection(CoasterCar car) {
