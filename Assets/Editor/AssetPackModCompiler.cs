@@ -52,54 +52,52 @@ namespace ParkitectAssetEditor
             manager.AddNamespace("x", ProjectDocument.DefaultCsProjNamespace);
 
             // List the referenced assemblies of the mod.
-           List<String> assembleRefrencesInclude = document.SelectNodes("//x:Reference", manager)
+            List<String> assembleRefrencesInclude = document.SelectNodes("//x:Reference", manager)
                 .Cast<XmlNode>()
                 .Select(node => node.Attributes["Include"])
                 .Select(name => name.Value.Split(',').FirstOrDefault()).ToList();
 
 
-           List<String> unresolvedSourceFiles = document.SelectNodes("//x:Compile", manager)
-               .Cast<XmlNode>()
-               .Select(node => node.Attributes["Include"].Value).ToList();
+            List<String> unresolvedSourceFiles = document.SelectNodes("//x:Compile", manager)
+                .Cast<XmlNode>()
+                .Select(node => node.Attributes["Include"].Value).ToList();
 
-           var assemblyFiles = new List<string>();
-           var sourceFiles = new List<string>();
-           foreach (var inc in assembleRefrencesInclude)
-           {
-               if (Utility.Utility.SystemAssemblies.Contains(inc))
-               {
-                   Debug.Log("Resolved Assembly Reference:" + inc + ".dll");
-                   assemblyFiles.Add(inc + ".dll");
-               }
-               else
-               {
-                   var pt = Path.Combine(Path.Combine(assetPack.ParkitectPath, "Parkitect_Data/Managed/"),
-                       inc + ".dll");
-                   Debug.Log("Resolved Assembly Reference:" + pt);
-                   assemblyFiles.Add(pt);
-               }
-           }
+            var assemblyFiles = new List<string>();
+            var sourceFiles = new List<string>();
+            foreach (var inc in assembleRefrencesInclude)
+            {
+                if (Utility.Utility.SystemAssemblies.Contains(inc))
+                {
+                    Debug.Log("Resolved Assembly Reference:" + inc + ".dll");
+                    assemblyFiles.Add(inc + ".dll");
+                }
+                else
+                {
+                    var pt = Path.Combine(Path.Combine(assetPack.ParkitectPath, "Parkitect_Data/Managed/"),
+                        inc + ".dll");
+                    Debug.Log("Resolved Assembly Reference:" + pt);
+                    assemblyFiles.Add(pt);
+                }
+            }
 
-           sourceFiles.AddRange(unresolvedSourceFiles.Select(file => Path.Combine(path, file)));
+            sourceFiles.AddRange(unresolvedSourceFiles.Select(file => Path.Combine(path, file)));
 
-           Debug.Log("Compile using compiler version v4.0");
-           var csCodeProvider = new CSharpCodeProvider();
-           CompilerParameters parameters = new CompilerParameters(assemblyFiles.ToArray())
-           {
-               GenerateExecutable = false,
-               OutputAssembly = Path.Combine(ProjectManager.Project.Value.ModDirectory, "build.dll")
-           };
+            Debug.Log("Compile using compiler version v4.0");
+            var csCodeProvider = new CSharpCodeProvider();
 
-           // var parameters = new CompilerParameters(assemblyFiles.ToArray(), Path.Combine(ProjectManager.Project.Value.ModDirectory,"build.dll"));
+            var parameters = new CompilerParameters(assemblyFiles.ToArray(),
+                Path.Combine(ProjectManager.Project.Value.ModDirectory, "build.dll"));
             var result = csCodeProvider.CompileAssemblyFromFile(parameters, sourceFiles.ToArray());
 
             foreach (var o in result.Output)
             {
                 Debug.Log(o);
             }
+
             foreach (var error in result.Errors.Cast<CompilerError>())
             {
-                Debug.LogError(error.ErrorNumber + ":" + error.Line + ":" + error.Column + ":" + error.ErrorText + " in " + error.FileName);
+                Debug.LogError(error.ErrorNumber + ":" + error.Line + ":" + error.Column + ":" + error.ErrorText +
+                               " in " + error.FileName);
             }
 
             return true;
