@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace ParkitectAssetEditor
 {
@@ -9,6 +11,22 @@ namespace ParkitectAssetEditor
     /// </summary>
     public class AssetPack
     {
+        /// <summary>
+        /// Gets or sets the path for Parkitect.
+        /// </summary>
+        /// <value>
+        /// The path for Parkitect.
+        /// </value>
+        public String ParkitectPath;
+
+        /// <summary>
+        /// List Of Enabled Project Assemblies
+        /// </summary>
+        /// <value>
+        /// The assemblies used for compiling the mod
+        /// </value>
+        public List<String> ProjectAssemblies { get; set; }
+
         /// <summary>
         /// Gets or sets the assets.
         /// </summary>
@@ -40,7 +58,7 @@ namespace ParkitectAssetEditor
         /// The archive setting. If true, assets should be archived with the mod to be uploaded to the workshop.
         /// </value>
         public bool ArchiveAssets { get; set; }
-        
+
         /// <summary>
         /// Adds the specified game object as an asset.
         /// </summary>
@@ -93,7 +111,7 @@ namespace ParkitectAssetEditor
 
             LayOutAssets();
         }
-        
+
         /// <summary>
         /// Removes the specified asset.
         /// </summary>
