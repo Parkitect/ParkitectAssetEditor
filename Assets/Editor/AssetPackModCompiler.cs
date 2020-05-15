@@ -1,6 +1,7 @@
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -82,13 +83,14 @@ namespace ParkitectAssetEditor
            sourceFiles.AddRange(unresolvedSourceFiles.Select(file => Path.Combine(path, file)));
 
            Debug.Log("Compile using compiler version v4.0");
-           var csCodeProvider =
-               new CSharpCodeProvider(new Dictionary<string, string>
-               {
-                   // {"CompilerVersion", "v4.0"}
-               });
+           var csCodeProvider = new CSharpCodeProvider();
+           CompilerParameters parameters = new CompilerParameters(assemblyFiles.ToArray())
+           {
+               GenerateExecutable = false,
+               OutputAssembly = Path.Combine(ProjectManager.Project.Value.ModDirectory, "build.dll")
+           };
 
-           var parameters = new CompilerParameters(assemblyFiles.ToArray(), Path.Combine(ProjectManager.Project.Value.ModDirectory,"build.dll"));
+           // var parameters = new CompilerParameters(assemblyFiles.ToArray(), Path.Combine(ProjectManager.Project.Value.ModDirectory,"build.dll"));
             var result = csCodeProvider.CompileAssemblyFromFile(parameters, sourceFiles.ToArray());
 
             foreach (var o in result.Output)
