@@ -89,9 +89,9 @@ namespace ParkitectAssetEditor
             }
 
             XmlDocument csProj = new XmlDocument();
-            csProj.LoadXml(ProjectDocument.CSProj.Replace("${RootNamespace}", "Parkitect")
-                .Replace("${AssemblyName}","Parkitect")
-                .Replace("${OutputPath}", "./debug"));
+            csProj.LoadXml(ProjectDocument.CSProj.Replace("${RootNamespace}", "ParkitectMod")
+                .Replace("${AssemblyName}","ParkitectMod")
+                .Replace("${OutputPath}", ProjectManager.Project.Value.ModDirectory));
 
             var manager = new XmlNamespaceManager(csProj.NameTable);
             manager.AddNamespace("x", ProjectDocument.DefaultCsProjNamespace);
@@ -138,8 +138,6 @@ namespace ParkitectAssetEditor
 
                 }
             }
-
-
 
             csProj.Save(Path.Combine(projectPath,"ParkitectMod.csproj"));
 
