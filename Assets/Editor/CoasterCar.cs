@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Newtonsoft.Json;
-using UnityEditor;
 using UnityEngine;
 
 namespace ParkitectAssetEditor
@@ -9,7 +7,7 @@ namespace ParkitectAssetEditor
     public class CoasterCar
     {
         public string Guid { get; private set; }
-        
+
 		[JsonIgnore]
 		public GameObject GameObject
 		{
@@ -24,7 +22,7 @@ namespace ParkitectAssetEditor
 
 		public CoasterCar(string guid)
 		{
-			Guid = guid; 
+			Guid = guid;
 		}
 	}
 }

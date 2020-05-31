@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -7,7 +6,6 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using ParkitectAssetEditor.Compression;
 using ParkitectAssetEditor.UI;
-using ParkitectAssetEditor.Utility;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -48,7 +46,7 @@ namespace ParkitectAssetEditor
         }
 
         private static string _autoSaveHash = "";
-        
+
         /// <summary>
         /// Saves the project.
         /// </summary>
@@ -65,7 +63,7 @@ namespace ParkitectAssetEditor
                 Debug.Log("There are no defined assets in the Asset Pack, can't save");
                 return false;
             }
-            
+
             string output = JsonConvert.SerializeObject(AssetPack);
 
             File.WriteAllText(path, output);
@@ -96,7 +94,7 @@ namespace ParkitectAssetEditor
                 {
                     File.Delete(assetZipPath);
                 }
-                
+
                 if (exportAssetZip)
                 {
                     Debug.Log(string.Format("Archiving {0} to {1}", Project.Value.ProjectDirectory, assetZipPath));
@@ -111,7 +109,7 @@ namespace ParkitectAssetEditor
             }
 
             Debug.LogWarning(string.Format("Failed saving project {0}", path));
-            
+
             return false;
         }
 
@@ -136,9 +134,9 @@ namespace ParkitectAssetEditor
                 ProjectFile = Path.GetFileName(path),
                 ProjectFileAutoSave = Path.GetFileName(path) + ".autosave"
             };
-            
+
             AssetPack = JsonConvert.DeserializeObject<AssetPack>(File.ReadAllText(path));
-            
+
             AssetPack.LoadGameObjects();
             AssetPack.InitAssetsInScene();
 
@@ -159,7 +157,7 @@ namespace ParkitectAssetEditor
         public static void AutoSave()
         {
             var path = EditorPrefs.GetString("loadedProject");
-            
+
             string output = JsonConvert.SerializeObject(AssetPack);
 
             using (var md5 = MD5.Create())
@@ -189,7 +187,7 @@ namespace ParkitectAssetEditor
         public static void AutoLoad()
         {
             var path = EditorPrefs.GetString("loadedProject");
-            
+
             // .autosave = 9 characters, them hacks!
             var pathWithoutAutoSave = path.Remove(path.Length - 9);
 
@@ -203,7 +201,7 @@ namespace ParkitectAssetEditor
                 ProjectFile = Path.GetFileName(pathWithoutAutoSave),
                 ProjectFileAutoSave = Path.GetFileName(pathWithoutAutoSave) + ".autosave"
             };
-            
+
             AssetPack = JsonConvert.DeserializeObject<AssetPack>(File.ReadAllText(path));
 
             EditorPrefs.SetString("loadedProject", Path.Combine(Project.Value.ProjectDirectory, Project.Value.ProjectFileAutoSave));
@@ -246,7 +244,7 @@ namespace ParkitectAssetEditor
             {
                 throw new ProjectAlreadyExistsException(string.Format("There already is a project at {0}", projectFilePath));
             }
-            
+
             if (Directory.Exists(modDirectory))
             {
                 throw new ProjectAlreadyExistsException(string.Format("Your Parkitect installation already has a mod called {0} at {1}", name, modDirectory));

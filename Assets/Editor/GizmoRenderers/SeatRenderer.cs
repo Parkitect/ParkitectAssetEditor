@@ -1,17 +1,11 @@
-﻿using System.Globalization;
-using System.Linq;
-using Microsoft.CSharp;
-using UnityEditor;
-using UnityEngine;
-
-namespace ParkitectAssetEditor.GizmoRenderers
+﻿namespace ParkitectAssetEditor.GizmoRenderers
 {
 	/// <summary>
 	/// Renders guests on a bench
 	/// </summary>
 	/// <seealso cref="IGizmoRenderer" />
 	class SeatRenderer : IGizmoRenderer
-	{		
+	{
 		/// <inheritdoc />
 		/// <summary>
 		/// Determines whether this instance can render the specified asset.

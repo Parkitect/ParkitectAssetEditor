@@ -5,7 +5,6 @@ using System.Linq;
 using ParkitectAssetEditor.GizmoRenderers;
 using ParkitectAssetEditor.Utility;
 using UnityEditor;
-using UnityEditor.Animations;
 using UnityEngine;
 
 namespace ParkitectAssetEditor.UI
@@ -29,21 +28,23 @@ namespace ParkitectAssetEditor.UI
 
 		private Vector2 _descriptionTextScrollPosition;
 
-		/// <summary>
-		/// The selected asset.
-		/// </summary>
-		private Asset _selectedAsset;
-	   
+        private ShopProduct _selectedProduct;
+        private Vector2 _productScrollPosition;
+
+        /// <summary>
+        /// The selected asset.
+        /// </summary>
+        private Asset _selectedAsset;
 
 		private static readonly IGizmoRenderer[] _gizmoRenderers = {
 			new SeatRenderer(),
 			new WallRenderer(),
-			new GridRenderer(), 
-			new SignRenderer(), 
+			new GridRenderer(),
+			new SignRenderer(),
 			new FootprintRenderer(),
-			new WaypointRenderer(), 
-			new BoundingBoxRenderer(), 
-			new TrainRenderer(), 
+			new WaypointRenderer(),
+			new BoundingBoxRenderer(),
+			new TrainRenderer(),
 		};
 
 		private static string[] trackedRideNames = new[]
@@ -99,13 +100,13 @@ namespace ParkitectAssetEditor.UI
 			EditorPrefs.SetString("loadedProject", null);
 
 			var files = Directory.GetFiles(Application.dataPath, "*.assetProject");
-			
+
 			if (files.Length > 0)
 			{
 				ProjectManager.Load(files[0]);
 			}
 		}
-		
+
 		public void Update()
 		{
 			// Unity loses its state when it compiles, with the editor pref we can load the opened project automatically.
@@ -180,7 +181,7 @@ namespace ParkitectAssetEditor.UI
 				}
 			}
 		}
-		
+
 		void OnFocus()
 		{
 			// Remove delegate listener if it has previously
@@ -314,7 +315,8 @@ namespace ParkitectAssetEditor.UI
 				AssetType.Tv.ToString(),
 				AssetType.FlatRide.ToString(),
 				AssetType.ImageSign.ToString(),
-				AssetType.Train.ToString()
+				AssetType.Train.ToString(),
+                AssetType.Shop.ToString()
 			});
 			_selectedAsset.Price = EditorGUILayout.FloatField("Price:", _selectedAsset.Price);
 
@@ -377,6 +379,9 @@ namespace ParkitectAssetEditor.UI
 					GUILayout.Space(15);
 					DrawSeatsDetailSection(_selectedAsset.GameObject);
 					break;
+                case AssetType.Shop:
+                    DrawShopProductSection();
+                    break;
 			}
 
 			GUILayout.Space(20);
@@ -387,7 +392,72 @@ namespace ParkitectAssetEditor.UI
 			}
 		}
 
-		private void DrawBoundingBoxDetailSection()
+        /// <summary>
+        /// Shop product
+        /// </summary>
+        private void DrawShopProductSection()
+        {
+
+            Event e = Event.current;
+
+            GUILayout.Space(10);
+            EditorGUILayout.LabelField("Products:", EditorStyles.boldLabel);
+            _productScrollPosition =
+                EditorGUILayout.BeginScrollView(_productScrollPosition, "GroupBox", GUILayout.Height(100));
+            foreach (var product in _selectedAsset.Products)
+            {
+                Color gui = GUI.color;
+                if (product == _selectedProduct)
+                {
+                    GUI.color = Color.red;
+                }
+
+                if (GUILayout.Button(product.Name + "    $" + product.Price + " (" + product.ProductType + ")"))
+                {
+
+                    GUI.FocusControl("");
+                    if (e.button == 1)
+                    {
+                        _selectedAsset.Products.Remove(product);
+                        return;
+                    }
+
+                    if (_selectedProduct == product)
+                    {
+                        _selectedProduct = null;
+                        return;
+                    }
+
+                    _selectedProduct = product;
+                }
+
+                GUI.color = gui;
+            }
+
+            EditorGUILayout.EndScrollView();
+
+
+            if (GUILayout.Button("Add Product"))
+            {
+                _selectedAsset.Products.Add(new ShopProduct());
+            }
+
+            if (_selectedProduct != null)
+            {
+                if (!_selectedAsset.Products.Contains(_selectedProduct))
+                {
+                    _selectedProduct = null;
+                    return;
+                }
+
+                GUILayout.Space(10);
+                _selectedProduct.ShopProductSection();
+
+            }
+
+        }
+
+        private void DrawBoundingBoxDetailSection()
 		{
 			GUILayout.Label("Collisions", "PreToolbar");
 
@@ -456,7 +526,7 @@ namespace ParkitectAssetEditor.UI
 				_selectedAsset.GridSubdivision = Mathf.RoundToInt(EditorGUILayout.Slider("Grid subdivision: ", _selectedAsset.GridSubdivision, 1, 9));
 			}
 			_selectedAsset.HeightDelta = Mathf.RoundToInt(EditorGUILayout.Slider("Height delta: ", _selectedAsset.HeightDelta, 0.05f, 1) * 200f) / 200f;
-			
+
 			GUILayout.Label("Size settings", EditorStyles.boldLabel);
 			_selectedAsset.IsResizable = EditorGUILayout.Toggle("Is resizable: ", _selectedAsset.IsResizable);
 
@@ -678,7 +748,7 @@ namespace ParkitectAssetEditor.UI
 			GUILayout.Label("Bench settings", EditorStyles.boldLabel);
 			_selectedAsset.HasBackRest = EditorGUILayout.Toggle("Has back rest: ", _selectedAsset.HasBackRest);
 		}
-		
+
 		/// <summary>
 		/// Draws the asset fence detail section.
 		/// </summary>
@@ -708,7 +778,7 @@ namespace ParkitectAssetEditor.UI
 
 			DrawAssetWallDetailSection();
 		}
-		
+
 		/// <summary>
 		/// Draws the asset sign detail section.
 		/// </summary>
@@ -723,7 +793,7 @@ namespace ParkitectAssetEditor.UI
 				text.name = "Text";
 			}
 		}
-		
+
 		/// <summary>
 		/// Draws the asset tv detail section.
 		/// </summary>
@@ -766,7 +836,7 @@ namespace ParkitectAssetEditor.UI
 			}
 
 			GUILayout.Label("Train settings:", EditorStyles.boldLabel);
-			
+
 			if (_selectedAsset.GameObject.transform.Find("backAxis") == null)
 			{
 				EditorGUILayout.HelpBox("There is no backAxis marker!", MessageType.Error);
@@ -782,7 +852,7 @@ namespace ParkitectAssetEditor.UI
 			_selectedAsset.MaxTrainLength = EditorGUILayout.IntSlider("Maximum train length: ", _selectedAsset.MaxTrainLength, 1, 12);
 
 			GUILayout.Space(15);
-			
+
 			if (_selectedAsset.LeadCar == null)
 			{
 				CoasterCar car = new CoasterCar(_selectedAsset.Guid + ".leadCar");
@@ -793,7 +863,7 @@ namespace ParkitectAssetEditor.UI
 			DrawCarDetailSection(_selectedAsset.LeadCar);
 
 			GUILayout.Space(30);
-			
+
 			if (_selectedAsset.Car == null)
 			{
 				CoasterCar car = new CoasterCar(_selectedAsset.Guid + ".car");
@@ -808,7 +878,7 @@ namespace ParkitectAssetEditor.UI
 			DrawCarDetailSection(_selectedAsset.Car);
 
 			GUILayout.Space(30);
-			
+
 			if (_selectedAsset.RearCar == null)
 			{
 				CoasterCar car = new CoasterCar(_selectedAsset.Guid + ".rearCar");
@@ -833,7 +903,7 @@ namespace ParkitectAssetEditor.UI
 			car.SeatWaypointOffset = EditorGUILayout.FloatField("Seat waypoint offset:", car.SeatWaypointOffset);
 			car.OffsetFront = EditorGUILayout.FloatField("Offset front:", car.OffsetFront);
 			car.OffsetBack = EditorGUILayout.FloatField("Offset back:", car.OffsetBack);
-			
+
 			DrawSeatsDetailSection(car.GameObject);
 
 			GUILayout.Space(15);
@@ -870,7 +940,7 @@ namespace ParkitectAssetEditor.UI
 		private void SelectAsset(Asset asset)
 		{
 			_selectedAsset = asset;
-			
+
 			EditorGUIUtility.PingObject(_selectedAsset.GameObject.GetInstanceID());
 
 			Selection.activeGameObject = _selectedAsset.GameObject;
