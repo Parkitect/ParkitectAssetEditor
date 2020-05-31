@@ -244,11 +244,31 @@ namespace ParkitectAssetEditor
 
 		#region wall
 
-		public int WallSettings;
+        public int WallSettings;
 
-		public float Height;
-		
-		#endregion
+        public float Height;
+        #endregion
+
+        #region shop
+
+        public List<ShopProduct> Products = new List<ShopProduct>();
+
+	    #endregion
+
+        #region sign
+        /// <summary>
+        /// Gets or sets the text game object.
+        /// </summary>
+        /// <value>
+        /// The text game object.
+        /// </value>
+        [JsonIgnore]
+        public GameObject Text
+        {
+            get { return GameObjectHashMap.Instance.Get(Guid + ".text"); }
+            set { GameObjectHashMap.Instance.Set(Guid + ".text", value); }
+        }
+        #endregion
 
 		#region flatride
 
@@ -307,20 +327,20 @@ namespace ParkitectAssetEditor
 
 		#region BoundingBoxes
 
-		[JsonIgnore] 
+		[JsonIgnore]
 		public bool EnableBoundingBoxEditing;
 
-		
+
 		/// <summary>
 		/// determins if the bounding box can snap
 		/// </summary>
-		[JsonIgnore] 
+		[JsonIgnore]
 		public bool BoundingBoxSnap;
 
 		/// <summary>
 		/// the active bounded box
 		/// </summary>
-		[JsonIgnore] 
+		[JsonIgnore]
 		public BoundingBox SelectedBoundingBox = null;
 
 		/// <summary>
@@ -333,7 +353,7 @@ namespace ParkitectAssetEditor
 		#region waypoints
 
 		/// <summary>
-		/// list of waypoints to help with NPC traversial 
+		/// list of waypoints to help with NPC traversial
 		/// </summary>
 		public List<Waypoint> Waypoints = new List<Waypoint>();
 
@@ -356,24 +376,7 @@ namespace ParkitectAssetEditor
 
 		#endregion
 
-		#region sign        
-
-		/// <summary>
-		/// Gets or sets the text game object.
-		/// </summary>
-		/// <value>
-		/// The text game object.
-		/// </value>
-		[JsonIgnore]
-		public GameObject Text
-		{
-			get { return GameObjectHashMap.Instance.Get(Guid + ".text"); }
-			set { GameObjectHashMap.Instance.Set(Guid + ".text", value); }
-		}
-
-		#endregion
-
-		#region sign        
+        #region sign
 
 		/// <summary>
 		/// Gets or sets the screen game object.
