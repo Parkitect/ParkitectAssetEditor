@@ -22,7 +22,7 @@ namespace ParkitectAssetEditor.GizmoRenderers
             fill.a = 0.1f;
             Handles.zTest = CompareFunction.LessEqual;
             Handles.color = Color.white;
-            Handles.DrawSolidRectangleWithOutline(new[] {topLeft, topRight, bottomRight, bottomLeft}, fill, Color.black);         
+            Handles.DrawSolidRectangleWithOutline(new[] {topLeft, topRight, bottomRight, bottomLeft}, fill, Color.black);
         }
 
     }

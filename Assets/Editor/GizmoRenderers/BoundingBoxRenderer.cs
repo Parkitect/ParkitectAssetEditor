@@ -9,7 +9,7 @@ namespace ParkitectAssetEditor.GizmoRenderers
 	{
 		public bool CanRender(Asset asset)
 		{
-			return asset.Type == AssetType.FlatRide;
+			return asset.Type == AssetType.FlatRide || asset.Type == AssetType.Shop;
 		}
 
 		public void Render(Asset asset)
@@ -77,7 +77,7 @@ namespace ParkitectAssetEditor.GizmoRenderers
 					fill.a = 0.05f;
 					outer = Color.black;
 				}
-				
+
 				Handles.zTest = CompareFunction.Less;
 
 				// left

@@ -320,28 +320,41 @@ namespace ParkitectAssetEditor.UI
 			});
 			_selectedAsset.Price = EditorGUILayout.FloatField("Price:", _selectedAsset.Price);
 
-			GUILayout.Label("Color settings", EditorStyles.boldLabel);
-			_selectedAsset.HasCustomColors = EditorGUILayout.Toggle("Has custom colors: ", _selectedAsset.HasCustomColors);
-			if (_selectedAsset.HasCustomColors)
-			{
-				_selectedAsset.ColorCount = Mathf.RoundToInt(EditorGUILayout.Slider("Color Count: ", _selectedAsset.ColorCount, 1, 4));
-				for (int i = 0; i < _selectedAsset.ColorCount; i++)
-				{
-					_selectedAsset.Colors[i] = EditorGUILayout.ColorField("Color " + (i + 1), _selectedAsset.Colors[i]);
 
-				}
-			}
+            if (_selectedAsset.Type != AssetType.Shop)
+            {
+                GUILayout.Label("Color settings", EditorStyles.boldLabel);
+                _selectedAsset.HasCustomColors =
+                    EditorGUILayout.Toggle("Has custom colors: ", _selectedAsset.HasCustomColors);
+                if (_selectedAsset.HasCustomColors)
+                {
+                    _selectedAsset.ColorCount =
+                        Mathf.RoundToInt(EditorGUILayout.Slider("Color Count: ", _selectedAsset.ColorCount, 1, 4));
+                    for (int i = 0; i < _selectedAsset.ColorCount; i++)
+                    {
+                        _selectedAsset.Colors[i] =
+                            EditorGUILayout.ColorField("Color " + (i + 1), _selectedAsset.Colors[i]);
 
-			GUILayout.Label("Light settings", EditorStyles.boldLabel);
-			_selectedAsset.LightsTurnOnAtNight = EditorGUILayout.Toggle("Turn on at night: ", _selectedAsset.LightsTurnOnAtNight);
-			if (_selectedAsset.LightsTurnOnAtNight && _selectedAsset.HasCustomColors) {
-				_selectedAsset.LightsUseCustomColors = EditorGUILayout.Toggle("Use custom colors: ", _selectedAsset.LightsUseCustomColors);
-				if (_selectedAsset.LightsUseCustomColors) {
-					_selectedAsset.LightsCustomColorSlot = (int)(CustomColorSlot)EditorGUILayout.EnumPopup("Custom color slot:", (CustomColorSlot)_selectedAsset.LightsCustomColorSlot);
-				}
-			}
+                    }
+                }
 
-			// Type specific settings
+                GUILayout.Label("Light settings", EditorStyles.boldLabel);
+                _selectedAsset.LightsTurnOnAtNight =
+                    EditorGUILayout.Toggle("Turn on at night: ", _selectedAsset.LightsTurnOnAtNight);
+                if (_selectedAsset.LightsTurnOnAtNight && _selectedAsset.HasCustomColors)
+                {
+                    _selectedAsset.LightsUseCustomColors = EditorGUILayout.Toggle("Use custom colors: ",
+                        _selectedAsset.LightsUseCustomColors);
+                    if (_selectedAsset.LightsUseCustomColors)
+                    {
+                        _selectedAsset.LightsCustomColorSlot =
+                            (int) (CustomColorSlot) EditorGUILayout.EnumPopup("Custom color slot:",
+                                (CustomColorSlot) _selectedAsset.LightsCustomColorSlot);
+                    }
+                }
+            }
+
+            // Type specific settings
 			switch (_selectedAsset.Type)
 			{
 				case AssetType.Wall:
@@ -381,6 +394,8 @@ namespace ParkitectAssetEditor.UI
 					break;
                 case AssetType.Shop:
                     DrawShopProductSection();
+                    GUILayout.Space(15);
+                    DrawBoundingBoxDetailSection();
                     break;
 			}
 
@@ -399,9 +414,8 @@ namespace ParkitectAssetEditor.UI
         {
 
             Event e = Event.current;
-
             GUILayout.Space(10);
-            EditorGUILayout.LabelField("Products:", EditorStyles.boldLabel);
+            GUILayout.Label("Products:", EditorStyles.boldLabel);
             _productScrollPosition =
                 EditorGUILayout.BeginScrollView(_productScrollPosition, "GroupBox", GUILayout.Height(100));
             foreach (var product in _selectedAsset.Products)
