@@ -394,6 +394,8 @@ namespace ParkitectAssetEditor.UI
 					break;
                 case AssetType.Shop:
                     DrawShopProductSection();
+                    GUILayout.Space(15);
+                    DrawBoundingBoxDetailSection();
                     break;
 			}
 
