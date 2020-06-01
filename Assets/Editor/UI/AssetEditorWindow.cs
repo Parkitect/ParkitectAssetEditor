@@ -394,8 +394,6 @@ namespace ParkitectAssetEditor.UI
 					break;
                 case AssetType.Shop:
                     DrawShopProductSection();
-                    GUILayout.Space(15);
-                    DrawBoundingBoxDetailSection();
                     break;
 			}
 
@@ -414,8 +412,9 @@ namespace ParkitectAssetEditor.UI
         {
 
             Event e = Event.current;
+
             GUILayout.Space(10);
-            GUILayout.Label("Products:", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField("Products:", EditorStyles.boldLabel);
             _productScrollPosition =
                 EditorGUILayout.BeginScrollView(_productScrollPosition, "GroupBox", GUILayout.Height(100));
             foreach (var product in _selectedAsset.Products)
