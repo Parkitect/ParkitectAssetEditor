@@ -299,8 +299,7 @@ namespace ParkitectAssetEditor.UI
 
             if (GUILayout.Button("Parkitect Path"))
             {
-                string path = EditorUtility.OpenFolderPanel("Parkitect Path", "", "");
-                Debug.Log("Parkitect path:"+ path);
+                ProjectManager.AssetPack.ParkitectPath = EditorUtility.OpenFolderPanel("Parkitect Path", "", "");
             }
 		}
 
