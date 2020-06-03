@@ -18,6 +18,11 @@ namespace ParkitectAssetEditor
         public List<Asset> Assets { get; set; }
 
         /// <summary>
+        /// Paths to the assemblies that this mod will load
+        /// </summary>
+		public List<string> Assemblies = new List<string>();
+
+        /// <summary>
         /// Gets or sets the name.
         /// </summary>
         /// <value>
@@ -32,6 +37,11 @@ namespace ParkitectAssetEditor
         /// The description.
         /// </value>
         public string Description { get; set; }
+
+        /// <value>
+        /// Defines the order in which this mod will get loaded
+        /// </value>
+        public int OrderPriority { get; set; }
 
         /// <summary>
         /// Gets or sets the asset archive setting.

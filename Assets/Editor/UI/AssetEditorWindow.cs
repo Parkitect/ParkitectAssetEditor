@@ -236,6 +236,31 @@ namespace ParkitectAssetEditor.UI
 			_descriptionTextScrollPosition = EditorGUILayout.BeginScrollView(_descriptionTextScrollPosition, GUILayout.Height(150));
 			ProjectManager.AssetPack.Description = EditorGUILayout.TextArea(ProjectManager.AssetPack.Description, GUILayout.ExpandHeight(true));
 			EditorGUILayout.EndScrollView();
+			ProjectManager.AssetPack.OrderPriority = EditorGUILayout.IntField("Load Order Priority", ProjectManager.AssetPack.OrderPriority);
+			
+			GUILayout.Label("Assemblies", EditorStyles.boldLabel);
+			//adds a waypoint at (0,0,0) relative to the unity object
+			if (GUILayout.Button("Add Assembly"))
+			{
+				ProjectManager.AssetPack.Assemblies.Add("");
+			}
+
+			//provides a list of all the waypoints
+			for (int i = 0; i < ProjectManager.AssetPack.Assemblies.Count; i++)
+			{
+				EditorGUILayout.BeginHorizontal();
+				GUILayout.Label("#" + i);
+
+				ProjectManager.AssetPack.Assemblies[i] = EditorGUILayout.TextField(ProjectManager.AssetPack.Assemblies[i]);
+
+				if (GUILayout.Button("Delete"))
+				{
+					ProjectManager.AssetPack.Assemblies.RemoveAt(i);
+					i--;
+				}
+
+				EditorGUILayout.EndHorizontal();
+			}
 
 			EditorGUILayout.Space();
 
