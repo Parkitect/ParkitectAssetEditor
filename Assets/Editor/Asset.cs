@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using ParkitectAssetEditor.GizmoRenderers;
@@ -249,6 +249,10 @@ namespace ParkitectAssetEditor
 		public float Height;
 		
 		#endregion
+
+        #region shop
+        public List<ShopProduct> Products = new List<ShopProduct>();
+        #endregion
 
 		#region flatride
 

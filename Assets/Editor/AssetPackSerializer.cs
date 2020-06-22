@@ -46,6 +46,14 @@ namespace ParkitectAssetEditor
                         prefabPaths.Add(CreatePrefab(asset.RearCar.GameObject, asset.RearCar.Guid));
                     }
                 }
+                else if (asset.Type == AssetType.Shop)
+                {
+                    foreach (var product in asset.Products)
+                    {
+                        prefabPaths.Add(CreatePrefab(product.Product, product.Guid));
+                    }
+                    prefabPaths.Add(CreatePrefab(asset.GameObject, asset.Guid));
+                }
                 else {
                     asset.LeadCar = null;
                     asset.Car = null;
