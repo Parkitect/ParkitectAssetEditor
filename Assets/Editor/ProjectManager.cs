@@ -81,6 +81,8 @@ namespace ParkitectAssetEditor
         /// <param name="exportAssetZip">If the assets folder should be exported as an archive with the pack.</param>
         public static bool Export(bool exportAssetZip)
         {
+            AssetPack.BuildGuid = GUID.Generate().ToString();
+            
             EditorSceneManager.SaveScene(SceneManager.GetActiveScene());
 
             var path = Path.Combine(Project.Value.ProjectDirectory, Project.Value.ProjectFile);

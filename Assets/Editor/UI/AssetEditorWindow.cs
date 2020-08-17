@@ -266,6 +266,8 @@ namespace ParkitectAssetEditor.UI
 
 			EditorGUILayout.HelpBox("Stores your raw model files with the asset pack in an archive. Recommended: on", MessageType.Info);
 			ProjectManager.AssetPack.ArchiveAssets = EditorGUILayout.Toggle("Archive assets", ProjectManager.AssetPack.ArchiveAssets);
+			
+			ProjectManager.AssetPack.VersionNumber = EditorGUILayout.TextField("Version number", ProjectManager.AssetPack.VersionNumber);
 
 			GUILayout.Space(10);
 
