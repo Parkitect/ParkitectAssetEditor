@@ -10,6 +10,7 @@ namespace ParkitectAssetEditor.Utility
 			
 			importer.materialName = ModelImporterMaterialName.BasedOnMaterialName;
 			importer.materialSearch = ModelImporterMaterialSearch.Everywhere;
+			importer.isReadable = true;
 		}
 	}
 }

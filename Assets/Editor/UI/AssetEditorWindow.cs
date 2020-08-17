@@ -494,6 +494,18 @@ namespace ParkitectAssetEditor.UI
 			GUILayout.Label("Visibility settings", EditorStyles.boldLabel);
 			_selectedAsset.CanSeeThrough = EditorGUILayout.Toggle("Can see through: ", _selectedAsset.CanSeeThrough);
 			_selectedAsset.BlocksRain = EditorGUILayout.Toggle("Blocks rain: ", _selectedAsset.BlocksRain);
+
+			if (_selectedAsset.GameObject.GetComponent<Animator>() != null)
+			{
+				GUILayout.Label("Animation trigger", EditorStyles.boldLabel);
+				_selectedAsset.EffectsTriggerEnabled =
+					EditorGUILayout.Toggle("Animation can be triggered: ", _selectedAsset.EffectsTriggerEnabled);
+				if (_selectedAsset.EffectsTriggerEnabled)
+				{
+					_selectedAsset.EffectsTriggerCustomizableDuration =
+						EditorGUILayout.Toggle("Customizable animation duration: ", _selectedAsset.EffectsTriggerCustomizableDuration);
+				}
+			}
 		}
 
 
