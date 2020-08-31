@@ -41,7 +41,7 @@ namespace ParkitectAssetEditor
         /// <summary>
         /// A user-readable version number
         /// </summary>
-        public string VersionNumber { get; set; }
+        public string VersionNumber { get; set; } = "1.0";
 
         /// <summary>
         /// Gets or sets the description.
