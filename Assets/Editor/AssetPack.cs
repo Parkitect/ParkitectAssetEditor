@@ -41,7 +41,7 @@ namespace ParkitectAssetEditor
         /// <summary>
         /// A user-readable version number
         /// </summary>
-        public string VersionNumber { get; set; } = "1.0";
+        public string VersionNumber { get; set; };
 
         /// <summary>
         /// Gets or sets the description.
@@ -199,6 +199,7 @@ namespace ParkitectAssetEditor
         {
             Assets = new List<Asset>();
             ArchiveAssets = true;
+            VersionNumber = "1.0";
         }
     }
 }

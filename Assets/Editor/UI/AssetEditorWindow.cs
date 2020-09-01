@@ -505,7 +505,7 @@ namespace ParkitectAssetEditor.UI
 				if (_selectedAsset.EffectsTriggerEnabled)
 				{
 					_selectedAsset.EffectsTriggerCustomizableDuration =
-						EditorGUILayout.Toggle("Customizable animation duration: ", _selectedAsset.EffectsTriggerCustomizableDuration);
+						EditorGUILayout.Toggle("Customizable duration: ", _selectedAsset.EffectsTriggerCustomizableDuration);
 				}
 			}
 		}
