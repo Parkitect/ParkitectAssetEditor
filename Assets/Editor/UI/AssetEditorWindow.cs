@@ -497,7 +497,7 @@ namespace ParkitectAssetEditor.UI
 			_selectedAsset.CanSeeThrough = EditorGUILayout.Toggle("Can see through: ", _selectedAsset.CanSeeThrough);
 			_selectedAsset.BlocksRain = EditorGUILayout.Toggle("Blocks rain: ", _selectedAsset.BlocksRain);
 
-			if (_selectedAsset.GameObject.GetComponent<Animator>() != null)
+			if (_selectedAsset.GameObject != null && _selectedAsset.GameObject.GetComponent<Animator>() != null)
 			{
 				GUILayout.Label("Animation trigger", EditorStyles.boldLabel);
 				_selectedAsset.EffectsTriggerEnabled =
