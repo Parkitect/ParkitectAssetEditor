@@ -872,6 +872,21 @@ namespace ParkitectAssetEditor.UI
 				car.GameObject = newAsset;
 			}
 
+			car.CoasterCarType = (CoasterCarType)EditorGUILayout.EnumPopup("Type:", car.CoasterCarType);
+			if (car.CoasterCarType == CoasterCarType.Spinning)
+			{
+				car.SpinFriction = EditorGUILayout.Slider("Spin friction:", car.SpinFriction, 0f, 1f);
+				car.SpinStrength = Mathf.RoundToInt(EditorGUILayout.Slider("Spin strength:", car.SpinStrength / 100f, 0f, 1f) * 100);
+				car.SpinSymmetrySides = EditorGUILayout.IntField("Spin symmetry sides:", car.SpinSymmetrySides);
+			}
+			else if (car.CoasterCarType == CoasterCarType.Swinging)
+			{
+				car.SwingFriction = EditorGUILayout.Slider("Swing friction:", car.SwingFriction, 0f, 1f);
+				car.SwingStrength = EditorGUILayout.Slider("Swing strength:", car.SwingStrength, 0f, 1f);
+				car.SwingMaxAngle = EditorGUILayout.FloatField("Max swing angle:", car.SwingMaxAngle);
+				car.SwingArmLength = EditorGUILayout.FloatField("Swing arm length:", car.SwingArmLength);
+			}
+
 			car.SeatWaypointOffset = EditorGUILayout.FloatField("Seat waypoint offset:", car.SeatWaypointOffset);
 			car.OffsetFront = EditorGUILayout.FloatField("Offset front:", car.OffsetFront);
 			car.OffsetBack = EditorGUILayout.FloatField("Offset back:", car.OffsetBack);
