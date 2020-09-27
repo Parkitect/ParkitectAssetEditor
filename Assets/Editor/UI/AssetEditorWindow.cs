@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -29,6 +29,8 @@ namespace ParkitectAssetEditor.UI
 
 		private Vector2 _descriptionTextScrollPosition;
 
+        private ShopProduct _selectedProduct;
+        private Vector2 _productScrollPosition;
 		/// <summary>
 		/// The selected asset.
 		/// </summary>
@@ -344,23 +346,30 @@ namespace ParkitectAssetEditor.UI
 				AssetType.Tv.ToString(),
 				AssetType.FlatRide.ToString(),
 				AssetType.ImageSign.ToString(),
-				AssetType.Train.ToString()
+				AssetType.Train.ToString(),
+                AssetType.Shop.ToString()
 			});
 			_selectedAsset.Price = EditorGUILayout.FloatField("Price:", _selectedAsset.Price);
 
-			GUILayout.Label("Color settings", EditorStyles.boldLabel);
-			_selectedAsset.HasCustomColors = EditorGUILayout.Toggle("Has custom colors: ", _selectedAsset.HasCustomColors);
-			if (_selectedAsset.HasCustomColors)
-			{
-				_selectedAsset.ColorCount = Mathf.RoundToInt(EditorGUILayout.Slider("Color Count: ", _selectedAsset.ColorCount, 1, 4));
-				for (int i = 0; i < _selectedAsset.ColorCount; i++)
-				{
-					_selectedAsset.Colors[i] = EditorGUILayout.ColorField("Color " + (i + 1), _selectedAsset.Colors[i]);
+            if (_selectedAsset.Type != AssetType.Shop)
+            {
+                GUILayout.Label("Color settings", EditorStyles.boldLabel);
+                _selectedAsset.HasCustomColors =
+                    EditorGUILayout.Toggle("Has custom colors: ", _selectedAsset.HasCustomColors);
+                if (_selectedAsset.HasCustomColors)
+                {
+                    _selectedAsset.ColorCount =
+                        Mathf.RoundToInt(EditorGUILayout.Slider("Color Count: ", _selectedAsset.ColorCount, 1, 4));
+                    for (int i = 0; i < _selectedAsset.ColorCount; i++)
+                    {
+                        _selectedAsset.Colors[i] =
+                            EditorGUILayout.ColorField("Color " + (i + 1), _selectedAsset.Colors[i]);
 
-				}
-			}
+                    }
+                }
+            }
 
-			GUILayout.Label("Light settings", EditorStyles.boldLabel);
+            GUILayout.Label("Light settings", EditorStyles.boldLabel);
 			_selectedAsset.LightsTurnOnAtNight = EditorGUILayout.Toggle("Turn on at night: ", _selectedAsset.LightsTurnOnAtNight);
 			if (_selectedAsset.LightsTurnOnAtNight && _selectedAsset.HasCustomColors) {
 				_selectedAsset.LightsUseCustomColors = EditorGUILayout.Toggle("Use custom colors: ", _selectedAsset.LightsUseCustomColors);
@@ -407,6 +416,11 @@ namespace ParkitectAssetEditor.UI
 					GUILayout.Space(15);
 					DrawSeatsDetailSection(_selectedAsset.GameObject);
 					break;
+                case AssetType.Shop:
+                    DrawShopProductSection();
+                    GUILayout.Space(15);
+                    DrawBoundingBoxDetailSection();
+                    break;
 			}
 
 			GUILayout.Space(20);
@@ -466,6 +480,68 @@ namespace ParkitectAssetEditor.UI
 				_selectedAsset.BoundingBoxes.Add(boundingBox);
 			}
 		}
+
+        /// <summary>
+        /// Shop product
+        /// </summary>
+        private void DrawShopProductSection()
+        {
+
+            Event e = Event.current;
+
+            GUILayout.Space(10);
+            EditorGUILayout.LabelField("Products:", EditorStyles.boldLabel);
+            _productScrollPosition =
+                EditorGUILayout.BeginScrollView(_productScrollPosition, "GroupBox", GUILayout.Height(100));
+            foreach (var product in _selectedAsset.Products)
+            {
+                Color gui = GUI.color;
+                if (product == _selectedProduct)
+                {
+                    GUI.color = Color.red;
+                }
+
+                if (GUILayout.Button(product.Name + "    $" + product.Price + " (" + product.ProductType + ")"))
+                {
+
+                    GUI.FocusControl("");
+                    if (e.button == 1)
+                    {
+                        _selectedAsset.Products.Remove(product);
+                        return;
+                    }
+
+                    if (_selectedProduct == product)
+                    {
+                        _selectedProduct = null;
+                        return;
+                    }
+
+                    _selectedProduct = product;
+                }
+
+                GUI.color = gui;
+            }
+
+            EditorGUILayout.EndScrollView();
+
+
+            if (GUILayout.Button("Add Product"))
+            {
+                _selectedAsset.Products.Add(new ShopProduct());
+            }
+
+            if (_selectedProduct != null)
+            {
+                if (!_selectedAsset.Products.Contains(_selectedProduct))
+                {
+                    _selectedProduct = null;
+                    return;
+                }
+                GUILayout.Space(10);
+                _selectedProduct.ShopProductSection();
+            }
+        }
 
 		/// <summary>
 		/// Draws the asset deco detail section.

@@ -1,4 +1,4 @@
-﻿using ParkitectAssetEditor.Utility;
+using ParkitectAssetEditor.Utility;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -9,7 +9,7 @@ namespace ParkitectAssetEditor.GizmoRenderers
 	{
 		public bool CanRender(Asset asset)
 		{
-			return asset.Type == AssetType.FlatRide;
+			return asset.Type == AssetType.FlatRide || asset.Type == AssetType.Shop;
 		}
 
 		public void Render(Asset asset)
