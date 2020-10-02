@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Xml;
+using System.Xml.Linq;
+using Microsoft.CSharp;
 using Newtonsoft.Json;
 using ParkitectAssetEditor.Compression;
 using ParkitectAssetEditor.UI;
@@ -12,7 +16,6 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
 namespace ParkitectAssetEditor
 {
     /// <summary>
@@ -48,7 +51,7 @@ namespace ParkitectAssetEditor
         }
 
         private static string _autoSaveHash = "";
-        
+
         /// <summary>
         /// Saves the project.
         /// </summary>
@@ -65,12 +68,78 @@ namespace ParkitectAssetEditor
                 Debug.Log("There are no defined assets in the Asset Pack, can't save");
                 return false;
             }
-            
+
             string output = JsonConvert.SerializeObject(AssetPack);
 
             File.WriteAllText(path, output);
 
             Debug.Log(string.Format("Finished saving project {0}", path));
+
+            return true;
+        }
+
+        public static bool UpdateProjectSetup()
+        {
+
+            String projectPath = Path.Combine(Application.dataPath.Replace("/Assets", ""),"ParkitectMod");
+
+            if (!Directory.Exists(projectPath)) {
+                Directory.CreateDirectory(projectPath);
+                File.WriteAllText(Path.Combine(projectPath, "Main.cs"), ProjectDocument.MainCS);
+            }
+
+            XmlDocument csProj = new XmlDocument();
+            csProj.LoadXml(ProjectDocument.CSProj.Replace("${RootNamespace}", "ParkitectMod")
+                .Replace("${AssemblyName}","ParkitectMod")
+                .Replace("${OutputPath}", ProjectManager.Project.Value.ModDirectory));
+
+            var manager = new XmlNamespaceManager(csProj.NameTable);
+            manager.AddNamespace("x", ProjectDocument.DefaultCsProjNamespace);
+
+            var project = csProj.SelectNodes("//x:Project", manager).Cast<XmlNode>().First();
+
+            XmlElement itemGroup = csProj.CreateElement("ItemGroup",ProjectDocument.DefaultCsProjNamespace);
+            project.AppendChild(itemGroup);
+
+            foreach (var assmb in AssetPack.ProjectAssemblies)
+            {
+                XmlElement reff = csProj.CreateElement("Reference",ProjectDocument.DefaultCsProjNamespace);
+                var refrenceAttribute = csProj.CreateAttribute("Include");
+                refrenceAttribute.InnerText = assmb;
+                reff.Attributes.Append(refrenceAttribute);
+
+                var prv = csProj.CreateElement("Private",ProjectDocument.DefaultCsProjNamespace);
+                prv.InnerText = "False";
+                reff.AppendChild(prv);
+                if (!string.IsNullOrEmpty(AssetPack.ParkitectPath))
+                {
+                    var hint = csProj.CreateElement("HintPath",ProjectDocument.DefaultCsProjNamespace);
+                    hint.InnerText = Path.Combine(Path.Combine(AssetPack.ParkitectPath, "Parkitect_Data/Managed/"), assmb + ".dll");
+                    reff.AppendChild(hint);
+                }
+
+                itemGroup.AppendChild(reff);
+            }
+
+            XmlElement sourceGroup = csProj.CreateElement("ItemGroup",ProjectDocument.DefaultCsProjNamespace);
+            project.AppendChild(sourceGroup);
+
+            foreach (var ff in Directory.GetFiles(projectPath,"*.*", SearchOption.AllDirectories))
+            {
+                if (ff.EndsWith(".cs"))
+                {
+                    String fil = ff.Substring(projectPath.Length + 1);
+                    XmlElement comp = csProj.CreateElement("Compile",ProjectDocument.DefaultCsProjNamespace);
+                    var refrenceAttribute = csProj.CreateAttribute("Include");
+                    refrenceAttribute.InnerText = fil;
+                    comp.Attributes.Append(refrenceAttribute);
+
+                    sourceGroup.AppendChild(comp);
+
+                }
+            }
+
+            csProj.Save(Path.Combine(projectPath,"ParkitectMod.csproj"));
 
             return true;
         }
@@ -87,8 +156,14 @@ namespace ParkitectAssetEditor
 
             var path = Path.Combine(Project.Value.ProjectDirectory, Project.Value.ProjectFile);
 
+            String projectPath = Path.Combine(Application.dataPath.Replace("/Assets", ""),"ParkitectMod");
             if (Save() && AssetPack.CreateAssetBundle())
             {
+                if (Directory.Exists(projectPath))
+                {
+                    AssetPack.CompileModule(projectPath);
+                }
+
                 File.Copy(path, Path.Combine(Project.Value.ModDirectory, Project.Value.ProjectFile), true);
 
                 var assetZipPath = Path.Combine(Project.Value.ModDirectory, "assets.zip");
@@ -98,7 +173,7 @@ namespace ParkitectAssetEditor
                 {
                     File.Delete(assetZipPath);
                 }
-                
+
                 if (exportAssetZip)
                 {
                     Debug.Log(string.Format("Archiving {0} to {1}", Project.Value.ProjectDirectory, assetZipPath));
@@ -113,7 +188,7 @@ namespace ParkitectAssetEditor
             }
 
             Debug.LogWarning(string.Format("Failed saving project {0}", path));
-            
+
             return false;
         }
 
@@ -138,9 +213,9 @@ namespace ParkitectAssetEditor
                 ProjectFile = Path.GetFileName(path),
                 ProjectFileAutoSave = Path.GetFileName(path) + ".autosave"
             };
-            
+
             AssetPack = JsonConvert.DeserializeObject<AssetPack>(File.ReadAllText(path));
-            
+
             AssetPack.LoadGameObjects();
             AssetPack.InitAssetsInScene();
 
@@ -161,7 +236,7 @@ namespace ParkitectAssetEditor
         public static void AutoSave()
         {
             var path = EditorPrefs.GetString("loadedProject");
-            
+
             string output = JsonConvert.SerializeObject(AssetPack);
 
             using (var md5 = MD5.Create())
@@ -191,7 +266,7 @@ namespace ParkitectAssetEditor
         public static void AutoLoad()
         {
             var path = EditorPrefs.GetString("loadedProject");
-            
+
             // .autosave = 9 characters, them hacks!
             var pathWithoutAutoSave = path.Remove(path.Length - 9);
 
@@ -205,7 +280,7 @@ namespace ParkitectAssetEditor
                 ProjectFile = Path.GetFileName(pathWithoutAutoSave),
                 ProjectFileAutoSave = Path.GetFileName(pathWithoutAutoSave) + ".autosave"
             };
-            
+
             AssetPack = JsonConvert.DeserializeObject<AssetPack>(File.ReadAllText(path));
 
             EditorPrefs.SetString("loadedProject", Path.Combine(Project.Value.ProjectDirectory, Project.Value.ProjectFileAutoSave));
@@ -248,7 +323,7 @@ namespace ParkitectAssetEditor
             {
                 throw new ProjectAlreadyExistsException(string.Format("There already is a project at {0}", projectFilePath));
             }
-            
+
             if (Directory.Exists(modDirectory))
             {
                 throw new ProjectAlreadyExistsException(string.Format("Your Parkitect installation already has a mod called {0} at {1}", name, modDirectory));

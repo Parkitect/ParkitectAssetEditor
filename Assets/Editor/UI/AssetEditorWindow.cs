@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -33,17 +34,21 @@ namespace ParkitectAssetEditor.UI
 		/// The selected asset.
 		/// </summary>
 		private Asset _selectedAsset;
-	   
 
-		private static readonly IGizmoRenderer[] _gizmoRenderers = {
+        private Vector2 _assemblyListScrollPos;
+
+
+        private bool _showCodeModule = false;
+
+        private static readonly IGizmoRenderer[] _gizmoRenderers = {
 			new SeatRenderer(),
 			new WallRenderer(),
-			new GridRenderer(), 
-			new SignRenderer(), 
+			new GridRenderer(),
+			new SignRenderer(),
 			new FootprintRenderer(),
-			new WaypointRenderer(), 
-			new BoundingBoxRenderer(), 
-			new TrainRenderer(), 
+			new WaypointRenderer(),
+			new BoundingBoxRenderer(),
+			new TrainRenderer(),
 		};
 
 		private static string[] trackedRideNames = new[]
@@ -102,13 +107,13 @@ namespace ParkitectAssetEditor.UI
 			EditorPrefs.SetString("loadedProject", null);
 
 			var files = Directory.GetFiles(Application.dataPath, "*.assetProject");
-			
+
 			if (files.Length > 0)
 			{
 				ProjectManager.Load(files[0]);
 			}
 		}
-		
+
 		public void Update()
 		{
 			// Unity loses its state when it compiles, with the editor pref we can load the opened project automatically.
@@ -156,6 +161,7 @@ namespace ParkitectAssetEditor.UI
 			GUILayout.BeginVertical();
 			_windowScrollPosition = GUILayout.BeginScrollView(_windowScrollPosition);
 			DrawAssetPackSettingsSection();
+            DrawAssetPackCodeSettingSection();
 			GUILayout.Space(15);
 			DrawAssetListSection();
 			GUILayout.Space(15);
@@ -183,7 +189,7 @@ namespace ParkitectAssetEditor.UI
 				}
 			}
 		}
-		
+
 		void OnFocus()
 		{
 			// Remove delegate listener if it has previously
@@ -227,12 +233,55 @@ namespace ParkitectAssetEditor.UI
 			}
 		}
 
+        private void DrawAssetPackCodeSettingSection()
+        {
+            _showCodeModule = EditorGUILayout.Foldout(_showCodeModule, "Code Module");
+            if (_showCodeModule)
+            {
+                GUILayout.Label("Parkitect Path: " + ProjectManager.AssetPack.ParkitectPath, EditorStyles.boldLabel);
+                if (GUILayout.Button("Folder"))
+                {
+                    String path =  EditorUtility.OpenFolderPanel("Set Parkitect Path", "", "");
+                    ProjectManager.AssetPack.ParkitectPath = path;
+                }
+
+                _assemblyListScrollPos = EditorGUILayout.BeginScrollView(_assemblyListScrollPos, GUILayout.Height(150));
+                foreach (var assemb in Utility.Utility.ParkitectAssemblies)
+                {
+                    if (ProjectManager.AssetPack.ProjectAssemblies == null)
+                    {
+                        ProjectManager.AssetPack.ProjectAssemblies  = new List<string>(Utility.Utility.DefaultAssemblies);
+                    }
+
+                    bool contains = ProjectManager.AssetPack.ProjectAssemblies.Contains(assemb);
+                    if (EditorGUILayout.Toggle(assemb, contains) != contains){
+                        if (!contains){
+
+                            ProjectManager.AssetPack.ProjectAssemblies.Add(assemb);
+                        }
+                        else
+                        {
+                            ProjectManager.AssetPack.ProjectAssemblies.Remove(assemb);
+                        }
+                    }
+
+                }
+                EditorGUILayout.EndScrollView();
+
+                EditorGUILayout.Space();
+                if (GUILayout.Button("Refresh Project"))
+                {
+                    ProjectManager.UpdateProjectSetup();
+                }
+            }
+        }
+
 		/// <summary>
 		/// Draws the asset pack settings section.
 		/// </summary>
 		private void DrawAssetPackSettingsSection()
 		{
-			GUILayout.Label("Asset Pack Settings", "PreToolbar");
+            GUILayout.Label("Asset Pack Settings", "PreToolbar");
 
 			ProjectManager.AssetPack.Name = EditorGUILayout.TextField("Name", ProjectManager.AssetPack.Name);
 			GUILayout.Label("Pack description", EditorStyles.boldLabel);
@@ -273,11 +322,15 @@ namespace ParkitectAssetEditor.UI
 			ProjectManager.AssetPack.VersionNumber = EditorGUILayout.TextField("Version number", ProjectManager.AssetPack.VersionNumber);
 
 			GUILayout.Space(10);
-
-			if (GUILayout.Button("Export Asset Pack"))
+            if (GUILayout.Button("Export Asset Pack"))
 			{
 				ProjectManager.Export(ProjectManager.AssetPack.ArchiveAssets);
 			}
+
+            if (GUILayout.Button("Parkitect Path"))
+            {
+                ProjectManager.AssetPack.ParkitectPath = EditorUtility.OpenFolderPanel("Parkitect Path", "", "");
+            }
 		}
 
 		/// <summary>
@@ -486,7 +539,7 @@ namespace ParkitectAssetEditor.UI
 				_selectedAsset.GridSubdivision = Mathf.RoundToInt(EditorGUILayout.Slider("Grid subdivision: ", _selectedAsset.GridSubdivision, 1, 9));
 			}
 			_selectedAsset.HeightDelta = Mathf.RoundToInt(EditorGUILayout.Slider("Height delta: ", _selectedAsset.HeightDelta, 0.05f, 1) * 200f) / 200f;
-			
+
 			GUILayout.Label("Size settings", EditorStyles.boldLabel);
 			_selectedAsset.IsResizable = EditorGUILayout.Toggle("Is resizable: ", _selectedAsset.IsResizable);
 
@@ -720,7 +773,7 @@ namespace ParkitectAssetEditor.UI
 			GUILayout.Label("Bench settings", EditorStyles.boldLabel);
 			_selectedAsset.HasBackRest = EditorGUILayout.Toggle("Has back rest: ", _selectedAsset.HasBackRest);
 		}
-		
+
 		/// <summary>
 		/// Draws the asset fence detail section.
 		/// </summary>
@@ -750,7 +803,7 @@ namespace ParkitectAssetEditor.UI
 
 			DrawAssetWallDetailSection();
 		}
-		
+
 		/// <summary>
 		/// Draws the asset sign detail section.
 		/// </summary>
@@ -765,7 +818,7 @@ namespace ParkitectAssetEditor.UI
 				text.name = "Text";
 			}
 		}
-		
+
 		/// <summary>
 		/// Draws the asset tv detail section.
 		/// </summary>
@@ -808,7 +861,7 @@ namespace ParkitectAssetEditor.UI
 			}
 
 			GUILayout.Label("Train settings:", EditorStyles.boldLabel);
-			
+
 			if (_selectedAsset.GameObject.transform.Find("backAxis") == null)
 			{
 				EditorGUILayout.HelpBox("There is no backAxis marker!", MessageType.Error);
@@ -824,7 +877,7 @@ namespace ParkitectAssetEditor.UI
 			_selectedAsset.MaxTrainLength = EditorGUILayout.IntSlider("Maximum train length: ", _selectedAsset.MaxTrainLength, 1, 12);
 
 			GUILayout.Space(15);
-			
+
 			if (_selectedAsset.LeadCar == null)
 			{
 				CoasterCar car = new CoasterCar(_selectedAsset.Guid + ".leadCar");
@@ -835,7 +888,7 @@ namespace ParkitectAssetEditor.UI
 			DrawCarDetailSection(_selectedAsset.LeadCar);
 
 			GUILayout.Space(30);
-			
+
 			if (_selectedAsset.Car == null)
 			{
 				CoasterCar car = new CoasterCar(_selectedAsset.Guid + ".car");
@@ -850,7 +903,7 @@ namespace ParkitectAssetEditor.UI
 			DrawCarDetailSection(_selectedAsset.Car);
 
 			GUILayout.Space(30);
-			
+
 			if (_selectedAsset.RearCar == null)
 			{
 				CoasterCar car = new CoasterCar(_selectedAsset.Guid + ".rearCar");
@@ -890,7 +943,7 @@ namespace ParkitectAssetEditor.UI
 			car.SeatWaypointOffset = EditorGUILayout.FloatField("Seat waypoint offset:", car.SeatWaypointOffset);
 			car.OffsetFront = EditorGUILayout.FloatField("Offset front:", car.OffsetFront);
 			car.OffsetBack = EditorGUILayout.FloatField("Offset back:", car.OffsetBack);
-			
+
 			DrawSeatsDetailSection(car.GameObject);
 
 			GUILayout.Space(15);
@@ -927,7 +980,7 @@ namespace ParkitectAssetEditor.UI
 		private void SelectAsset(Asset asset)
 		{
 			_selectedAsset = asset;
-			
+
 			EditorGUIUtility.PingObject(_selectedAsset.GameObject.GetInstanceID());
 
 			Selection.activeGameObject = _selectedAsset.GameObject;
