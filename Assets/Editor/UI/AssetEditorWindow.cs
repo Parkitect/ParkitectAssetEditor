@@ -5,7 +5,6 @@ using System.Linq;
 using ParkitectAssetEditor.GizmoRenderers;
 using ParkitectAssetEditor.Utility;
 using UnityEditor;
-using UnityEditor.Animations;
 using UnityEngine;
 
 namespace ParkitectAssetEditor.UI

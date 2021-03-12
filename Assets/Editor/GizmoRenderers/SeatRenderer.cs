@@ -1,10 +1,4 @@
-﻿using System.Globalization;
-using System.Linq;
-using Microsoft.CSharp;
-using UnityEditor;
-using UnityEngine;
-
-namespace ParkitectAssetEditor.GizmoRenderers
+﻿namespace ParkitectAssetEditor.GizmoRenderers
 {
 	/// <summary>
 	/// Renders guests on a bench
