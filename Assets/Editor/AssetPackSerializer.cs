@@ -76,6 +76,7 @@ namespace ParkitectAssetEditor
             var path = string.Format("Assets/Resources/AssetPack/{0}.prefab", Guid);
 
             PrefabUtility.SaveAsPrefabAsset(gameObject, path);
+
             return path;
         }
         
