@@ -7,7 +7,7 @@ namespace ParkitectAssetEditor.GizmoRenderers
     /// Renders the blocking sides of a wall.
     /// </summary>
     /// <seealso cref="IGizmoRenderer" />
-    class WallRenderer : IGizmoRenderer
+    internal class WallRenderer : IGizmoRenderer
     {
         /// <inheritdoc />
         /// <summary>

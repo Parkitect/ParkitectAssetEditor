@@ -8,7 +8,7 @@ namespace ParkitectAssetEditor.GizmoRenderers
 	/// Renders a grid around decos and walls.
 	/// </summary>
 	/// <seealso cref="IGizmoRenderer" />
-	class GridRenderer : IGizmoRenderer
+	internal class GridRenderer : IGizmoRenderer
 	{
 		/// <summary>
 		/// Determines whether this instance can render the specified asset.

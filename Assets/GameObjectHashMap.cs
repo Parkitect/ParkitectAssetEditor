@@ -43,7 +43,7 @@ public class GameObjectHashMap : MonoBehaviour
 
     public List<GameObject> GameObjects = new List<GameObject>(10);
 
-    void Awake()
+    private void Awake()
     {
         _instance = this;
     }

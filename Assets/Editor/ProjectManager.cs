@@ -16,7 +16,7 @@ namespace ParkitectAssetEditor
     /// <summary>
     /// Class for saving/loading projects.
     /// </summary>
-    static class ProjectManager
+    internal static class ProjectManager
     {
         /// <summary>
         /// Gets the loaded project.

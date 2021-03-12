@@ -1,6 +1,6 @@
 ﻿namespace ParkitectAssetEditor.GizmoRenderers
 {
-    interface IGizmoRenderer
+    internal interface IGizmoRenderer
     {
         /// <summary>
         /// Determines whether this instance can render the specified asset.

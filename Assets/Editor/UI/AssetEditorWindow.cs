@@ -95,7 +95,7 @@ namespace ParkitectAssetEditor.UI
 			GetWindow(typeof(AssetEditorWindow));
 		}
 
-		void Awake()
+		private void Awake()
 		{
 			// Make sure it doesn't autoload the project on unity start. This editor pref is just for when unity loses its state when it compiles.
 			EditorPrefs.SetString("loadedProject", null);
@@ -164,7 +164,7 @@ namespace ParkitectAssetEditor.UI
 		}
 
 		[DrawGizmo(GizmoType.Selected)]
-		static void DrawGizmoForMyScript(Transform scr, GizmoType gizmoType)
+		private static void DrawGizmoForMyScript(Transform scr, GizmoType gizmoType)
 		{
 			if (ProjectManager.AssetPack == null)
 			{
@@ -183,7 +183,7 @@ namespace ParkitectAssetEditor.UI
 			}
 		}
 		
-		void OnFocus()
+		private void OnFocus()
 		{
 			// Remove delegate listener if it has previously
 			// been assigned.
@@ -192,7 +192,7 @@ namespace ParkitectAssetEditor.UI
 			SceneView.onSceneGUIDelegate += OnSceneGUI;
 		}
 
-		void OnDestroy()
+		private void OnDestroy()
 		{
 			// When the window is destroyed, remove the delegate
 			// so that it will no longer do any drawing.
@@ -201,7 +201,7 @@ namespace ParkitectAssetEditor.UI
 
 		}
 
-		void OnSceneGUI(SceneView sceneView)
+        private void OnSceneGUI(SceneView sceneView)
 		{
 			if (ProjectManager.AssetPack == null)
 			{
