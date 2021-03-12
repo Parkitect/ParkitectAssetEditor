@@ -188,9 +188,9 @@ namespace ParkitectAssetEditor.UI
 		{
 			// Remove delegate listener if it has previously
 			// been assigned.
-			SceneView.onSceneGUIDelegate -= OnSceneGUI;
+			SceneView.duringSceneGui -= OnSceneGUI;
 			// Add (or re-add) the delegate.
-			SceneView.onSceneGUIDelegate += OnSceneGUI;
+			SceneView.duringSceneGui += OnSceneGUI;
 		}
 
 		void OnDestroy()
@@ -198,7 +198,7 @@ namespace ParkitectAssetEditor.UI
 			// When the window is destroyed, remove the delegate
 			// so that it will no longer do any drawing.
 			//Exporter.SaveToXML(ModManager);
-			SceneView.onSceneGUIDelegate -= OnSceneGUI;
+			SceneView.duringSceneGui -= OnSceneGUI;
 
 		}
 
