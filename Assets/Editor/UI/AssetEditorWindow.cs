@@ -276,7 +276,8 @@ namespace ParkitectAssetEditor.UI
 
 			if (GUILayout.Button("Export Asset Pack"))
 			{
-				ProjectManager.Export(ProjectManager.AssetPack.ArchiveAssets);
+				if (ProjectManager.Export(ProjectManager.AssetPack.ArchiveAssets))
+					GUIUtility.ExitGUI();
 			}
 		}
 
