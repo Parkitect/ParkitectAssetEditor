@@ -6,11 +6,12 @@ using UnityEditor;
 
 namespace ParkitectAssetEditor.Assets.Editor.UI
 {
-    public class AssetProcessor : SaveAssetsProcessor
+    public class AssetProcessor : UnityEditor.AssetModificationProcessor
     {
         static string[] OnWillSaveAssets(string[] paths)
         {
-            ProjectManager.Save();
+            if (ProjectManager.Project != null)
+                ProjectManager.Save();
 
             return paths;
         }
