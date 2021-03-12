@@ -5,6 +5,7 @@
 /[Bb]uilds/
 /Assets/AssetStoreTools*
 /Assets/Resources/AssetPack/
+/Assets/Resources/AssetPack.meta
 
 # Visual Studio 2015 cache directory
 /.vs/
@@ -36,4 +37,3 @@ sysinfo.txt
 
 *.assetProject*
 *.autosave*
-
