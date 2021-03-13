@@ -16,7 +16,7 @@ namespace ParkitectAssetEditor.Compression
             var zipStream = new ZipOutputStream(File.Create(outPathname));
 
             zipStream.SetLevel(9); // highest level
-            
+
             // This setting will strip the leading part of the folder path in the entries, to
             // make the entries relative to the starting folder.
             var folderOffset = folderName.Length + (folderName.EndsWith("\\") ? 0 : 1);
@@ -43,7 +43,7 @@ namespace ParkitectAssetEditor.Compression
 
                 var entryName = file.Substring(folderOffset); // Makes the name in zip based on the folder
                 entryName = ZipEntry.CleanName(entryName); // Removes drive from name and fixes slash direction
-                
+
                 zipStream.PutNextEntry(new ZipEntry(entryName)
                 {
                     DateTime = fileInfo.LastWriteTime,

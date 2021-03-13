@@ -6,6 +6,6 @@
         /// Renders unity handles
         /// </summary>
         /// <param name="asset">The asset.</param>
-        void Handle(Asset asset);   
+        void Handle(Asset asset);
     }
 }

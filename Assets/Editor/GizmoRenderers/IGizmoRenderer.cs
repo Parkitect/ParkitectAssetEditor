@@ -16,6 +16,6 @@
         /// </summary>
         /// <param name="asset">The asset.</param>
         void Render(Asset asset);
-      
+
     }
 }

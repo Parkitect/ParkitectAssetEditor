@@ -29,7 +29,7 @@ namespace ParkitectAssetEditor
         /// The name.
         /// </value>
         public string Name { get; set; }
-		
+
         /// <summary>
         /// A unique id per build
         /// </summary>
@@ -37,7 +37,7 @@ namespace ParkitectAssetEditor
         /// The unique identifier.
         /// </value>
         public string BuildGuid { get; set; }
-		
+
         /// <summary>
         /// A user-readable version number
         /// </summary>
@@ -63,7 +63,7 @@ namespace ParkitectAssetEditor
         /// The archive setting. If true, assets should be archived with the mod to be uploaded to the workshop.
         /// </value>
         public bool ArchiveAssets { get; set; }
-        
+
         /// <summary>
         /// Adds the specified game object as an asset.
         /// </summary>
@@ -89,7 +89,7 @@ namespace ParkitectAssetEditor
                 SubCategory = "",
                 SnapCenter = true,
                 GridSubdivision = 1,
-				HeightDelta = 0.25f
+                HeightDelta = 0.25f
             };
 
             Add(asset);
@@ -116,7 +116,7 @@ namespace ParkitectAssetEditor
 
             LayOutAssets();
         }
-        
+
         /// <summary>
         /// Removes the specified asset.
         /// </summary>
