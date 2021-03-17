@@ -30,7 +30,7 @@ namespace ParkitectAssetEditor.UI
             window.position = new Rect(Screen.width / 2, Screen.height / 2, 300, 50);
             window.ShowUtility();
         }
-        
+
         public void OnGUI()
         {
             _name = EditorGUILayout.TextField("Project Name", _name);

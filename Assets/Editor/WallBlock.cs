@@ -5,9 +5,9 @@
     /// </summary>
     enum WallBlock
     {
-	    Back = 1 << 0,
-	    Right = 1 << 1,
-	    Forward = 1 << 2,
-	    Left = 1 << 3
-	}
+        Back = 1 << 0,
+        Right = 1 << 1,
+        Forward = 1 << 2,
+        Left = 1 << 3
+    }
 }

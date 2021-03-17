@@ -35,25 +35,30 @@ namespace ParkitectAssetEditor
             var prefabPaths = new List<string>();
             foreach (var asset in assetPack.Assets)
             {
-                if (asset.Type == AssetType.Train) {
-                    if (asset.LeadCar != null) {
+                if (asset.Type == AssetType.Train)
+                {
+                    if (asset.LeadCar != null)
+                    {
                         prefabPaths.Add(CreatePrefab(asset.LeadCar.GameObject, asset.LeadCar.Guid));
                     }
-                    if (asset.Car != null) {
+                    if (asset.Car != null)
+                    {
                         prefabPaths.Add(CreatePrefab(asset.Car.GameObject, asset.Car.Guid));
                     }
-                    if (asset.RearCar != null) {
+                    if (asset.RearCar != null)
+                    {
                         prefabPaths.Add(CreatePrefab(asset.RearCar.GameObject, asset.RearCar.Guid));
                     }
                 }
-                else {
+                else
+                {
                     asset.LeadCar = null;
                     asset.Car = null;
                     asset.RearCar = null;
                     prefabPaths.Add(CreatePrefab(asset.GameObject, asset.Guid));
                 }
             }
-            
+
             // use the prefab list to build an assetbundle
             AssetBundleBuild[] descriptor = {
                 new AssetBundleBuild()
@@ -64,12 +69,14 @@ namespace ParkitectAssetEditor
             };
 
             BuildPipeline.BuildAssetBundles(ProjectManager.Project.Value.ModDirectory, descriptor, BuildAssetBundleOptions.ForceRebuildAssetBundle | BuildAssetBundleOptions.DeterministicAssetBundle | BuildAssetBundleOptions.UncompressedAssetBundle | BuildAssetBundleOptions.StrictMode, BuildTarget.StandaloneWindows);
-            
+
             return true;
         }
 
-        private static string CreatePrefab(GameObject gameObject, string Guid) {
-            if (gameObject == null) {
+        private static string CreatePrefab(GameObject gameObject, string Guid)
+        {
+            if (gameObject == null)
+            {
                 return null;
             }
 
@@ -79,7 +86,7 @@ namespace ParkitectAssetEditor
 
             return path;
         }
-        
+
         /// <summary>
         /// Fills asset pack with gameobjects from the scene and/or prefabs.
         /// </summary>
@@ -97,7 +104,7 @@ namespace ParkitectAssetEditor
                     try // if one object fails to load, don't make it fail the rest
                     {
                         var go = Resources.Load<GameObject>(string.Format("AssetPack/{0}", asset.Guid));
-                        
+
                         asset.GameObject = Object.Instantiate(go);
                         asset.GameObject.name = asset.Name;
                     }
@@ -136,7 +143,7 @@ namespace ParkitectAssetEditor
                 try // if one object fails to load, don't make it fail the rest
                 {
                     var go = Resources.Load<GameObject>(string.Format("AssetPack/{0}", Guid));
-                    
+
                     return Object.Instantiate(go);
                 }
                 catch (System.Exception)
