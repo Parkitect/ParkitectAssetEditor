@@ -15,6 +15,7 @@
         Tv,
         FlatRide,
         ImageSign,
-        Train
+        Train,
+        ParticleEffect,
     }
 }

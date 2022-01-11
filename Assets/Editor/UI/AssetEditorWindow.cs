@@ -343,7 +343,8 @@ namespace ParkitectAssetEditor.UI
                 AssetType.Tv.ToString(),
                 AssetType.FlatRide.ToString(),
                 AssetType.ImageSign.ToString(),
-                AssetType.Train.ToString()
+                AssetType.Train.ToString(),
+                AssetType.ParticleEffect.ToString()
             });
             _selectedAsset.Price = EditorGUILayout.FloatField("Price:", _selectedAsset.Price);
 
@@ -398,6 +399,9 @@ namespace ParkitectAssetEditor.UI
                     goto case AssetType.Deco;
                 case AssetType.Train:
                     DrawAssetTrainDetailSection();
+                    break;
+                case AssetType.ParticleEffect:
+                    DrawAssetParticleEffectDetailSection();
                     break;
                 case AssetType.FlatRide:
                     DrawAssetFlatRideDetailSection();
@@ -512,6 +516,46 @@ namespace ParkitectAssetEditor.UI
                         EditorGUILayout.Toggle("Customizable duration: ", _selectedAsset.EffectsTriggerCustomizableDuration);
                 }
             }
+        }
+        
+        /// <summary>
+        /// Draws the asset deco detail section.
+        /// </summary>
+        private void DrawAssetParticleEffectDetailSection()
+        {
+            // Category settings
+            GUILayout.Label("Category in the deco window:", EditorStyles.boldLabel);
+            _selectedAsset.Category = EditorGUILayout.TextField("Category:", _selectedAsset.Category);
+            _selectedAsset.SubCategory = EditorGUILayout.TextField("Sub category:", _selectedAsset.SubCategory);
+
+            // Placement settings
+            GUILayout.Label("Placement settings", EditorStyles.boldLabel);
+            _selectedAsset.BuildOnGrid = EditorGUILayout.Toggle("Force build on grid: ", _selectedAsset.BuildOnGrid);
+            _selectedAsset.SnapCenter = EditorGUILayout.Toggle("Snaps to center: ", _selectedAsset.SnapCenter);
+            _selectedAsset.GridSubdivision = Mathf.RoundToInt(EditorGUILayout.Slider("Grid subdivision: ", _selectedAsset.GridSubdivision, 1, 9));
+            _selectedAsset.HeightDelta = Mathf.RoundToInt(EditorGUILayout.Slider("Height delta: ", _selectedAsset.HeightDelta, 0.05f, 1) * 200f) / 200f;
+
+            GUILayout.Label("Size settings", EditorStyles.boldLabel);
+            _selectedAsset.IsResizable = EditorGUILayout.Toggle("Is resizable: ", _selectedAsset.IsResizable);
+
+            if (_selectedAsset.IsResizable)
+            {
+                _selectedAsset.MinSize = Mathf.RoundToInt(EditorGUILayout.Slider("Min size: ", _selectedAsset.MinSize, 0.1f, _selectedAsset.MaxSize) * 10f) / 10f;
+                _selectedAsset.MaxSize = Mathf.RoundToInt(EditorGUILayout.Slider("Max size: ", _selectedAsset.MaxSize, _selectedAsset.MinSize, 10) * 10f) / 10f;
+                
+                _selectedAsset.ParticleEffectSizeModifiesScale =
+                    EditorGUILayout.Toggle("Size modifies particle scale: ", _selectedAsset.ParticleEffectSizeModifiesScale);
+                
+                _selectedAsset.ParticleEffectSizeModifiesVelocity =
+                    EditorGUILayout.Toggle("Size modifies particle velocity: ", _selectedAsset.ParticleEffectSizeModifiesVelocity);
+                
+                _selectedAsset.ParticleEffectSizeModifiesLifetime =
+                    EditorGUILayout.Toggle("Size modifies particle lifetime: ", _selectedAsset.ParticleEffectSizeModifiesLifetime);
+            }
+            
+            GUILayout.Label("Effect trigger", EditorStyles.boldLabel);
+            _selectedAsset.EffectsTriggerEnabled =
+                EditorGUILayout.Toggle("Can be triggered: ", _selectedAsset.EffectsTriggerEnabled);
         }
 
 

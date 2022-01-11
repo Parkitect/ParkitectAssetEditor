@@ -293,6 +293,12 @@ namespace ParkitectAssetEditor
         public string FlatRideCategory = AttractionType.CategoryTag[0];
 
         #endregion
+        
+        #region particle effect
+        public bool ParticleEffectSizeModifiesScale { get; set; }
+        public bool ParticleEffectSizeModifiesVelocity { get; set; }
+        public bool ParticleEffectSizeModifiesLifetime { get; set; }
+        #endregion
 
         #region trains
 
