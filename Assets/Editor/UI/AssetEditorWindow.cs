@@ -58,6 +58,7 @@ namespace ParkitectAssetEditor.UI
             { AssetType.Trashbin, new DefaultAssetHandler(AssetType.Trashbin) },
             { AssetType.Lamp, new DefaultAssetHandler(AssetType.Lamp) },
             { AssetType.ParticleEffect, new ParticleEffectAssetHandler() },
+            { AssetType.Custom, new CustomAssetHandler() },
         };
 
         [MenuItem("Window/Parkitect Asset Editor")]

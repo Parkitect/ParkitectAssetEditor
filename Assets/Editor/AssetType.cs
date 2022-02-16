@@ -17,5 +17,6 @@
         ImageSign,
         Train,
         ParticleEffect,
+        Custom,
     }
 }

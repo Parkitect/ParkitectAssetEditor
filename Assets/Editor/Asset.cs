@@ -398,6 +398,11 @@ namespace ParkitectAssetEditor
         }
 
         #endregion
+        
+        #region custom assets
+        public string CustomType { get; set; }
+        public string CustomData { get; set; }
+        #endregion
 
         public AspectRatio AspectRatio { get; set; }
 
