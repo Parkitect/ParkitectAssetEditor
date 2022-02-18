@@ -14,7 +14,9 @@ namespace ParkitectAssetEditor.UI.AssetHandlers
 
             GUILayout.Label("Custom asset settings", EditorStyles.boldLabel);
             selectedAsset.CustomType = EditorGUILayout.TextField("Type: ", selectedAsset.CustomType);
-            selectedAsset.CustomData = EditorGUILayout.TextArea("Data: ", selectedAsset.CustomData);
+
+            GUILayout.Label("Data:");
+            selectedAsset.CustomData = EditorGUILayout.TextArea(selectedAsset.CustomData);
         }
     }
 }
