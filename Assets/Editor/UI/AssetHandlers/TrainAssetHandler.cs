@@ -18,6 +18,7 @@ namespace ParkitectAssetEditor.UI.AssetHandlers
             "Gentle Monorail Ride",
             "Ghost Mansion Ride",
             "Giga Coaster",
+            "Go-Karts",
             "Hydraulically-Launched Coaster",
             "Hyper Coaster",
             "Inverted Coaster",
@@ -69,6 +70,8 @@ namespace ParkitectAssetEditor.UI.AssetHandlers
             {
                 _selectedAsset.TrackedRideName = trackedRideNames[trackedRideNameIndex];
             }
+            
+            _selectedAsset.SittingType = (SittingType)EditorGUILayout.EnumPopup("Sitting Type:", _selectedAsset.SittingType);
 
             _selectedAsset.DefaultTrainLength = EditorGUILayout.IntSlider("Default train length: ", _selectedAsset.DefaultTrainLength, 1, 12);
             _selectedAsset.MinTrainLength = EditorGUILayout.IntSlider("Minimum train length: ", _selectedAsset.MinTrainLength, 1, 12);

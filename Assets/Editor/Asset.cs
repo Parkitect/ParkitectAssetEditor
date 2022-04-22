@@ -75,6 +75,8 @@ namespace ParkitectAssetEditor
         /// </value>
         public string SubCategory { get; set; }
 
+        public SittingType SittingType { get; set; } = SittingType.NormalRide;
+
         #region deco
 
         /// <summary>
