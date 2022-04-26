@@ -50,6 +50,8 @@ namespace ParkitectAssetEditor.UI.AssetHandlers
 
 
             selectedAsset.RainProtection = EditorGUILayout.Slider("Rain Protection", selectedAsset.RainProtection * 100, 0, 100) / 100f;
+            
+            selectedAsset.SittingType = (SittingType)EditorGUILayout.EnumPopup("Sitting Type:", selectedAsset.SittingType);
 
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.PrefixLabel("Description");
