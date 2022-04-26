@@ -75,12 +75,12 @@ namespace ParkitectAssetEditor.GizmoRenderers
                 }
             }
 
-            DrawCar(asset.LeadCar);
-            DrawCar(asset.Car);
-            DrawCar(asset.RearCar);
+            DrawCar(asset, asset.LeadCar);
+            DrawCar(asset, asset.Car);
+            DrawCar(asset, asset.RearCar);
         }
 
-        private void DrawCar(CoasterCar car)
+        private void DrawCar(Asset asset, CoasterCar car)
         {
             if (car == null || car.GameObject == null)
             {
@@ -89,7 +89,7 @@ namespace ParkitectAssetEditor.GizmoRenderers
 
             GameObject carGO = car.GameObject;
 
-            Utility.Utility.renderSeatGizmo(carGO);
+            Utility.Utility.renderSeatGizmo(carGO, asset.SittingType);
 
             Color gizmoColor = Gizmos.color;
             Gizmos.color = Color.red;

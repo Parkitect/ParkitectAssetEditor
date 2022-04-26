@@ -26,7 +26,13 @@
         /// <param name="asset">The asset.</param>
         public void Render(Asset asset)
         {
-            Utility.Utility.renderSeatGizmo(asset.GameObject);
+            SittingType sittingType = SittingType.Bench;
+            if (asset.Type != AssetType.Bench)
+            {
+                sittingType = asset.SittingType;
+            }
+
+            Utility.Utility.renderSeatGizmo(asset.GameObject, sittingType);
         }
     }
 }

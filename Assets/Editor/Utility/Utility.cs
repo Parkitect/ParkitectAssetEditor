@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
@@ -28,14 +29,54 @@ namespace ParkitectAssetEditor.Utility
         }
 
 
-        private static Mesh npcMesh;
+        private static Dictionary<SittingType, Mesh> npcMeshes = new Dictionary<SittingType,Mesh>();
         private static Material sceneViewMaterial;
 
-        public static void renderSeatGizmo(GameObject gameObject)
+        public static void renderSeatGizmo(GameObject gameObject, SittingType sittingType)
         {
-            if (npcMesh == null)
+            if (!npcMeshes.TryGetValue(sittingType, out Mesh npcMesh))
             {
-                npcMesh = Resources.Load<Mesh>("Reference Objects/reference_guest_sitting");
+                switch (sittingType)
+                {
+                    case SittingType.Bench:
+                        npcMesh = Resources.Load<Mesh>("Reference Objects/reference_guest_sitting_bench");
+                        break;
+                    case SittingType.Car:
+                        npcMesh = Resources.Load<Mesh>("Reference Objects/reference_guest_sitting_kart");
+                        break;
+                    case SittingType.Flat:
+                        npcMesh = Resources.Load<Mesh>("Reference Objects/reference_guest_sitting_flat");
+                        break;
+                    case SittingType.Horse:
+                        npcMesh = Resources.Load<Mesh>("Reference Objects/reference_guest_sitting_horse");
+                        break;
+                    case SittingType.Pedaling:
+                        npcMesh = Resources.Load<Mesh>("Reference Objects/reference_guest_sitting_pedaling");
+                        break;
+                    case SittingType.Rowing:
+                        npcMesh = Resources.Load<Mesh>("Reference Objects/reference_guest_sitting");
+                        break;
+                    case SittingType.MonorailCoaster:
+                        npcMesh = Resources.Load<Mesh>("Reference Objects/reference_guest_sitting_monorailcoaster");
+                        break;
+                    case SittingType.NormalRide:
+                        npcMesh = Resources.Load<Mesh>("Reference Objects/reference_guest_sitting");
+                        break;
+                    case SittingType.StandingNormal:
+                        npcMesh = Resources.Load<Mesh>("Reference Objects/reference_guest");
+                        break;
+                    case SittingType.SteepleChaseFront:
+                        npcMesh = Resources.Load<Mesh>("Reference Objects/reference_guest_sitting_steeple_front");
+                        break;
+                    case SittingType.SteepleChaseBack:
+                        npcMesh = Resources.Load<Mesh>("Reference Objects/reference_guest_sitting_steeple_front");
+                        break;
+                    default:
+                        npcMesh = Resources.Load<Mesh>("Reference Objects/reference_guest_sitting");
+                        break;
+                }
+                
+                npcMeshes.Add(sittingType, npcMesh);
             }
 
             if (sceneViewMaterial == null)
