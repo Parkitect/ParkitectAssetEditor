@@ -329,6 +329,7 @@ namespace ParkitectAssetEditor.UI
             _selectedAsset.Name = EditorGUILayout.TextField("Name", _selectedAsset.Name);
             _selectedAsset.Type = (AssetType)EditorGUILayout.EnumPopup("Type", _selectedAsset.Type);
             _selectedAsset.Price = EditorGUILayout.FloatField("Price:", _selectedAsset.Price);
+            _selectedAsset.SpawnSound = (SpawnSound)EditorGUILayout.EnumPopup("Spawn Sound:", _selectedAsset.SpawnSound);
 
             GUILayout.Label("Color settings", EditorStyles.boldLabel);
             _selectedAsset.HasCustomColors = EditorGUILayout.Toggle("Has custom colors: ", _selectedAsset.HasCustomColors);

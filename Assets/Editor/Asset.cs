@@ -77,6 +77,8 @@ namespace ParkitectAssetEditor
 
         public SittingType SittingType { get; set; } = SittingType.NormalRide;
 
+        public SpawnSound SpawnSound { get; set; } = SpawnSound.None;
+
         #region deco
 
         /// <summary>
