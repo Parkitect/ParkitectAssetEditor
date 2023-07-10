@@ -167,6 +167,55 @@ namespace ParkitectAssetEditor
         /// </value>
         public float MaxSize { get; set; }
 
+        public class JsonVector3
+        {
+            [JsonIgnore]
+            private float x;
+            [JsonIgnore]
+            private float y;
+            [JsonIgnore]
+            private float z;
+
+            [JsonProperty("x")]
+            public float X => x;
+            [JsonProperty("y")]
+            public float Y => y;
+            [JsonProperty("z")]
+            public float Z => z;
+
+            public JsonVector3(float x, float y, float z)
+            {
+                this.x = x;
+                this.y = y;
+                this.z = z;
+            }
+            public JsonVector3(Vector3 v)
+            {
+                x = v.x;
+                y = v.y;
+                z = v.z;
+            }
+
+            public Vector3 ToVector3()
+            {
+                return new Vector3(x, y, z);
+            }
+            public void Set(Vector3 v)
+            {
+                x = v.x;
+                y = v.y;
+                z = v.z;
+            }
+        }
+
+        [JsonIgnore]
+        private JsonVector3 m_ScaleAxis = new JsonVector3(1, 1, 1);
+        public JsonVector3 ScaleAxis
+        {
+            get => m_ScaleAxis;
+            set => m_ScaleAxis = value;
+        }
+
         /// <summary>
         /// Gets or sets a value indicating whether this object blocks visibility.
         /// </summary>
