@@ -17,6 +17,7 @@
 /Assets/Resources/AssetPack/
 /Assets/Resources/AssetPack.meta
 
+/Properties/AssemblyInfo.cs
 
 
 # Visual Studio 2015 cache directory
@@ -53,6 +54,7 @@ ExportedObj/
 
 *.pdb
 
+*.config
 
 
 # Unity3D generated meta files

@@ -54,7 +54,7 @@ namespace ParkitectAssetEditor
         {
             var path = Path.Combine(Project.Value.ProjectDirectory, Project.Value.ProjectFile);
 
-            Debug.Log(string.Format("Starting saving project {0}", path));
+            //Debug.Log(string.Format("Starting saving project {0}", path)); // Double Message
 
             Directory.CreateDirectory(Project.Value.ModDirectory);
 
@@ -62,6 +62,14 @@ namespace ParkitectAssetEditor
             {
                 Debug.Log("There are no defined assets in the Asset Pack, can't save");
                 return false;
+            }
+
+            foreach (Asset asset in AssetPack.Assets)
+            {
+                if (asset.AddLightSequence && asset.LightSequence != null)
+                {
+                    asset.LightSequence.OnBeforeSerialize();
+                }
             }
 
             string output = JsonConvert.SerializeObject(AssetPack);
@@ -126,7 +134,7 @@ namespace ParkitectAssetEditor
                 Close();
             }
 
-            Debug.Log(string.Format("Start loading project {0}", path));
+            //Debug.Log(string.Format("Start loading project {0}", path)); // Double Message
 
             Project = new Project
             {
@@ -170,7 +178,7 @@ namespace ParkitectAssetEditor
 
                 if (hash != _autoSaveHash)
                 {
-                    Debug.Log(string.Format("Starting auto saving project {0}", path));
+                    //Debug.Log(string.Format("Starting auto saving project {0}", path)); // Double Message
 
                     File.WriteAllText(path, output);
 
@@ -193,7 +201,7 @@ namespace ParkitectAssetEditor
             // .autosave = 9 characters, them hacks!
             var pathWithoutAutoSave = path.Remove(path.Length - 9);
 
-            Debug.Log(string.Format("Start auto loading project {0}", path));
+            //Debug.Log(string.Format("Start auto loading project {0}", path)); // Double Message
 
             Project = new Project
             {

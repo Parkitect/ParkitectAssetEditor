@@ -4,6 +4,7 @@ using System.Linq;
 using ParkitectAssetEditor.GizmoRenderers;
 using ParkitectAssetEditor.UI.AssetHandlers;
 using UnityEditor;
+using UnityEditor.VersionControl;
 using UnityEngine;
 
 namespace ParkitectAssetEditor.UI
@@ -92,7 +93,7 @@ namespace ParkitectAssetEditor.UI
 
             if (ProjectManager.Initialized)
             {
-                ProjectManager.AutoSave();
+                ProjectManager.AutoSave();  //Saves pretty ANY input, bad
 
                 // sync the selected game object in the scene with the corresponding asset
                 if (_selectedAsset != null && Selection.activeGameObject != _selectedAsset.GameObject)
@@ -354,6 +355,10 @@ namespace ParkitectAssetEditor.UI
                 }
             }
 
+            DrawLightSequencerSection();
+
+            /* End of Asset General Detail Section */
+
             if (assetHandlers.TryGetValue(_selectedAsset.Type, out var handler))
             {
                 handler.DrawDetailsSection(_selectedAsset);
@@ -369,6 +374,55 @@ namespace ParkitectAssetEditor.UI
             {
                 RemoveAsset(_selectedAsset);
             }
+        }
+
+        /// <summary>
+        /// Draws the LightSequencer section of the selected asset.
+        /// </summary>
+        private void DrawLightSequencerSection()
+        {
+            if (!(_selectedAsset.Type == AssetType.Train || _selectedAsset.Type == AssetType.Custom || _selectedAsset.Type == AssetType.ParticleEffect))
+            {
+                GUILayout.Space(10);
+
+                _selectedAsset.AddLightSequence = EditorGUILayout.Toggle("Add Light Sequence ", _selectedAsset.AddLightSequence);
+                if (_selectedAsset.AddLightSequence)
+                {
+
+                    EditorGUILayout.HelpBox("Adds Light Sequences for e.g. FlatRides, needs to build Loops with Lights in Light Groups which can be sequenced with the effects in the Light Sequence Editor Window.", MessageType.Info);
+                    // _selectedAsset.LS_UseCustomColors = EditorGUILayout.Toggle("Use Deco CustomColors: ", _selectedAsset.LS_UseCustomColors);
+                    // if (_selectedAsset.LS_UseCustomColors)
+                    // {
+                    // }
+                    _selectedAsset.LS_ColorCount = Mathf.RoundToInt(EditorGUILayout.Slider("Color Count: ", _selectedAsset.LS_ColorCount, 1, 4));
+                    for (int i = 0; i < _selectedAsset.LS_ColorCount; i++)
+                    {
+                        _selectedAsset.LS_Colors[i] = EditorGUILayout.ColorField("Color " + (i + 1), _selectedAsset.LS_Colors[i]);
+
+                    }
+
+                    if (GUILayout.Button("Open Light Sequence Window"))
+                    {
+                        LoadLightSequenceEditorWindow();
+                    }
+                }
+                GUILayout.Space(10);
+            }
+        }
+
+        private void LoadLightSequenceEditorWindow()
+        {
+            if (_selectedAsset.LightSequence != null)
+            {
+                LightSequenceEditorWindow.ShowWindow(_selectedAsset.LightSequence, _selectedAsset);
+            }
+            else
+            {
+                _selectedAsset.AddLightSequenceSO();
+                LightSequenceEditorWindow.ShowWindow(_selectedAsset.LightSequence, _selectedAsset);
+                Debug.Log($"Adding LightSequence Script to Asset: {_selectedAsset.Name}");
+            }
+
         }
 
         /// <summary>

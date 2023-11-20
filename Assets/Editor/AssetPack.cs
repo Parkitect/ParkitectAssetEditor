@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using ParkitectAssetEditor.UI;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -106,6 +107,8 @@ namespace ParkitectAssetEditor
             if (Assets.Contains(asset))
             {
                 Debug.LogWarning(string.Format("Asset {0} was already added as an asset, can't add twice.", asset.Name));
+
+                return;
             }
 
             Assets.Add(asset);
