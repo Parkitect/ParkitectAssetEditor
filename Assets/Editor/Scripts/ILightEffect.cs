@@ -1,4 +1,4 @@
 public interface ILightEffect
 {
-	void setEnabled(bool value);
+    void setEnabled(bool value);
 }
