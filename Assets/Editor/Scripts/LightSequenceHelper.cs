@@ -10,12 +10,12 @@ public static class LightSequenceHelper    // Small AssetManager
     {
         if (RideLightMat == null)
         {
-            RideLightMat = (Material)AssetDatabase.LoadAssetAtPath("Assets/Resources/Reference Objects/Materials/RideLight.mat", typeof(Material));
+            RideLightMat = (Material)AssetDatabase.LoadAssetAtPath("Assets/Editor/RideLight.mat", typeof(Material));
             //Debug.Log($"Loaded Material: {RideLightMat}");
         }
         if (Ride_LightMesh == null)
         {
-            Ride_LightMesh = Resources.Load<Mesh>("Reference Objects/ride_light");
+            Ride_LightMesh = (Mesh)AssetDatabase.LoadAssetAtPath("Assets/Editor/ride_light.fbx", typeof(Mesh));
             //Debug.Log($"Loaded Ride_Light Mesh: {Ride_LightMesh}");
         }
     }
