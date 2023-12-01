@@ -30,7 +30,7 @@ namespace ParkitectAssetEditor.UI
 
         private static float lightSnapDistance = 0.02f;
         private static float lightSnapRadius = 0.15f;
-        private static float lineToolLightDistance = 0.1f; // lightRadius * 2 + lightRadius / 2;
+        private static float lineToolLightDistance = lightRadius * 2 + lightRadius / 2; // or 0.1f 
 
         private static Vector3Int rotateAroundV3I = new Vector3Int(0, 1, 0);
         private static bool rotateToolDuplicate = true;
@@ -38,7 +38,7 @@ namespace ParkitectAssetEditor.UI
         private Transform rotateTooltransform;
         private List<LightSequenceLight> selectedLights4RotateT = new List<LightSequenceLight>();
 
-        private const float lightRadius = 0.036f;   // 0.036f before 0.025f
+        private const float lightRadius = 0.025f;
         private const float zoomFactor = 50;
         private const float effectInspectorWidth = 300;
         private const int snapZoneSize = 5;
@@ -111,7 +111,9 @@ namespace ParkitectAssetEditor.UI
             GUILayout.BeginHorizontal();
 
             Rect sequencerRect = new Rect(0, 0, position.width - effectInspectorWidth, position.height);
-            GUILayout.BeginArea(sequencerRect);	 // left: sequencer
+            GUILayout.BeginArea(sequencerRect);  // left: sequencer
+
+            sequencerScrollPosition = EditorGUILayout.BeginScrollView(sequencerScrollPosition);
 
             GUILayout.Space(10);
 
@@ -170,7 +172,7 @@ namespace ParkitectAssetEditor.UI
 
             GUILayout.EndHorizontal();
 
-            GUILayout.Space(20);
+            GUILayout.Space(10);
 
             EditorGUILayout.HelpBox("Move Tool: ", MessageType.None);
             GUILayout.BeginHorizontal();
@@ -200,7 +202,7 @@ namespace ParkitectAssetEditor.UI
             EditorGUIUtility.labelWidth = 0;
             GUILayout.EndHorizontal();
 
-            GUILayout.Space(20);
+            GUILayout.Space(15);
 
 
             EditorGUILayout.HelpBox("Line Tool:		1. Place or Select a Light for Reference    2. Left-Click, then Right-Click on Mesh to project line on Mesh		3. Add next Light or Interpolate Distance between Lights	 -Needs always a Selected Light!", MessageType.None);
@@ -231,7 +233,7 @@ namespace ParkitectAssetEditor.UI
             }
             GUILayout.EndHorizontal();
 
-            GUILayout.Space(20);
+            GUILayout.Space(15);
 
 
             EditorGUILayout.HelpBox("Rotate Around Tool:	1. Select Lights in right Order	2. Set the correct Rotation Axis and degrees	3. and a Transform as Pivot Point	4. Rotate around", MessageType.None);
@@ -313,11 +315,10 @@ namespace ParkitectAssetEditor.UI
                     Debug.LogWarning("Cannot rotate around without a Transform as Pivotpoint. Please choose a Transform");
                 }
             }
-
-
+            
             GUILayout.EndHorizontal();
+            GUILayout.Space(5);
 
-            GUILayout.Space(10);
             if (GUILayout.Button("1. Add LightLoop", GUILayout.Width(150)))
             {
                 lightSequence.loops.Add(new LightSequenceLoop());
@@ -327,7 +328,7 @@ namespace ParkitectAssetEditor.UI
             EditorGUILayout.HelpBox("Light Loops", MessageType.None);
 
             EditorGUILayout.BeginVertical();
-            sequencerScrollPosition = EditorGUILayout.BeginScrollView(sequencerScrollPosition);
+            // sequencerScrollPosition = EditorGUILayout.BeginScrollView(sequencerScrollPosition);
 
             if (Event.current.type == EventType.MouseDown) {
                 mouseDownPosition = Event.current.mousePosition;
@@ -353,9 +354,10 @@ namespace ParkitectAssetEditor.UI
             TlightsStyle.alignment = TextAnchor.MiddleLeft;
             TlightsStyle.fontSize = 14;
             GUILayout.Label("Total lights: " + lightSequence.lights.Count, TlightsStyle, GUILayout.Height(30f));
-            EditorGUILayout.EndScrollView();
+            // EditorGUILayout.EndScrollView();
             EditorGUILayout.EndVertical();
 
+            EditorGUILayout.EndScrollView();
             GUILayout.EndArea(); // left: sequencer
 
             // effect inspector
