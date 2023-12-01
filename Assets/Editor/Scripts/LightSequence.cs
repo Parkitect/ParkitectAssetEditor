@@ -81,15 +81,6 @@ public class LightSequence : ScriptableObject, ILightEffect, ISerializationCallb
         MainGameObject = gameObject;
     }
 
-    /*
-    public LightSequence(Asset asset, GameObject gameObject) 
-    {
-        SetAsset(asset);
-        customColors = asset.LS_Colors;
-        MainGameObject = gameObject;
-    }
-    */
-
     public void InitiateAssetData(Asset asset, GameObject gameObject)
     {
         SetAsset(asset);
@@ -219,9 +210,9 @@ public class LightSequence : ScriptableObject, ILightEffect, ISerializationCallb
         }
     }
 
-    public void RotateLightAroundAxis(LightSequenceLight light, Vector3 pointOfRotation, Vector3 rotationAxis, float angleOfRotation)
+    public void RotateLightAroundAxis(LightSequenceLight light, Vector3 pointOfRotation, Vector3 rotationAxis, float angleOfRotation, GameObject objects)
     {
-        light.RotateMatrixAroundAxis(this, pointOfRotation, rotationAxis, angleOfRotation);
+        light.RotateMatrixAroundAxis(this, pointOfRotation, rotationAxis, angleOfRotation, objects);
 
         // invalidate();
     }
@@ -581,16 +572,16 @@ public class LightSequenceLight
         this.normal = CleaningNormal(normal);
     }
                                                     
-    public void RotateMatrixAroundAxis(LightSequence lightSequence, Vector3 pointOfRotation, Vector3 rotationAxis, float angleOfRotation)    // point axis angle
+    public void RotateMatrixAroundAxis(LightSequence lightSequence, Vector3 pointOfRotation, Vector3 rotationAxis, float angleOfRotation, GameObject objects = null)    // point axis angle
     {
-        Vector3 position = this.getWorldPosition();
+        Vector3 position = getWorldPosition();
         //Debug.Log($"LightSequence Light RotateMatrixAroundAxis() this.parent: {this.parent.name} on World Position: {this.parent.position}");
 
         Quaternion quaternion = Quaternion.AngleAxis(angleOfRotation, rotationAxis);    // Vector.up
 
-        Vector3 rotatedNormal = quaternion * this.normal;   // stimmt eigtl immer
+        Vector3 rotatedNormal = quaternion * normal;   // is actually always correct
 
-        this.normal = rotatedNormal;
+        normal = rotatedNormal;
 
         Matrix4x4 rotation = Matrix4x4.Rotate(quaternion);
 
@@ -604,27 +595,27 @@ public class LightSequenceLight
         try
         {
             SceneRaycastHit hit;                                                                                                        // light.normal * -1f, Invert Direction
-            if (EditorHandles_UnityInternal.IntersectRayGameObject(new Ray(new Vector3(result[0, 3], result[1, 3], result[2, 3]), rotatedNormal), lightSequence.MainGameObject, out hit))
+            if (EditorHandles_UnityInternal.IntersectRayGameObject(new Ray(new Vector3(result[0, 3]+(0.01f*rotatedNormal.x), result[1, 3]+(0.01f*rotatedNormal.y), result[2, 3]+(0.01f*rotatedNormal.z)), rotatedNormal), objects != null ? objects : lightSequence.MainGameObject, out hit))
             {
-                this.normal = CleaningNormal(hit.normal);
+                normal = CleaningNormal(hit.normal);
 
                 if (hit.transform != parent)
                 {
-                    this.parent = hit.transform;
+                    parent = hit.transform;
                     Debug.Log("LightSequence Rotate4x4MatrixAroundAxis() New Parent: " + hit.transform.name);
                 }
-                this.transform = CleaningMatrix4x4(parent.worldToLocalMatrix * Matrix4x4.TRS(hit.point, Quaternion.LookRotation(this.normal, parent.up), Vector3.one));
+                transform = CleaningMatrix4x4(parent.worldToLocalMatrix * Matrix4x4.TRS(hit.point, Quaternion.LookRotation(normal, parent.up), Vector3.one));
             }
-            else if (EditorHandles_UnityInternal.IntersectRayGameObject(new Ray(new Vector3(result[0, 3], result[1, 3], result[2, 3]), rotatedNormal * -1f), lightSequence.MainGameObject, out hit))
+            else if (EditorHandles_UnityInternal.IntersectRayGameObject(new Ray(new Vector3(result[0, 3]+(0.01f*rotatedNormal.x), result[1, 3]+(0.01f*rotatedNormal.y), result[2, 3]+(0.01f*rotatedNormal.z)), rotatedNormal * -1f), objects != null ? objects : lightSequence.MainGameObject, out hit))
             {
-                this.normal = CleaningNormal(hit.normal);
+                normal = CleaningNormal(hit.normal);
 
                 if (hit.transform != parent)
                 {
-                    this.parent = hit.transform;
+                    parent = hit.transform;
                     Debug.Log("LightSequence Rotate4x4MatrixAroundAxis() New Parent: " + hit.transform.name);
                 }
-                this.transform = CleaningMatrix4x4(parent.worldToLocalMatrix * Matrix4x4.TRS(hit.point, Quaternion.LookRotation(this.normal, parent.up), Vector3.one));
+                transform = CleaningMatrix4x4(parent.worldToLocalMatrix * Matrix4x4.TRS(hit.point, Quaternion.LookRotation(normal, parent.up), Vector3.one));
             }
             else
             {
@@ -634,7 +625,7 @@ public class LightSequenceLight
 
                 result = parent.worldToLocalMatrix * result;
 
-                this.transform = CleaningMatrix4x4(result);
+                transform = CleaningMatrix4x4(result);
             }
         }
         catch (Exception e)

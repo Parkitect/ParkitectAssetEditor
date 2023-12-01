@@ -52,13 +52,18 @@ public static class EditorHandles_UnityInternal
         return result;
     }
 
-    public static bool IntersectRayGameObject(Ray ray, GameObject gameObject, out SceneRaycastHit hit)
+    public static bool IntersectRayGameObject(Ray ray, GameObject gameObject, out SceneRaycastHit hit)  // Addition: Excludes Hidden Objects of Hierarchy with SceneVisibilityManager
     {
         hit = new SceneRaycastHit();
         float nearestHitDistance = float.MaxValue;
         bool hitSomething = false;
         foreach (MeshFilter meshFilter in gameObject.GetComponentsInChildren<MeshFilter>())
         {
+            if (SceneVisibilityManager.instance.IsHidden(meshFilter.gameObject))
+            {
+                continue;
+            }
+
             RaycastHit meshFilterHit = new RaycastHit();
             if (IntersectRayMesh(ray, meshFilter, out meshFilterHit) && meshFilterHit.distance < nearestHitDistance)
             {
