@@ -114,7 +114,6 @@ namespace ParkitectAssetEditor.UI
             Rect sequencerRect = new Rect(0, 0, position.width - effectInspectorWidth, position.height);
             GUILayout.BeginArea(sequencerRect);  // left: sequencer
 
-            // sequencerScrollPosition = EditorGUILayout.BeginScrollView(sequencerScrollPosition); // Does not work, either this or sequencer, and scrolls horizontal too
 
             GUILayout.Space(10);
 
@@ -360,7 +359,6 @@ namespace ParkitectAssetEditor.UI
             EditorGUILayout.EndScrollView();
             EditorGUILayout.EndVertical();
 
-            // EditorGUILayout.EndScrollView();
             GUILayout.EndArea(); // left: sequencer
 
             // effect inspector
