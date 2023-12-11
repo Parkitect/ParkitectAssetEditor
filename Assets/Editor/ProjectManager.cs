@@ -216,7 +216,7 @@ namespace ParkitectAssetEditor
 
             EditorPrefs.SetString("loadedProject", Path.Combine(Project.Value.ProjectDirectory, Project.Value.ProjectFileAutoSave));
 
-            Debug.Log(string.Format("Finished auto loading project {0}", path));
+            Debug.Log(string.Format("Finished AUTO LOADING project {0}", path));
         }
 
         /// <summary>

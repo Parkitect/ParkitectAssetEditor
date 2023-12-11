@@ -32,6 +32,7 @@ namespace ParkitectAssetEditor.UI
         /// </summary>
         private Asset _selectedAsset;
 
+        private bool enabledAutoSave = true;
 
         private static readonly IGizmoRenderer[] _gizmoRenderers = {
             new SeatRenderer(),
@@ -85,14 +86,17 @@ namespace ParkitectAssetEditor.UI
             // Unity loses its state when it compiles, with the editor pref we can load the opened project automatically.
             if (!ProjectManager.Initialized && !string.IsNullOrEmpty(EditorPrefs.GetString("loadedProject")))
             {
-                ProjectManager.AutoLoad();
+                ProjectManager.AutoLoad();  // from AutoSave file!
 
                 _selectedAsset = ProjectManager.AssetPack.Assets.First();
             }
 
             if (ProjectManager.Initialized)
             {
-                ProjectManager.AutoSave();  //Saves pretty ANY input, bad
+                if (enabledAutoSave)
+                {
+                    ProjectManager.AutoSave();  //Saves pretty ANY input, with each time Json.Serialize & Hash Gen, gets super laggy with big assetProject file
+                }
 
                 // sync the selected game object in the scene with the corresponding asset
                 if (_selectedAsset != null && Selection.activeGameObject != _selectedAsset.GameObject)
@@ -126,6 +130,8 @@ namespace ParkitectAssetEditor.UI
             // This draws the whole asset editor window, split up in sections.
             GUILayout.BeginVertical();
             _windowScrollPosition = GUILayout.BeginScrollView(_windowScrollPosition);
+            AutoSaveSetting();
+            GUILayout.Space(15);
             DrawAssetPackSettingsSection();
             GUILayout.Space(15);
             DrawAssetListSection();
@@ -196,6 +202,34 @@ namespace ParkitectAssetEditor.UI
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// AutoSave Setting section.
+        /// </summary>
+        private void AutoSaveSetting()
+        {
+            var style = new GUIStyle(GUI.skin.button);
+            if (enabledAutoSave)
+            {
+                style.fontStyle = FontStyle.Bold;
+                style.normal.textColor = new Color(0.1f, 0.75f, 0.1f, 1f);
+            }
+
+            GUILayout.BeginHorizontal();
+
+            if (GUILayout.Button(enabledAutoSave ? "Enabled AutoSave" : "Disabled AutoSave", style, GUILayout.Width(150)))
+            {
+                enabledAutoSave = !enabledAutoSave;
+            }
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+            // GUILayout.Space(5);
+            style = new GUIStyle(GUI.skin.label)
+            {
+                fontSize = 10,
+            };
+            GUILayout.Label("Should be enabled. But AutoSave can lead to a laggy Scene", style);
         }
 
         /// <summary>
@@ -297,7 +331,7 @@ namespace ParkitectAssetEditor.UI
                     stretchWidth = false
                 };
 
-                if (GUILayout.Button("Remove", style))
+                if (GUILayout.Button("Remove", style) && EditorUtility.DisplayDialog("Remove Asset", "Do you really want to delete this Asset?", "Yes", "Cancel"))
                 {
                     removedAsset = asset;
                 }
@@ -369,7 +403,7 @@ namespace ParkitectAssetEditor.UI
 
             GUILayout.Space(20);
 
-            if (GUILayout.Button("Remove From Asset Pack"))
+            if (GUILayout.Button("Remove From Asset Pack") && EditorUtility.DisplayDialog("Remove Asset", "Do you really want to delete this Asset?", "Yes", "Cancel"))
             {
                 RemoveAsset(_selectedAsset);
             }
@@ -400,10 +434,23 @@ namespace ParkitectAssetEditor.UI
 
                     }
 
+                    GUILayout.Space(10);
+
                     if (GUILayout.Button("Open Light Sequence Window"))
                     {
                         LoadLightSequenceEditorWindow();
                     }
+
+                    GUILayout.Space(10);
+
+                    GUILayout.BeginHorizontal();
+                    GUILayout.FlexibleSpace();
+                    if (GUILayout.Button("Delete All LS Data", GUILayout.Width(150)) && EditorUtility.DisplayDialog("Delete All LightSequence Data", "Do you really want to delete all LightSequence Data of this Asset?", "Yes", "Cancel"))
+                    {
+                        _selectedAsset.DeleteLSData();
+                    }
+
+                    GUILayout.EndHorizontal();
                 }
                 GUILayout.Space(10);
             }

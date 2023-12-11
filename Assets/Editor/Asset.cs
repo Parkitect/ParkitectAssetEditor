@@ -79,6 +79,65 @@ namespace ParkitectAssetEditor
 
         public SpawnSound SpawnSound { get; set; } = SpawnSound.None;
 
+        #region LightSequence
+
+        /// <summary>
+        /// Add LightSequence to Asset and give access to the LS Editor Window
+        /// </summary>
+        /// <value>
+        /// Add LightSequence to Asset
+        /// </value>
+        public bool AddLightSequence { get; set; } = false;
+
+        /// <summary>
+        /// The LightSqeuence Scriptable Object
+        /// </summary>
+        /// <value>
+        /// The LightSqeuence.
+        /// </value>
+        [JsonIgnore] public LightSequence LightSequence { get; private set; }
+
+        //public bool LS_UseCustomColors { get; set; }  //Always available
+
+        /// <summary>
+        /// The colors for Light Sequence
+        /// </summary>
+        [JsonIgnore] public Color[] LS_Colors = new Color[4] { Color.black, Color.black, Color.black, Color.black };    //for new Color.black for Alpha 1
+
+        /// <summary>
+        /// Property to support serializing for Unity's color struct
+        /// </summary>
+        public CustomColor[] LS_CustomColors
+        {
+            get { return LS_Colors.Select(c => new CustomColor { Red = c.r, Green = c.g, Blue = c.b, Alpha = c.a }).ToArray(); }
+            set { LS_Colors = value.Select(c => new Color(c.Red, c.Green, c.Blue, c.Alpha)).ToArray(); }
+        }
+
+        /// <summary>
+        /// Gets or sets the amount of custom colors for Light Sequence.
+        /// </summary>
+        /// <value>
+        /// The color count.
+        /// </value>
+        public int LS_ColorCount { get; set; }
+
+        /// <summary>
+        /// List of Lights and Data holder for LightSequence.lights
+        /// </summary>
+        public List<LightSequenceLight> LS_Lights = new List<LightSequenceLight>();
+
+        /// <summary>
+        /// List of Loops and Data holder for LightSequence.Loops
+        /// </summary>
+        public List<LightSequenceLoop> LS_Loops = new List<LightSequenceLoop>();
+
+        /// <summary>
+        /// List of LightsGroups and Data holder for LightSequence.Groups, with List<LightSequenceEffect> 
+        /// </summary>
+        public List<LightSequenceGroup> LS_Groups = new List<LightSequenceGroup>();
+
+        #endregion
+
         #region deco
 
         /// <summary>
@@ -206,65 +265,6 @@ namespace ParkitectAssetEditor
         /// The custom color slot
         /// </value>
         public int LightsCustomColorSlot { get; set; }
-
-        /*////////////////////////////////////////////////////////////////////////////////*/
-
-        /// <summary>
-        /// Add LightSequence to Asset and give access to the LS Editor Window
-        /// </summary>
-        /// <value>
-        /// Add LightSequence to Asset
-        /// </value>
-        public bool AddLightSequence { get; set; } = false;
-
-        /// <summary>
-        /// The LightSqeuence Scriptable Object
-        /// </summary>
-        /// <value>
-        /// The LightSqeuence.
-        /// </value>
-        [JsonIgnore] public LightSequence LightSequence { get; private set; }
-
-        //public bool LS_UseCustomColors { get; set; }  //Always available
-
-        /// <summary>
-        /// The colors for Light Sequence
-        /// </summary>
-        [JsonIgnore] public Color[] LS_Colors = new Color[4] { Color.black, Color.black, Color.black, Color.black };    //for new Color.black for Alpha 1
-
-        /// <summary>
-        /// Property to support serializing for Unity's color struct
-        /// </summary>
-        public CustomColor[] LS_CustomColors
-        {
-            get { return LS_Colors.Select(c => new CustomColor { Red = c.r, Green = c.g, Blue = c.b, Alpha = c.a }).ToArray(); }
-            set { LS_Colors = value.Select(c => new Color(c.Red , c.Green, c.Blue, c.Alpha)).ToArray(); }
-        }
-
-        /// <summary>
-        /// Gets or sets the amount of custom colors for Light Sequence.
-        /// </summary>
-        /// <value>
-        /// The color count.
-        /// </value>
-        public int LS_ColorCount { get; set; }
-
-        /// <summary>
-        /// List of Lights and Data holder for LightSequence.lights
-        /// </summary>
-        public List<LightSequenceLight> LS_Lights = new List<LightSequenceLight>();
-
-        /// <summary>
-        /// List of Loops and Data holder for LightSequence.Loops
-        /// </summary>
-        public List<LightSequenceLoop> LS_Loops = new List<LightSequenceLoop>();
-
-        /// <summary>
-        /// List of LightsGroups and Data holder for LightSequence.Groups, with List<LightSequenceEffect> 
-        /// </summary>
-        public List<LightSequenceGroup> LS_Groups = new List<LightSequenceGroup>();
-
-        /*//////////////////////////////////////////////////////////////////////////////////*/
 
         public bool EffectsTriggerEnabled { get; set; }
         public bool EffectsTriggerCustomizableDuration { get; set; }
@@ -491,7 +491,6 @@ namespace ParkitectAssetEditor
         /// <summary>
         /// Adds and Initializes the LightSequence ScriptableObject
         /// </summary>
-        /// <param name="gameobject">The asset.</param>
         public void AddLightSequenceSO()
         {
             if (LightSequence != null)
@@ -502,6 +501,31 @@ namespace ParkitectAssetEditor
             //LightSequence = new LightSequence(this, gameObject);
             LightSequence = ScriptableObject.CreateInstance<LightSequence>();
             LightSequence.InitiateAssetData(this, GameObject);
+        }
+
+        /// <summary>
+        /// Delete all LS Data of this Asset
+        /// </summary>
+        public void DeleteLSData()
+        {
+            if (LightSequence != null)
+                LightSequence = null;
+
+            foreach (var group in LS_Groups)
+            {
+               group.effects.Clear();
+               group.lights.Clear();
+            }
+            LS_Groups.Clear();
+            foreach (var loop in LS_Loops)
+            {
+                loop.groups.Clear();
+            }
+            LS_Loops.Clear();
+            LS_Lights.Clear();
+
+            LS_Colors = new Color[4] { Color.black, Color.black, Color.black, Color.black };
+            LS_ColorCount = 0;
         }
 
         /// <summary>

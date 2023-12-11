@@ -23,22 +23,23 @@ namespace ParkitectAssetEditor.UI
         private static SerializedProperty serializedgroups;
         private Vector2 debugScrollPosition;
 
-        private static bool EnabledLSEWSceneView = false;
+        private static bool enabledLSEWSceneView = false;
 
         private static bool lockMoving = true;
         private static bool snapX = true, snapY = true, snapZ = true;
 
         private static float lightSnapDistance = 0.02f;
         private static float lightSnapRadius = 0.15f;
-        private static float lineToolLightDistance = 0.1f; // lightRadius * 2 + lightRadius / 2;
+        private static float lineToolLightDistance = lightRadius * 2 + lightRadius / 2; // or 0.1f 
 
         private static Vector3Int rotateAroundV3I = new Vector3Int(0, 1, 0);
         private static bool rotateToolDuplicate = true;
         private float rotateTooldegrees = 45.0f;
         private Transform rotateTooltransform;
+        private GameObject rotateToolGOchilds;
         private List<LightSequenceLight> selectedLights4RotateT = new List<LightSequenceLight>();
 
-        private const float lightRadius = 0.036f;   // 0.036f before 0.025f
+        private const float lightRadius = 0.025f;
         private const float zoomFactor = 50;
         private const float effectInspectorWidth = 300;
         private const int snapZoneSize = 5;
@@ -91,12 +92,12 @@ namespace ParkitectAssetEditor.UI
 
         public void Awake() {
             SceneView.duringSceneGui += OnScene;    // 'SceneView.onSceneGUIDelegate' is obsolete: 'onSceneGUIDelegate has been deprecated. Use duringSceneGui instead.'	SceneView.duringSceneGui
-            EnabledLSEWSceneView = false;
+            enabledLSEWSceneView = false;
         }
 
         public void OnDestroy() {
             SceneView.duringSceneGui -= OnScene;    // 'SceneView.onSceneGUIDelegate' is obsolete: 'onSceneGUIDelegate has been deprecated. Use duringSceneGui instead.'	SceneView.duringSceneGui
-            EnabledLSEWSceneView = false;
+            enabledLSEWSceneView = false;
             serializedLS = null;
         }
 
@@ -111,21 +112,22 @@ namespace ParkitectAssetEditor.UI
             GUILayout.BeginHorizontal();
 
             Rect sequencerRect = new Rect(0, 0, position.width - effectInspectorWidth, position.height);
-            GUILayout.BeginArea(sequencerRect);	 // left: sequencer
+            GUILayout.BeginArea(sequencerRect);  // left: sequencer
+
 
             GUILayout.Space(10);
 
             GUILayout.BeginHorizontal();
             GUIStyle lsewStyle = new GUIStyle(GUI.skin.button);
-            if (EnabledLSEWSceneView)
+            if (enabledLSEWSceneView)
             {
                 lsewStyle.fontStyle = FontStyle.Bold;
                 lsewStyle.normal.textColor = new Color(0.1f, 0.9f, 0.1f, 1f);
                 lsewStyle.fontSize = 13;
             }
-            if (GUILayout.Button(EnabledLSEWSceneView ? "Activated LS SceneView with controls" : "Deactivated LS SceneView no controls", lsewStyle, GUILayout.Width(400)))
+            if (GUILayout.Button(enabledLSEWSceneView ? "Activated LS SceneView with controls" : "Deactivated LS SceneView no controls", lsewStyle, GUILayout.Width(400)))
             {
-                EnabledLSEWSceneView = !EnabledLSEWSceneView;
+                enabledLSEWSceneView = !enabledLSEWSceneView;
             }
             GUILayout.FlexibleSpace();
             GUILayout.Box($"Loaded LightSequence for:  {lightSequence?.MainGameObject.name}", new GUIStyle(GUI.skin.box), GUILayout.Width(300));
@@ -170,7 +172,7 @@ namespace ParkitectAssetEditor.UI
 
             GUILayout.EndHorizontal();
 
-            GUILayout.Space(20);
+            GUILayout.Space(10);
 
             EditorGUILayout.HelpBox("Move Tool: ", MessageType.None);
             GUILayout.BeginHorizontal();
@@ -200,10 +202,10 @@ namespace ParkitectAssetEditor.UI
             EditorGUIUtility.labelWidth = 0;
             GUILayout.EndHorizontal();
 
-            GUILayout.Space(20);
+            GUILayout.Space(15);
 
 
-            EditorGUILayout.HelpBox("Line Tool:		1. Place or Select a Light for Reference    2. Left-Click, then Right-Click on Mesh to project line on Mesh		3. Add next Light or Interpolate Distance between Lights	 -Needs always a Selected Light!", MessageType.None);
+            EditorGUILayout.HelpBox("Line Tool:     1. Place or Select a Light for Reference    2. Left-Click, then Right-Click on Mesh to project line on Mesh    3. Add next Light or Interpolate Distance between Lights    -Needs always a Selected Light!", MessageType.None);
             GUILayout.BeginHorizontal();
             GUIStyle buttonLineTStyle = new GUIStyle(GUI.skin.button);
             if (tool == Tool.LineTool)
@@ -231,10 +233,10 @@ namespace ParkitectAssetEditor.UI
             }
             GUILayout.EndHorizontal();
 
-            GUILayout.Space(20);
+            GUILayout.Space(15);
 
 
-            EditorGUILayout.HelpBox("Rotate Around Tool:	1. Select Lights in right Order	2. Set the correct Rotation Axis and degrees	3. and a Transform as Pivot Point	4. Rotate around", MessageType.None);
+            EditorGUILayout.HelpBox("Rotate Around Tool:    1. Select Lights in right Order    2. Set the correct Rotation Axis and degrees    3. and a Transform as Pivot Point    4. Rotate around    -Only on Active Objects", MessageType.None);
             GUILayout.BeginHorizontal();
             GUIStyle selectLTStyle = new GUIStyle(GUI.skin.button);
             if (tool == Tool.SelectRotateTool)
@@ -269,7 +271,9 @@ namespace ParkitectAssetEditor.UI
             EditorGUIUtility.labelWidth = 100;
             rotateTooldegrees = EditorGUILayout.FloatField(rotateTooldegrees, GUILayout.Width(50));	//, GUILayout.ExpandWidth(false)
 
-            rotateTooltransform = EditorGUILayout.ObjectField("On Transform", rotateTooltransform, typeof(Transform), true, GUILayout.MinWidth(200)) as Transform;
+            rotateTooltransform = EditorGUILayout.ObjectField("  PivotPoint", rotateTooltransform, typeof(Transform), true, GUILayout.MinWidth(200)) as Transform;
+
+            rotateToolGOchilds = EditorGUILayout.ObjectField("  On GO & childs", rotateToolGOchilds, typeof(GameObject), true, GUILayout.MinWidth(200)) as GameObject;
 
             rotateToolDuplicate = GUILayout.Toggle(rotateToolDuplicate, "Duplicate", GUILayout.Width(80));
 
@@ -295,7 +299,7 @@ namespace ParkitectAssetEditor.UI
                         selectedLights4RotateT.Clear();
                         foreach (LightSequenceLight duplicateLight in duplicateLights)
                         {
-                            lightSequence.RotateLightAroundAxis(duplicateLight, rotateTooltransform.position, rotateAroundV3I, rotateTooldegrees);
+                            lightSequence.RotateLightAroundAxis(duplicateLight, rotateTooltransform.position, rotateAroundV3I, rotateTooldegrees, rotateToolGOchilds);
                             selectedLights4RotateT.Add(duplicateLight);
                         }
                     }
@@ -303,7 +307,7 @@ namespace ParkitectAssetEditor.UI
                     {
                         foreach (LightSequenceLight light in selectedLights4RotateT)
                         {
-                            lightSequence.RotateLightAroundAxis(light, rotateTooltransform.position, rotateAroundV3I, rotateTooldegrees);
+                            lightSequence.RotateLightAroundAxis(light, rotateTooltransform.position, rotateAroundV3I, rotateTooldegrees, rotateToolGOchilds);
                         }
                     }
                     EditorUtility.SetDirty(lightSequence);
@@ -313,11 +317,10 @@ namespace ParkitectAssetEditor.UI
                     Debug.LogWarning("Cannot rotate around without a Transform as Pivotpoint. Please choose a Transform");
                 }
             }
-
-
+            
             GUILayout.EndHorizontal();
+            GUILayout.Space(5);
 
-            GUILayout.Space(10);
             if (GUILayout.Button("1. Add LightLoop", GUILayout.Width(150)))
             {
                 lightSequence.loops.Add(new LightSequenceLoop());
@@ -397,7 +400,7 @@ namespace ParkitectAssetEditor.UI
 
         private void OnScene(SceneView sceneview)   //	CONTROLS	AND RENDERING LIGHTS
         {
-            if (!EnabledLSEWSceneView)
+            if (!enabledLSEWSceneView)
                 return;
 
             Event e = Event.current;
@@ -956,7 +959,7 @@ namespace ParkitectAssetEditor.UI
 
             GUILayout.FlexibleSpace();
 
-            if (GUILayout.Button("Delete Loop",GUILayout.ExpandWidth(false)) && EditorUtility.DisplayDialog("Delete loop", "Do you really want to delete this loop?", "Yes", "Cancel")) {
+            if (GUILayout.Button("Delete Loop", GUILayout.ExpandWidth(false)) && EditorUtility.DisplayDialog("Delete loop", "Do you really want to delete this loop?", "Yes", "Cancel")) {
                 Undo.RecordObject(lightSequence, "Delete Loop");
                 lightSequence.removeLoop(loop);
                 EditorUtility.SetDirty(lightSequence);
@@ -965,7 +968,7 @@ namespace ParkitectAssetEditor.UI
             GUILayout.EndHorizontal();
 
             GUILayout.Space(10);
-            if (GUILayout.Button("2. Add LightGroup")) {
+            if (GUILayout.Button("2. Add LightGroup", GUILayout.Width(150))) {
                 LightSequenceGroup group = new LightSequenceGroup();
                 lightSequence.groups.Add(group);
                 loop.groups.Add(group);
@@ -1052,6 +1055,11 @@ namespace ParkitectAssetEditor.UI
             if (GUILayout.Button("Duplicate", GUILayout.Width(65)))
             {
                 LightSequenceGroup duplicatedGroup = duplicateGroup(group);
+                loop.groups.Add(duplicatedGroup);
+            }
+            if (GUILayout.Button("Duplicate with Lights", GUILayout.Width(130)))
+            {
+                LightSequenceGroup duplicatedGroup = duplicateGroup(group, true);
                 loop.groups.Add(duplicatedGroup);
             }
             if (GUILayout.Button("Delete", GUILayout.Width(65)))
@@ -1325,13 +1333,19 @@ namespace ParkitectAssetEditor.UI
         /// <summary>
         /// Duplicate Group
         /// </summary>
-        private LightSequenceGroup duplicateGroup(LightSequenceGroup group) {
+        private LightSequenceGroup duplicateGroup(LightSequenceGroup group, bool copyAssignedLights = false) {
             LightSequenceGroup duplicatedGroup = new LightSequenceGroup();
             foreach (LightSequenceEffect effect in group.effects) {
                 duplicatedGroup.effects.Add(new LightSequenceEffect(effect));
             }
+            if (copyAssignedLights)
+            {
+                foreach (LightSequenceLight light in group.lights)
+                {
+                    duplicatedGroup.lights.Add(light);
+                }
+            }
             lightSequence.groups.Add(duplicatedGroup);
-
             return duplicatedGroup;
         }
 
@@ -1346,14 +1360,14 @@ namespace ParkitectAssetEditor.UI
             lightSequence.loops.Add(duplicatedLoop);
 
             foreach (LightSequenceGroup group in loop.groups) {
-                LightSequenceGroup duplicatedGroup = duplicateGroup(group);
+                LightSequenceGroup duplicatedGroup = duplicateGroup(group, copyAssignedLights);
                 duplicatedLoop.groups.Add(duplicatedGroup);
-
+                /*
                 if (copyAssignedLights) {
-                    foreach (LightSequenceLight light in group.lights) {
+                    foreach (LightSequenceLight light in group.lights) {    // Moved to duplicateGroup
                         duplicatedGroup.lights.Add(light);
                     }
-                }
+                }*/
             }
 
             return duplicatedLoop;
