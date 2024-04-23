@@ -35,6 +35,7 @@ namespace ParkitectAssetEditor.UI.AssetHandlers
             "Monorail Coaster",
             "Pivot Coaster",
             "Powered Coaster",
+            "River Rapids",
             "Spinning Coaster",
             "Splash Battle",
             "Stand-up Coaster",
