@@ -29,6 +29,8 @@ namespace ParkitectAssetEditor.UI.AssetHandlers
             {
                 selectedAsset.MinSize = Mathf.RoundToInt(EditorGUILayout.Slider("Min size: ", selectedAsset.MinSize, 0.1f, selectedAsset.MaxSize) * 10f) / 10f;
                 selectedAsset.MaxSize = Mathf.RoundToInt(EditorGUILayout.Slider("Max size: ", selectedAsset.MaxSize, selectedAsset.MinSize, 10) * 10f) / 10f;
+
+                selectedAsset.ScaleAxis.Set(EditorGUILayout.Vector3Field("Scale Axis: ", selectedAsset.ScaleAxis.ToVector3()));
             }
 
             GUILayout.Label("Visibility settings", EditorStyles.boldLabel);
